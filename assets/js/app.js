@@ -22,8 +22,7 @@ KBR.app = (function () {
     [/^\/konto$/, function () { return P.redirect('#/konto/subskrypcja'); }],
     [/^\/konto\/subskrypcja$/, P.mySubscription],
     [/^\/konto\/dane$/, P.myData],
-    [/^\/konto\/platnosci$/, P.payments],
-    [/^\/konto\/preferencje$/, P.preferences],
+    [/^\/konto\/(platnosci|preferencje)$/, function () { return P.redirect('#/konto/subskrypcja'); }],
     [/^\/subskrypcja$/, P.plans],
     [/^\/zamowienie$/, P.order],
     [/^\/zamowienie\/status$/, P.orderStatus],
@@ -267,3 +266,18 @@ KBR.app = (function () {
 })();
 
 document.addEventListener('DOMContentLoaded', KBR.app.init);
+
+/* Nagłówek: duże logo na górze strony, kompaktowy pasek po przewinięciu */
+(function () {
+  const hdr = document.getElementById('site-header');
+  if (!hdr) return;
+  let compact = false, ticking = false;
+  const update = function () {
+    ticking = false;
+    const y = window.scrollY;
+    const next = compact ? y > 24 : y > 140;
+    if (next !== compact) { compact = next; hdr.classList.toggle('is-compact', compact); }
+  };
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  update();
+})();

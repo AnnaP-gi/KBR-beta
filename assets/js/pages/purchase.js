@@ -60,17 +60,17 @@
         '</div>' +
         (p.print ? '<p class="plan__ship">' + I('mail', 16) + '<span>' + esc(CFG.printShipping.short) + '</span></p>' : '') +
         (active
-          ? '<p class="btn btn--outline" aria-disabled="true" style="margin-top:24px;height:48px">' + (current ? 'Aktywny plan' : 'Zmiana planu – do decyzji') + '</p>'
+          ? (current ? '<p class="btn btn--outline" aria-disabled="true" style="margin-top:24px;height:48px">Aktywny plan</p>'
+            : '<div class="plan__change"><p>Zmiana pakietu:</p><a class="contact-box__mail" href="mailto:subskrypcje@kbr.example?subject=' + encodeURIComponent('Zmiana pakietu na ' + p.name) + '">' + I('mail', 18) + 'subskrypcje@kbr.example</a></div>')
           : '<button type="button" class="btn btn--primary" data-action="select-plan" data-plan="' + p.id + '">' + esc(p.cta || ('Wybierz: ' + p.name)) + I('chevRight', 16, 'stroke-width="2"') + '</button>') +
         '<ul>' + p.features.map(function (f) { return '<li class="' + (f.included ? 'yes' : 'no') + '">' + I(f.included ? 'check' : 'dash', 20) + '<span>' + (f.included ? '' : '<span class="visually-hidden">Nie obejmuje: </span>') + esc(f.text) + '</span></li>'; }).join('') + '</ul></article>';
     }).join('');
 
     const html = '<div class="container">' +
       '<header class="plans-head">' + ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Subskrypcja' }]).replace('<nav class="crumbs"', '<nav class="crumbs" style="display:flex;justify-content:center"') +
-        '<h1 style="margin-top:20px">Wybierz subskrypcję magazynu KBR</h1><p>Trzy warianty subskrypcji magazynu. Różnią się formatem wydania i zakresem dostępu do artykułów online.</p>' +
+        '<h1 style="margin-top:20px">Wybierz subskrypcję magazynu KBR</h1><p>Trzy warianty subskrypcji magazynu. Wydanie drukowane, cyfrowe z dostępem do wszystkich artykułów lub oba razem.</p>' +
         (active ? '<div class="notice notice--success" style="max-width:760px;margin:24px auto 0;text-align:left">' + I('checkCircle', 18) + '<span>Masz aktywną subskrypcję. <a class="link" href="#/konto/subskrypcja">Zobacz szczegóły w koncie</a></span></div>' : '') +
         sourceBox(src, 'Wybierasz subskrypcję, aby przeczytać') +
-        '<div class="notice notice--demo">' + I('info', 18) + '<span><strong>Ceny demonstracyjne.</strong> Każdy pakiet to jednorazowa płatność za 12 miesięcy dostępu, bez automatycznego odnawiania. Ceny i nazwy są w pliku config.js.</span></div>' +
       '</header>' +
       '<div class="plans">' + plans + '</div>' +
       '<section aria-labelledby="h-compare" style="margin-top:64px"><h2 class="t-section col-head" id="h-compare">Porównanie pakietów</h2>' +
@@ -81,7 +81,7 @@
             return '<td style="text-align:center;color:' + (on ? 'var(--c-gold)' : 'var(--c-border-strong)') + '">' + I(on ? 'check' : 'dash', 20) + '<span class="visually-hidden">' + (on ? 'Tak' : 'Nie') + '</span></td>';
           }).join('') + '</tr>';
         }).join('') + '</tbody></table></div>' +
-        '<p class="notice" style="margin-top:20px">' + I('info', 18) + '<span>Pakiet Drukowany nie obejmuje magazynu w formacie PDF ani dostępu do wszystkich artykułów w serwisie. Dostęp online dotyczy wyłącznie artykułów opublikowanych w magazynie.</span></p></section>' +
+        '<p class="notice" style="margin-top:20px">' + I('info', 18) + '<span>Pakiet Drukowany obejmuje wyłącznie drukowane wydanie magazynu – bez wersji PDF i bez dostępu do artykułów w serwisie. Pakiet Pełny łączy wersję cyfrową i drukowaną.</span></p></section>' +
       '<div style="height:96px"></div></div>';
 
     return { title: 'Subskrypcja – KBR', html: html, mount: function (root) {
@@ -126,7 +126,7 @@
     const p = KBR.subscription.plan(o.planId);
     const consents = CFG.purchase.consents;
     const name = [u.firstName, u.lastName].filter(Boolean).join(' ');
-    return '<div class="jf-demo-flag" role="note">' + I('info', 18) + '<div><strong>Tryb demonstracyjny – formularz Jotform nie jest jeszcze podłączony.</strong> Poniżej podgląd pól, które pojawią się w osadzonym formularzu. Płatność nie zostanie pobrana. Po podaniu linku do formularza w config.js (jotform.formUrl) w tym miejscu wyświetli się formularz Jotform z bramką płatności.</div></div>' +
+    return '' + 
       '<form id="jf-demo" class="jf-shell" novalidate>' +
         '<section class="form-section" aria-labelledby="h-buyer"><h2 id="h-buyer">Dane zamawiającego</h2>' +
           '<div class="field"><label for="o-name">Imię i nazwisko</label><input class="input" id="o-name" autocomplete="name" value="' + esc(name) + '"></div>' +
@@ -152,9 +152,9 @@
           '<div class="jf-total"><span>Razem</span><strong>' + ui.money(o.amount) + '</strong></div>' +
           '<p class="jf-note">' + esc(CFG.purchase.priceNote) + '</p></section>' +
         '<section class="form-section" aria-labelledby="h-terms"><h2 id="h-terms">Zgody</h2>' +
-          consents.map(function (c) { return '<label class="check" for="c-' + c.id + '"><input type="checkbox" id="c-' + c.id + '"><span>' + (c.link ? esc(c.text).replace(/(Regulamin subskrypcji KBR|Polityką prywatności)/, '<a href="' + c.link + '" target="_blank">$1</a>') : esc(c.text)) + (c.required ? ' (wymagane)' : '') + ' <span class="demo-tag">Treść do dostarczenia</span></span></label>'; }).join('') + '</section>' +
+          consents.map(function (c) { return '<label class="check" for="c-' + c.id + '"><input type="checkbox" id="c-' + c.id + '"><span>' + (c.link ? esc(c.text).replace(/(Regulamin subskrypcji KBR|Polityką prywatności)/, '<a href="' + c.link + '" target="_blank">$1</a>') : esc(c.text)) + (c.required ? ' (wymagane)' : '') + '</span></label>'; }).join('') + '</section>' +
         '<section class="form-section" aria-labelledby="h-pay"><h2 id="h-pay">Płatność</h2>' +
-          '<div class="jf-gateway">' + I('lock', 18) + '<span>Tu wyświetli się bramka płatności skonfigurowana w Jotform (płatność jednorazowa). Prototyp nie zawiera pól karty i nie zbiera danych płatniczych.</span></div></section>' +
+          '<div class="jf-gateway">' + I('lock', 18) + '<span>Tu wyświetli się bramka płatności skonfigurowana w Jotform (płatność jednorazowa).</span></div></section>' +
         '<div class="step-actions"><a class="btn btn--ghost" href="#/subskrypcja">Wróć do pakietów</a><button class="btn btn--primary" type="submit" style="height:48px">Zamawiam i płacę ' + ui.money(o.amount) + I('chevRight', 16, 'stroke-width="2"') + '</button></div>' +
         '<p class="hint" style="margin-top:12px">Wysłanie formularza nie aktywuje dostępu. Aktywujemy go po potwierdzeniu płatności przez operatora.</p>' +
       '</form>';
@@ -304,7 +304,7 @@
           '<div class="field"><label for="c-email">Służbowy e-mail</label><input class="input" id="c-email" type="email" autocomplete="email"></div></div>' +
           '<div class="field"><label for="c-phone">Telefon <span style="font-weight:400;color:var(--c-muted)">(opcjonalnie)</span></label><input class="input" id="c-phone" type="tel" autocomplete="tel"></div>' +
           '<div class="field"><label for="c-msg">Wiadomość <span style="font-weight:400;color:var(--c-muted)">(opcjonalnie)</span></label><textarea class="input" id="c-msg" rows="4" style="height:auto;padding:10px 12px"></textarea></div>' +
-          '<div class="consents"><label class="check" for="c-consent"><input type="checkbox" id="c-consent"><span>Wyrażam zgodę na kontakt w sprawie oferty (wymagane). <span class="demo-tag">Treść do zatwierdzenia</span></span></label></div>' +
+          '<div class="consents"><label class="check" for="c-consent"><input type="checkbox" id="c-consent"><span>Wyrażam zgodę na kontakt w sprawie oferty (wymagane).</span></label></div>' +
           '<div class="btn-row" style="margin-top:28px"><button class="btn btn--primary" type="submit" style="height:48px">Wyślij zapytanie' + I('chevRight', 16, 'stroke-width="2"') + '</button></div></form>') +
       '</div><aside><div class="auth-side"><h2>Twój doradca</h2><p style="margin-top:12px;font-size:15px;line-height:22px;color:var(--c-ink)"><strong>[Imię i nazwisko doradcy]</strong><br>Opiekun klientów korporacyjnych KBR<br>[e-mail] · [telefon]</p><p class="demo-tag" style="margin-top:12px">Dane do uzupełnienia</p>' +
         '<ul><li>' + I('check', 18) + 'Pakiet dla wielu pracowników</li><li>' + I('check', 18) + 'Oferta dopasowana do wielkości zespołu</li><li>' + I('check', 18) + 'Rozliczenie na podstawie umowy</li></ul></div>' +
@@ -325,10 +325,10 @@
   KBR.pages.academic = function () {
     const html = '<div class="container"><header class="page-head">' + ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Subskrypcja', href: '#/subskrypcja' }, { label: 'Dostęp akademicki' }]) +
       '<h1>Dostęp akademicki</h1><p>Studenci, doktoranci i pracownicy Akademii Leona Koźmińskiego mogą korzystać z treści KBR na zasadach dostępu akademickiego.</p></header>' +
-      '<div class="info-grid info"><div class="prose"><h2 style="margin-top:0">Uprawnienia</h2><p>Zakres dostępu akademickiego (np. treści Premium, wydania magazynu) wymaga potwierdzenia. <span class="demo-tag">Do decyzji</span></p>' +
+      '<div class="info-grid info"><div class="prose"><h2 style="margin-top:0">Uprawnienia</h2><p>Zakres dostępu akademickiego (np. treści Premium, wydania magazynu) wymaga potwierdzenia.</p>' +
       '<h2>Sposób aktywacji</h2><p>Rozważane są dwa warianty: logowanie przez konto uczelniane (SSO) lub weryfikacja adresu e-mail w domenie uczelni. Wybór wariantu wpływa na liczbę ekranów i nie został jeszcze podjęty.</p>' +
       '<ul><li>SSO – jedno logowanie, automatyczna weryfikacja statusu.</li><li>Weryfikacja e-mail – link aktywacyjny wysyłany na adres uczelniany.</li></ul>' +
-      '<p>Do czasu decyzji aktywacja nie jest dostępna w prototypie.</p></div>' +
+      '</div>' +
       '<aside class="auth-side"><h2>Masz pytania?</h2><p style="margin-top:12px">Skontaktuj się z redakcją KBR.</p><div class="btn-row" style="margin-top:16px"><a class="btn btn--outline" href="#/strona/kontakt">Kontakt</a></div></aside></div></div>';
     return { title: 'Dostęp akademicki – KBR', html: html };
   };

@@ -211,7 +211,7 @@
       const limit = KBR.access.meterLimit();
       if (limit === 0) return { full: true, kind: 'open' };
       const meter = readMeter();
-      if (meter.ids.indexOf(m.id) !== -1) return { full: true, kind: 'metered', used: meter.ids.length, limit: limit };
+      /* każde wejście w artykuł (także ponowne w ten sam) zużywa jedno wyświetlenie z limitu */
       if (meter.ids.length < limit) {
         if (consume) { meter.ids.push(m.id); S.set(METER_KEY, meter); }
         return { full: true, kind: 'metered', used: meter.ids.length + (consume ? 0 : 1), limit: limit };

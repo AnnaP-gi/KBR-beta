@@ -171,7 +171,7 @@
 
   KBR.pages.authors = function () {
     return { title: 'Autorzy i eksperci – KBR', html: '<div class="container"><header class="page-head">' + ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Autorzy i eksperci' }]) +
-      '<h1>Autorzy i eksperci</h1><p>Osoby publikujące w KBR i udzielające komentarzy eksperckich. Ta sama osoba może występować w obu rolach i ma jeden profil. <span class="demo-tag">Biogramy demonstracyjne</span></p></header>' +
+      '<h1>Autorzy i eksperci</h1><p>Osoby publikujące w KBR i udzielające komentarzy eksperckich. Ta sama osoba może występować w obu rolach i ma jeden profil.</p></header>' +
       '<div class="grid-3" style="padding-bottom:96px">' + KBR.data.authors.map(function (a) {
         const n = KBR.data.materials.filter(function (m) { return m.authors.some(function (x) { return x.id === a.id; }); }).length;
         return '<a class="community-card" href="#/autor/' + a.id + '" style="justify-content:flex-start"><div class="avatar avatar--sm" aria-hidden="true">' + esc(a.initials.slice(0, 2)) + '</div><div><h2 style="font-size:18px;line-height:24px;color:var(--c-ink);font-weight:700">' + esc(a.name) + '</h2><p style="font-size:14px;margin-top:4px;color:var(--c-muted)">' + countLabel(n) + '</p></div></a>';

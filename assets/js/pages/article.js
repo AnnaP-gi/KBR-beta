@@ -13,14 +13,24 @@ KBR.pages.article = function (route) {
   const isMedia = C.isMedia(m);
 
   /* Treść */
-  function block(b) {
+  const rich = function (s) { return esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); };
+  function block(b, i, arr) {
     switch (b.t) {
-      case 'p': return '<p>' + esc(b.x) + '</p>';
+      case 'p': return '<p' + (i === 0 ? ' class="lede"' : '') + '>' + rich(b.x) + (access.full && i === arr.length - 1 ? '<span class="endmark" aria-hidden="true"></span>' : '') + '</p>';
+      case 'pull': {
+        const nearSide = arr.slice(Math.max(0, i - 3), i + 3).some(function (y) { return y.t === 'figure' && /side/.test(y.layout || ''); });
+        return '<aside class="pull' + (nearSide ? ' pull--wide' : '') + '" aria-hidden="true">' + esc(b.x) + '</aside>';
+      }
+      case 'table': return '<figure class="rec-table"><h3>' + esc(b.title) + '</h3>' + (b.intro ? '<p>' + esc(b.intro) + '</p>' : '') + '<div class="rec-table__scroll"><table><thead><tr>' + b.cols.map(function (c) { return '<th scope="col">' + esc(c) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+        b.rows.map(function (r) { return '<tr>' + r.map(function (c, k) { return k === 0 ? '<th scope="row">' + esc(c) + '</th>' : '<td>' + esc(c) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></div></figure>';
       case 'h2': return '<h2>' + esc(b.x) + '</h2>';
-      case 'list': return '<ul>' + b.items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+      case 'list': return '<ul>' + b.items.map(function (x) { return '<li>' + rich(x) + '</li>'; }).join('') + '</ul>';
       case 'keypoints': return '<aside class="keypoints" aria-label="' + esc(b.title) + '"><h3>' + esc(b.title) + '</h3><ul>' + b.items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></aside>';
       case 'quote': return '<blockquote><p>„' + esc(b.x) + '”</p><footer>' + esc(b.by) + '</footer></blockquote>';
-      case 'figure': return '<figure><img src="' + ui.img(b.src) + '" alt="' + esc(b.alt) + '" loading="lazy"><figcaption>' + esc(b.cap) + '</figcaption></figure>';
+      case 'figure': return '<figure class="fig' + (b.layout === 'side' ? ' fig--side' : b.layout === 'side-left' ? ' fig--side fig--left' : '') + '"><img src="' + ui.img(b.src) + '" alt="' + esc(b.alt) + '" loading="lazy"' + (b.pos ? ' style="object-position:' + b.pos + '"' : '') + '>' + (b.cap ? '<figcaption>' + esc(b.cap) + '</figcaption>' : '') + '</figure>';
+      case 'split': return '<div class="split"><div class="split__text">' + b.blocks.map(function (y) { return y.t === 'pull' ? '<aside class="pull pull--wide" aria-hidden="true">' + esc(y.x) + '</aside>' : block(y, -1, b.blocks); }).join('') + '</div>' +
+        '<figure class="split__fig"><img src="' + ui.img(b.src) + '" alt="' + esc(b.alt) + '" loading="lazy"' + (b.pos ? ' style="object-position:' + b.pos + '"' : '') + '>' + (b.cap ? '<figcaption>' + esc(b.cap) + '</figcaption>' : '') + '</figure></div>';
+      case 'points': return '<ol class="points">' + b.items.map(function (x, k) { return '<li><span class="points__nr" aria-hidden="true">' + (k + 1) + '</span><div><p class="points__title">' + esc(x.title) + '</p>' + (x.x ? '<p>' + rich(x.x) + '</p>' : '') + '</div></li>'; }).join('') + '</ol>';
       case 'steps': return '<figure class="figure-chart"><h3>' + esc(b.title) + '</h3><ol class="steps-figure">' +
         b.items.map(function (x, i) { return '<li><span class="n">' + (i + 1) + '</span><span>' + esc(x) + '</span></li>'; }).join('') + '</ol><figcaption>' + esc(b.cap) + '</figcaption></figure>';
       default: return '';
@@ -29,13 +39,14 @@ KBR.pages.article = function (route) {
   const body = m.body || [];
   const previewCount = Math.min(2, body.length);
   const src = access.full ? body : body.slice(0, previewCount);
-  const shown = src.map(block);
+  const shown = src.map(function (b, i) { return block(b, i, src); });
   if (access.full && src.length > 3) {
     let at = -1;
     const mid = Math.floor(src.length / 2);
     for (let i = 2; i < src.length; i++) {
       if (src[i - 1].t === 'p' && src[i].t === 'p' && (at < 0 || Math.abs(i - mid) < Math.abs(at - mid))) at = i;
     }
+    if (at < src.length && src[at - 1] && src[at - 1].t === 'pull') at--;
     if (at < 0) for (let i = 2; i < src.length; i++) { if (src[i - 1].t === 'p' && src[i].t !== 'h2' && src[i].t !== 'h3') { at = i; break; } }
     if (at < 0) at = src.length;
     shown.splice(at, 0, '<aside class="ad-slot ad-slot--inline" aria-label="Reklama"><span class="ad-slot__label">Reklama</span><div class="ad-slot__box"><span>Miejsce na reklamę</span><span class="ad-slot__size">728 × 90</span></div></aside>');
@@ -59,7 +70,7 @@ KBR.pages.article = function (route) {
         '<form class="gate__form" data-gate-form novalidate><label for="gate-email">Adres e-mail</label><input class="input" id="gate-email" type="email" autocomplete="email" inputmode="email" required>' +
         '<button class="btn btn--primary gate__btn" type="submit">Dalej</button></form>' +
         '<div class="gate__or"><span>lub</span></div>' + terms +
-        '<div class="gate__social">' + (KBR.authProviders || []).map(function (p) { return '<a class="gate__soc" href="#/logowanie" data-action="auth-link">' + p[2] + 'Kontynuuj z ' + p[1] + '</a>'; }).join('') + '</div>' +
+        '<div class="gate__social">' + (KBR.authProviders || []).map(function (p) { return '<button type="button" class="gate__soc" data-gate-social="' + p[0] + '">' + p[2] + '<span>Kontynuuj z ' + p[1] + '</span></button>'; }).join('') + '</div>' +
         '<p class="gate__reg">Nie masz konta? <a href="#/rejestracja" data-action="auth-link">Załóż bezpłatne konto</a></p>' +
         subLink + '</div></section>';
     }
@@ -90,7 +101,7 @@ KBR.pages.article = function (route) {
   const subHref = '#/subskrypcja?z=' + encodeURIComponent(m.id);
   const lockedPlay = function (size, cls) { return '<a class="pp' + (cls ? ' ' + cls : '') + '" href="' + subHref + '" aria-label="Odtwórz: ' + esc(m.title) + ' – wymaga subskrypcji">' + I('play', size) + '</a>'; };
   const player = isMedia && !isVideo ? '<div class="media-player' + (access.full ? '' : ' is-locked') + '"' + (access.full ? ' data-player data-duration="' + m.duration + '"' : '') + '>' + (access.full ? '<button type="button" class="pp" data-action="player" aria-label="Odtwórz: ' + esc(m.title) + '">' + I('play', 26) + '</button>' : lockedPlay(26)) +
-    '<div><div class="row"><span class="title">' + esc(f.name) + ' · ' + m.duration + ' min</span><span class="demo-tag" style="background:transparent;color:#ffe2b0;border-color:#c89a5b">Odtwarzacz demonstracyjny – brak pliku</span></div>' +
+    '<div><div class="row"><span class="title">' + esc(f.name) + ' · ' + m.duration + ' min</span></div>' +
     '<div class="track" aria-hidden="true"><i></i></div><div class="row" style="margin-top:6px"><span data-time>0:00</span><span>' + m.duration + ':00</span></div></div></div>' : '';
 
   /* Serwisy streamingowe */
@@ -140,6 +151,10 @@ KBR.pages.article = function (route) {
       '<a class="t-link" href="#/autor/' + x.p.id + '">Wszystkie materiały' + KBR.icon('chevRight', 14, 'stroke-width="2.25"') + '</a></div></section>';
   }).join('');
 
+  const bios = '<section class="article-bios" aria-label="' + (people.length > 1 ? 'O autorach' : 'O autorze') + '"><ul>' + people.map(function (x) {
+    return '<li><a class="article-bios__name" href="#/autor/' + x.p.id + '">' + esc(x.p.name) + '</a>' + (x.p.role ? '<span class="article-bios__role">' + esc(x.p.role) + '</span>' : '') + '</li>';
+  }).join('') + '</ul></section>';
+
   const shareMenu = '<div class="menu"><button type="button" class="save-btn" data-action="menu" aria-expanded="false" aria-controls="share-menu" aria-haspopup="true">' + I('share', 18) + 'Udostępnij</button>' +
     '<div class="menu__panel" id="share-menu" hidden>' +
     '<button type="button" data-action="copy-link">' + I('link', 18) + 'Kopiuj link</button>' +
@@ -148,6 +163,11 @@ KBR.pages.article = function (route) {
     (navigator.share ? '<button type="button" data-action="native-share">' + I('share', 18) + 'Więcej opcji…</button>' : '') +
     '</div></div>';
 
+  const shareBtns = '<button type="button" class="share-rail__btn" data-action="copy-link" title="Kopiuj link">' + I('link', 18) + '<span class="visually-hidden">Kopiuj link</span></button>' +
+    '<a class="share-rail__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(location.href) + '" target="_blank" rel="noopener" title="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 8.5h3V19H5zM6.5 4a1.75 1.75 0 110 3.5 1.75 1.75 0 010-3.5zM10 8.5h2.9v1.4c.4-.8 1.4-1.6 3-1.6 3.2 0 3.8 2.1 3.8 4.8V19h-3v-5.2c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V19h-3z"/></svg><span class="visually-hidden">LinkedIn (otwiera się w nowej karcie)</span></a>' +
+    '<a class="share-rail__btn" href="mailto:?subject=' + encodeURIComponent(m.title) + '&body=' + encodeURIComponent(location.href) + '" title="E-mail">' + I('mail', 18) + '<span class="visually-hidden">E-mail</span></a>' +
+    (navigator.share ? '<button type="button" class="share-rail__btn" data-action="native-share" title="Więcej opcji">' + I('share', 18) + '<span class="visually-hidden">Więcej opcji</span></button>' : '');
+  const shareInline = '<div class="share-inline" role="group" aria-label="Udostępnij materiał"><span class="share-inline__label">Udostępnij artykuł</span>' + shareBtns + '</div>';
   const shareRail = '<aside class="share-rail" aria-label="Udostępnij materiał">' +
     '<span class="share-rail__label" aria-hidden="true">Udostępnij</span>' +
     '<button type="button" class="share-rail__btn" data-action="copy-link" title="Kopiuj link">' + I('link', 18) + '<span class="visually-hidden">Kopiuj link</span></button>' +
@@ -163,12 +183,12 @@ KBR.pages.article = function (route) {
         (m.access === 'premium' ? '<span class="badge badge--premium article-head__premium">' + I('lock', 13) + 'Premium</span>' : '') +
         '<div class="article-head__top">' + (m.format !== 'article' ? '<span class="badge badge--navy">' + esc(f.name) + '</span>' : '') +
           '<a class="t-label" href="#/tematy/' + t.slug + '"><span class="visually-hidden">Temat główny: </span>' + esc(t.name) + '</a>' +
-          '<div style="margin-left:auto">' + shareMenu + '</div></div>' +
+          '</div>' +
         '<h1>' + esc(m.title) + '</h1>' +
         '<p class="t-lead">' + esc(m.lead) + '</p>' +
         '<div class="article-meta"><time datetime="' + m.date + '">' + ui.dateLong(m.date) + '</time>' +
           (issue ? '<span class="dot" aria-hidden="true"></span><a href="#/magazyn">Z numeru ' + esc(issue.label) + '</a>' : '') + '</div>' +
-        tagsHtml +
+        '<div class="article-tagbar">' + tagsHtml + shareInline + '</div>' +
         '<div class="article-actions">' + authorsTop + '</div>' +
       '</div>' +
     '</header>' +
@@ -176,16 +196,15 @@ KBR.pages.article = function (route) {
       ? '<figure class="article-hero video-hero' + (access.full ? '' : ' is-locked') + '"' + (access.full ? ' data-player data-duration="' + m.duration + '"' : '') + '><div class="video-hero__frame"><img src="' + ui.img(m.image) + '" alt="' + esc(m.imageAlt) + '"' + (m.imagePos ? ' style="object-position:' + m.imagePos + '"' : '') + '>' +
           (access.full ? '<button type="button" class="pp video-hero__play" data-action="player" aria-label="Odtwórz wideo: ' + esc(m.title) + '">' + I('play', 34) + '</button>' : lockedPlay(34, 'video-hero__play') + '<span class="video-hero__lock">' + I('lock', 14) + 'Odtwarzanie dla subskrybentów</span>') +
           '<div class="video-hero__bar"><span data-time>0:00</span><div class="track" aria-hidden="true"><i></i></div><span>' + m.duration + ':00</span></div></div>' +
-          '<figcaption>Odtwarzacz demonstracyjny – brak pliku wideo. Docelowo osadzony odtwarzacz (np. YouTube).</figcaption></figure>'
+          '</figure>'
       : '<figure class="article-hero"><img src="' + ui.img(m.image) + '" alt="' + esc(m.imageAlt) + '"' + (m.imagePos ? ' style="object-position:' + m.imagePos + '"' : '') + '><figcaption>Fot. materiały Akademii Leona Koźmińskiego (zdjęcie z projektu strony, użyte poglądowo).</figcaption></figure>') +
     '<div class="article-layout"><div class="article-main">' +
       accessNote + player + streaming +
       '<div class="prose' + (access.full ? '' : ' paywall-fade') + '" id="article-body">' + bodyHtml + '</div>' +
-      (access.full ? '' : paywall()) +
+      (access.full ? '<div class="share-end">' + shareInline + '</div>' + bios : paywall()) +
       (issue && access.full ? '<div class="notice" style="margin-top:40px">' + I('newspaper', 18) + '<span>Materiał ukazał się w numerze <strong>' + esc(issue.label) + '</strong>. <a class="link" href="#/magazyn">Wróć do spisu treści numeru</a></span></div>' : '') +
       episodes +
-      '<p class="notice notice--demo demo-note">' + I('info', 18) + '<span>Treść demonstracyjna przygotowana na potrzeby prototypu. Nie jest publikacją KBR i nie zawiera wypowiedzi przywołanych osób.</span></p>' +
-    '</div>' +
+          '</div>' +
     '<aside class="article-aside" aria-label="Więcej z KBR"><div class="aside-sticky"><section class="latest" aria-labelledby="h-aside-latest"><h2 class="t-section col-head" id="h-aside-latest">Najnowsze</h2>' +
       latest.map(function (x) { return ui.card(x, { noImage: true, date: false }); }).join('') + '</section>' + '<div class="ad-slot" role="complementary" aria-label="Reklama"><span class="ad-slot__label">Reklama</span><div class="ad-slot__box"><span>Miejsce na reklamę</span><span class="ad-slot__size">300 × 225</span></div></div>' + '</div></aside>' +
     '</div>' +

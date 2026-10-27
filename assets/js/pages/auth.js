@@ -23,8 +23,7 @@
     return '<aside class="auth-side" aria-labelledby="h-benefits"><h2 id="h-benefits">Bezpłatne konto KBR</h2><ul>' +
       '<li>' + I('check', 18) + 'Czytaj bez ograniczeń dostępne bezpłatne artykuły</li>' +
       '<li>' + I('check', 18) + 'Zapisz się do newslettera KBR</li>' +
-      '<li>' + I('check', 18) + 'Kup subskrypcję, gdy potrzebujesz pełnego dostępu do treści Premium</li></ul>' +
-      '<p class="notice notice--demo" style="margin-top:24px">' + I('info', 18) + '<span>Prototyp: konta są symulowane w przeglądarce. Hasła nie są zapisywane ani weryfikowane, a wiadomości e-mail nie są wysyłane.</span></p></aside>';
+      '<li>' + I('check', 18) + 'Kup subskrypcję, gdy potrzebujesz pełnego dostępu do treści Premium</li></ul></aside>';
   }
 
   /* Wspólne dokończenie po zalogowaniu / rejestracji */
@@ -66,6 +65,15 @@
     ['apple', 'Apple', '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#000" d="M16.4 12.6c0-2.6 2.1-3.9 2.2-3.9-1.2-1.8-3.1-2-3.8-2-1.6-.2-3.1.9-3.9.9-.8 0-2.1-.9-3.4-.9-1.7 0-3.4 1-4.3 2.6-1.8 3.1-.5 7.8 1.3 10.3.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.4-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.7-1-2.6-4.2zM13.8 5c.7-.9 1.2-2.1 1.1-3.3-1 0-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.2 1.1.1 2.3-.6 3-1.5z"/></svg>']
   ];
   KBR.authProviders = PROVIDERS;
+  /* Paywall w artykule: logowanie przez dostawcę bez przechodzenia na stronę logowania */
+  document.addEventListener('click', function (e) {
+    const b = e.target.closest('[data-gate-social]'); if (!b || b.disabled) return;
+    e.preventDefault();
+    const name = PROVIDERS.find(function (p) { return p[0] === b.dataset.gateSocial; })[1];
+    F.busy(b, true, 'Łączenie z ' + name + '…');
+    KBR.flow.setReturn(location.hash || '#/');
+    setTimeout(function () { KBR.auth.demoSignIn(KBR.config.demoAccount); afterAuth(KBR.auth.currentUser(), false); }, 500);
+  });
   /* Zapamiętany e-mail między logowaniem, rejestracją i odzyskaniem hasła (sesja) */
   function rememberEmail(root, id) {
     const inp = root.querySelector('#' + id); if (!inp) return;
@@ -119,7 +127,7 @@
         '<div class="consents"><div class="group"><h2>Wymagane</h2>' +
           '<label class="check" for="reg-terms"><input type="checkbox" id="reg-terms" name="terms" required><span>Akceptuję <a href="#/strona/regulamin-serwisu" target="_blank">Regulamin serwisu</a> i zapoznałam/em się z <a href="#/strona/polityka-prywatnosci" target="_blank">Polityką prywatności</a>. <span class="demo-tag">Treść do zatwierdzenia</span></span></label></div>' +
           '<div class="group"><h2>Opcjonalne</h2>' +
-          '<label class="check" for="reg-newsletter"><input type="checkbox" id="reg-newsletter" name="newsletter"><span>Chcę otrzymywać cotygodniowy newsletter KBR.</span></label>' +
+          '<label class="check" for="reg-newsletter"><input type="checkbox" id="reg-newsletter" name="newsletter"><span>Chcę otrzymywać newsletter KBR.</span></label>' +
           '<label class="check" for="reg-marketing"><input type="checkbox" id="reg-marketing" name="marketing"><span>Chcę otrzymywać informacje o ofercie edukacyjnej Akademii Leona Koźmińskiego.</span></label></div></div>' +
         '<button class="btn btn--primary" type="submit">Załóż bezpłatne konto' + I('chevRight', 16, 'stroke-width="2"') + '</button>' +
       '</form><p class="alt">Masz już konto? <a href="#/logowanie">Zaloguj się</a></p></div>' + side() + '</div>';
@@ -181,7 +189,6 @@
       '<h1 style="margin-top:20px">Odzyskaj dostęp</h1>' +
       (sent
         ? '<div class="notice notice--success" role="status" style="margin-top:24px">' + I('checkCircle', 20) + '<div><strong>Sprawdź skrzynkę e-mail.</strong><br>Jeśli konto o podanym adresie istnieje, wysłaliśmy link do ustawienia nowego hasła. Link jest ważny przez określony czas (do ustalenia).</div></div>' +
-          '<div class="notice notice--demo" style="margin-top:16px">' + I('info', 18) + '<div>Prototyp nie wysyła wiadomości. Użyj przycisku poniżej, aby zasymulować kliknięcie linku z e-maila.</div></div>' +
           '<div class="btn-row" style="margin-top:24px"><a class="btn btn--primary" href="#/reset-hasla/nowe">Symulacja: otwórz link z wiadomości</a><a class="btn btn--ghost" href="#/logowanie">Wróć do logowania</a></div>'
         : '<p class="intro">Podaj adres e-mail przypisany do konta. Wyślemy link do ustawienia nowego hasła.</p>' +
           '<form id="reset-form" novalidate><div class="field"><label for="reset-email">Adres e-mail</label><input class="input" id="reset-email" type="email" autocomplete="email" required></div>' +

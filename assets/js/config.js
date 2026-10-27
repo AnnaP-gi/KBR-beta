@@ -30,28 +30,29 @@ KBR.config = {
   ],
   plans: [
     {
-      id: 'cyfrowy',
-      name: 'Cyfrowy',
-      description: 'Magazyn w PDF do pobrania i dostęp do artykułów z magazynu.',
-      cta: 'Wybieram cyfrowy',
-      prices: { year: 199 },
-      entitlements: ['magazine-pdf', 'magazine-articles'],
-      includes: [true, false, true, false]
-    },
-    {
       id: 'drukowany',
       name: 'Drukowany',
-      description: 'Magazyn drukowany wysyłany na podany adres i dostęp online do artykułów z magazynu.',
+      description: 'Drukowane wydanie magazynu wysyłane na podany adres. Bez dostępu do serwisu i artykułów online.',
       cta: 'Wybieram drukowany',
-      prices: { year: 249 },
-      entitlements: ['magazine-articles'],
+      prices: { year: 149 },
+      entitlements: [],
       print: true,
-      includes: [false, true, true, false]
+      includes: [false, true, false, false]
+    },
+    {
+      id: 'cyfrowy',
+      name: 'Cyfrowy',
+      description: 'Pełny dostęp do magazynu w PDF oraz do wszystkich artykułów w serwisie.',
+      cta: 'Wybieram cyfrowy',
+      prices: { year: 249 },
+      entitlements: ['premium', 'magazine-pdf', 'magazine-articles'],
+      includes: [true, false, true, true]
     },
     {
       id: 'pelny',
+      featured: true,
       name: 'Pełny',
-      description: 'Magazyn w PDF, wydanie drukowane z dostawą i dostęp do wszystkich artykułów w serwisie.',
+      description: 'Wersja cyfrowa i drukowana razem: magazyn w PDF, wydanie drukowane z dostawą i dostęp do wszystkich artykułów.',
       cta: 'Wybieram pełny',
       prices: { year: 349 },
       entitlements: ['premium', 'magazine-pdf', 'magazine-articles'],

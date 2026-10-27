@@ -7,13 +7,14 @@
 KBR.data.materials = [
   /* ---------------------------------------------------------------- HERO */
   {
-    id: 'gmina-plan-ogolny', format: 'article', topic: 'finanse', access: 'metered',
+    id: 'gmina-plan-ogolny', format: 'article', topic: 'gospodarka', access: 'metered',
     title: 'Gmina nie uchwaliła planu ogólnego. Czy możesz pójść do sądu?',
     lead: 'Po 31 sierpnia 2026 r. brak planu ogólnego może utrudnić prowadzenie inwestycji i wpłynąć na sytuację właścicieli nieruchomości. Prof. ALK dr hab. Jan Chmielewski wskazuje możliwą drogę zaskarżenia bezczynności gminy.',
     authors: [{ id: 'alk', role: 'autor' }], date: '2026-08-28', readTime: 7,
     image: 'hero-plan-ogolny.jpg', imageAlt: 'Dłoń z długopisem nad kolorowym planem zagospodarowania osiedla',
     body: [
       { t: 'p', x: 'Reforma planowania przestrzennego zmieniła sposób, w jaki gminy określają zasady zabudowy. Plan ogólny ma stać się podstawowym dokumentem, do którego odnoszą się kolejne decyzje – od planów miejscowych po warunki zabudowy. Dla inwestora oznacza to, że opóźnienie po stronie gminy przestaje być wyłącznie problemem urzędu.' },
+      { t: 'figure', layout: 'side', src: 'hero-plan-ogolny.jpg', pos: '35% 50%', alt: 'Dłoń z długopisem nad planem zagospodarowania osiedla', cap: 'Plan ogólny staje się podstawowym dokumentem dla kolejnych decyzji planistycznych.' },
       { t: 'p', x: 'W praktyce pytania przedsiębiorców i właścicieli gruntów są bardzo konkretne: czy w okresie przejściowym uda się uzyskać decyzję, co stanie się z rozpoczętymi procedurami i czy bezczynność rady gminy da się zaskarżyć.' },
       { t: 'h2', x: 'Dlaczego termin ma znaczenie' },
       { t: 'p', x: 'Termin przyjęcia planu ogólnego porządkuje cały system. Jeżeli gmina nie zdąży, część narzędzi, z których dotąd korzystali inwestorzy, może stać się niedostępna albo znacznie trudniejsza w użyciu. Dotyczy to zwłaszcza terenów, dla których nie obowiązuje plan miejscowy.' },
@@ -26,14 +27,14 @@ KBR.data.materials = [
       { t: 'p', x: 'Pierwszym krokiem jest sprawdzenie, na jakim etapie znajduje się procedura w danej gminie: czy podjęto uchwałę o przystąpieniu do sporządzania planu, czy projekt był wyłożony i czy zebrano uwagi. Od tych informacji zależy, jaka ścieżka będzie adekwatna.' },
       { t: 'quote', x: 'Opóźnienie w planowaniu przestrzennym przestaje być sprawą urzędu. Staje się czynnikiem ryzyka, który trzeba ująć w harmonogramie inwestycji.', by: 'Redakcja KBR' },
       { t: 'p', x: 'Drugim krokiem jest ocena, czy sytuacja inwestora spełnia przesłanki do wystąpienia na drogę sądowoadministracyjną. To decyzja, którą warto podjąć z prawnikiem – sam brak dokumentu nie przesądza jeszcze o skuteczności skargi.' },
-      { t: 'steps', title: 'Ścieżka oceny sytuacji inwestora', items: ['Sprawdzenie etapu procedury w gminie', 'Analiza wpływu na harmonogram i koszty', 'Konsultacja prawna i wybór drogi', 'Monitorowanie terminów i komunikacja z gminą'], cap: 'Schemat poglądowy przygotowany na potrzeby prototypu.' },
+      { t: 'figure', src: 'case-tlo.jpg', alt: 'Schemat: Ścieżka oceny sytuacji inwestora', cap: 'Ścieżka oceny sytuacji inwestora.' },
       { t: 'p', x: 'Niezależnie od wybranej drogi, dobrze prowadzona dokumentacja i stały kontakt z urzędem pozwalają ograniczyć niepewność. W wielu przypadkach to właśnie jakość informacji decyduje o tym, czy inwestycja utrzyma zakładany harmonogram.' }
     ]
   },
 
   /* ---------------------------------------------------- WYBRANE DLA CIEBIE */
   {
-    id: 'wiarygodnosc-po-kryzysie', format: 'case', topic: 'finanse', access: 'metered',
+    id: 'wiarygodnosc-po-kryzysie', format: 'case', topic: 'marketing', access: 'metered',
     title: 'Kto decyduje, czy firma odzyska wiarygodność po kryzysie w sieci?',
     lead: 'Badanie z udziałem prof. Doroty Dobiji pokazuje, jak w sieci powstają grupy krytyków, obrońców i obserwatorów oraz dlaczego odbudowa reputacji wymaga śledzenia zmieniających się oczekiwań społecznych.',
     authors: [{ id: 'alk', role: 'autor' }], date: '2026-08-28', readTime: 9,
@@ -52,7 +53,7 @@ KBR.data.materials = [
     ]
   },
   {
-    id: 'project-manager-w-grze', format: 'article', topic: 'strategia', access: 'metered',
+    id: 'project-manager-w-grze', format: 'article', topic: 'zarzadzanie', access: 'premium',
     title: 'Project manager w grze. Jak symulacje rozwijają kompetencje?',
     lead: 'Gry symulacyjne pozwalają ćwiczyć decyzje, których koszt w prawdziwym projekcie byłby zbyt wysoki. Sprawdzamy, kiedy ta metoda działa najlepiej.',
     authors: [{ id: 'tomasz-zielinski', role: 'autor' }], date: '2026-09-22', readTime: 6,
@@ -76,7 +77,7 @@ KBR.data.materials = [
     body: [
       { t: 'p', x: 'Prognoza odpowiada na pytanie, co najprawdopodobniej się wydarzy. Scenariusz odpowiada na inne: co zrobimy, jeśli wydarzy się coś, czego nie przewidujemy. W okresach dużej zmienności to drugie pytanie bywa ważniejsze.' },
       { t: 'h2', x: 'Cztery kroki na początek' },
-      { t: 'steps', title: 'Proces planowania scenariuszowego', items: ['Wybór kluczowego pytania strategicznego', 'Określenie dwóch najważniejszych niepewności', 'Opis czterech spójnych scenariuszy', 'Wskazanie sygnałów wczesnego ostrzegania'], cap: 'Schemat poglądowy przygotowany na potrzeby prototypu.' },
+      { t: 'figure', src: 'case-tlo.jpg', alt: 'Schemat: Proces planowania scenariuszowego', cap: 'Proces planowania scenariuszowego.' },
       { t: 'p', x: 'Warsztat scenariuszowy nie wymaga zaawansowanych narzędzi. Wymaga natomiast zaangażowania osób, które widzą organizację z różnych perspektyw – od sprzedaży po finanse.' },
       { t: 'quote', x: 'Dobry scenariusz nie jest przepowiednią. Jest próbą generalną decyzji, które być może trzeba będzie podjąć.', by: 'Tomasz Zieliński' },
       { t: 'p', x: 'Wynikiem pracy nie jest jeden plan, ale zestaw opcji i sygnałów, które pozwalają szybciej rozpoznać, w którą stronę zmierza otoczenie.' }
@@ -85,7 +86,7 @@ KBR.data.materials = [
 
   /* ----------------------------------------------------------- NAJNOWSZE */
   {
-    id: 'portfel-projektow-kiedy-stop', format: 'article', topic: 'strategia', access: 'metered',
+    id: 'portfel-projektow-kiedy-stop', format: 'article', topic: 'zarzadzanie', access: 'metered',
     title: 'Portfel projektów: kiedy powiedzieć „stop”?',
     lead: 'Zatrzymanie projektu bywa trudniejsze niż jego rozpoczęcie. Proponujemy kryteria, które pomagają podjąć tę decyzję na czas.',
     authors: [{ id: 'tomasz-zielinski', role: 'autor' }], date: '2026-09-26', readTime: 5,
@@ -99,7 +100,7 @@ KBR.data.materials = [
     ]
   },
   {
-    id: 'controlling-strategiczny', format: 'article', topic: 'strategia', access: 'metered',
+    id: 'controlling-strategiczny', format: 'article', topic: 'finanse', access: 'premium',
     title: 'Controlling strategiczny w średniej firmie: od budżetu do decyzji',
     lead: 'Budżet mówi, ile wydamy. Controlling strategiczny pomaga zrozumieć, czy wydajemy na to, co naprawdę buduje przewagę.',
     authors: [{ id: 'piotr-nowak', role: 'autor' }], date: '2026-09-24', readTime: 7,
@@ -113,7 +114,7 @@ KBR.data.materials = [
     ]
   },
   {
-    id: 'sukcesja-w-zarzadzie', format: 'article', topic: 'strategia', access: 'metered',
+    id: 'sukcesja-w-zarzadzie', format: 'article', topic: 'przedsiebiorczosc', access: 'metered',
     title: 'Jak przygotować firmę na sukcesję w zarządzie',
     lead: 'Plan sukcesji to nie lista nazwisk, lecz proces rozwijania ludzi i przekazywania odpowiedzialności. Wyjaśniamy, od czego zacząć.',
     authors: [{ id: 'marta-wisniewska', role: 'autor' }], date: '2026-09-20', readTime: 6,
@@ -121,6 +122,7 @@ KBR.data.materials = [
     body: [
       { t: 'p', x: 'Sukcesja w zarządzie najczęściej staje się tematem wtedy, gdy jest już pilna. Tymczasem najlepsze rezultaty daje proces rozpoczęty kilka lat wcześniej.' },
       { t: 'h2', x: 'Elementy dobrego planu' },
+      { t: 'pull', x: 'Plan sukcesji przygotowany w ostatniej chwili jest tylko listą nazwisk. Dobry plan to kilka lat rozwijania ludzi.' },
       { t: 'list', items: ['kryteria oceny gotowości kandydatów,', 'ścieżki rozwoju obejmujące realną odpowiedzialność,', 'rola rady nadzorczej i właścicieli w procesie,', 'plan komunikacji wobec zespołu i partnerów.'] },
       { t: 'p', x: 'Transparentny proces zmniejsza niepewność w organizacji i pozwala utrzymać ciągłość relacji z klientami.' }
     ]
@@ -146,7 +148,7 @@ KBR.data.materials = [
     ]
   },
   {
-    id: 'szybki-urzad-dobry-urzad', format: 'article', topic: 'ai', access: 'premium',
+    id: 'szybki-urzad-dobry-urzad', format: 'article', topic: 'technologie', access: 'premium',
     title: 'Czy szybki urząd to dobry urząd?',
     lead: 'Automatyzacja i narzędzia AI skracają czas obsługi spraw. Pytamy, jak mierzyć jakość usług publicznych, aby szybkość nie stała się jedynym celem.',
     authors: [{ id: 'anna-nowak', role: 'autor' }, { id: 'marta-wisniewska', role: 'ekspert' }], date: '2026-08-28', readTime: 8,
@@ -163,7 +165,7 @@ KBR.data.materials = [
     ]
   },
   {
-    id: 'cyberodpornosc-kompetencja-zarzadu', format: 'article', topic: 'innowacja', access: 'premium',
+    id: 'cyberodpornosc-kompetencja-zarzadu', format: 'article', topic: 'technologie', access: 'premium',
     title: 'Cyberodporność jako kompetencja zarządu',
     lead: 'Incydent bezpieczeństwa to dziś test przywództwa, a nie tylko działu IT. Opisujemy, jak zarządy przygotowują się do sytuacji kryzysowych.',
     authors: [{ id: 'katarzyna-lewandowska', role: 'autor' }], date: '2026-08-28', readTime: 9,
@@ -171,15 +173,16 @@ KBR.data.materials = [
     body: [
       { t: 'p', x: 'Jeszcze niedawno cyberbezpieczeństwo było traktowane jako specjalistyczny obszar technologii. Dziś coraz więcej organizacji uznaje je za element odporności całego biznesu – obok płynności finansowej i ciągłości łańcucha dostaw.' },
       { t: 'p', x: 'Zmienia się też rola zarządu. Nie chodzi o znajomość szczegółów technicznych, ale o umiejętność podejmowania decyzji w warunkach niepełnej informacji i presji czasu.' },
+      { t: 'pull', x: 'Incydent bezpieczeństwa sprawdza nie systemy, lecz to, jak szybko zarząd potrafi podjąć decyzję bez pełnej wiedzy.' },
       { t: 'h2', x: 'Ćwiczenia sztabowe' },
-      { t: 'steps', title: 'Przebieg ćwiczenia sztabowego', items: ['Scenariusz incydentu dopasowany do branży', 'Decyzje zarządu w kolejnych godzinach', 'Komunikacja z klientami i regulatorem', 'Omówienie i plan usprawnień'], cap: 'Schemat poglądowy przygotowany na potrzeby prototypu.' },
+      { t: 'figure', src: 'case-tlo.jpg', alt: 'Schemat: Przebieg ćwiczenia sztabowego', cap: 'Przebieg ćwiczenia sztabowego.' },
       { t: 'p', x: 'Ćwiczenia pozwalają sprawdzić, czy procedury działają w praktyce i czy wszyscy członkowie zarządu wiedzą, jaka jest ich rola w pierwszych godzinach kryzysu.' },
       { t: 'quote', x: 'Plan reagowania, którego nikt nie przećwiczył, jest tylko dokumentem.', by: 'Katarzyna Lewandowska' },
       { t: 'p', x: 'Organizacje, które regularnie ćwiczą takie scenariusze, szybciej podejmują decyzje o komunikacji i łatwiej utrzymują zaufanie klientów.' }
     ]
   },
   {
-    id: 'wybor-miedzy-slusznym-a-latwym', format: 'article', topic: 'finanse', access: 'premium',
+    id: 'wybor-miedzy-slusznym-a-latwym', format: 'article', topic: 'odpowiedzialny', access: 'premium',
     title: 'Mugole, dementorzy i niewinni czarodzieje, czyli o wyborze między tym, co słuszne, a tym, co łatwe',
     lead: 'Popkultura dostarcza zaskakująco trafnych metafor dylematów etycznych w organizacjach. Rozmawiamy o tym, jak ład korporacyjny wspiera trudne decyzje.',
     authors: [{ id: 'piotr-nowak', role: 'autor' }], date: '2026-08-28', readTime: 11,
@@ -201,35 +204,39 @@ KBR.data.materials = [
     lead: 'Firmy, które traktują sztuczną inteligencję jako jednorazowe wdrożenie, rzadko osiągają trwałe efekty. Pokazujemy, jak budować kompetencję, która rośnie razem z organizacją.',
     authors: [{ id: 'anna-nowak', role: 'autor' }, { id: 'tomasz-zielinski', role: 'autor' }, { id: 'marta-wisniewska', role: 'ekspert' }], date: '2026-09-15', readTime: 12,
     image: 'magazyn-ai-organizacja.jpg', imageAlt: 'Portret kobiety w dżinsowej koszuli na granatowym tle', imagePos: '50% 30%',
-    body: [
-      { t: 'p', x: 'Wiele firm rozpoczęło przygodę z AI od projektów pilotażowych. Część z nich przyniosła obiecujące wyniki, ale niewiele przełożyło się na trwałą zmianę sposobu pracy. Powód jest zwykle ten sam: wdrożenie potraktowano jak projekt technologiczny z datą zakończenia.' },
-      { t: 'p', x: 'Tymczasem wartość AI rośnie wtedy, gdy organizacja uczy się ją wykorzystywać w wielu procesach jednocześnie – i gdy odpowiedzialność za efekty spoczywa na właścicielach biznesowych, a nie wyłącznie na zespole IT.' },
-      { t: 'h2', x: 'Cztery filary zdolności organizacyjnej' },
-      { t: 'steps', title: 'Filary zdolności AI', items: ['Dane dostępne i opisane w sposób zrozumiały', 'Kompetencje w zespołach biznesowych', 'Zasady odpowiedzialnego użycia', 'Mierzenie efektów w procesach'], cap: 'Schemat poglądowy przygotowany na potrzeby prototypu.' },
-      { t: 'p', x: 'Żaden z tych filarów nie jest wyłącznie techniczny. Nawet dostęp do danych zależy w dużej mierze od decyzji organizacyjnych: kto jest właścicielem danych, kto może je udostępniać i na jakich zasadach.' },
-      { t: 'quote', x: 'Najważniejsze pytanie nie brzmi »jakie narzędzie wybrać«, ale »kto w organizacji będzie się uczył, jak z niego korzystać«.', by: 'dr Marta Wiśniewska, ekspertka' },
-      { t: 'h2', x: 'Od pilotażu do praktyki' },
-      { t: 'p', x: 'Przejście od pilotażu do codziennej praktyki wymaga zmiany sposobu finansowania. Zamiast jednorazowego budżetu projektu warto wydzielić stały budżet na rozwój kompetencji i utrzymanie rozwiązań.' },
-      { t: 'figure', src: 'wiarygodnosc-siec.jpg', alt: 'Wizualizacja sieci połączeń nad nowoczesnym budynkiem', cap: 'Zdolność organizacyjna oznacza sieć połączeń między zespołami, danymi i decyzjami. Ilustracja poglądowa.' },
-      { t: 'p', x: 'Organizacje, które przeszły tę drogę, podkreślają znaczenie wspólnego języka. Gdy zespoły biznesowe i technologiczne rozumieją ograniczenia modeli, łatwiej wybierają zastosowania o realnej wartości.' }
-    ]
+    body: [{"t":"p","x":"Wiele firm rozpoczęło pracę ze sztuczną inteligencją od projektów pilotażowych. Część przyniosła obiecujące wyniki, ale niewiele z nich zmieniło sposób, w jaki organizacja podejmuje decyzje. Problem rzadko leży w samej technologii. Zarządy traktują AI jak wdrożenie systemu – z budżetem, harmonogramem i datą zakończenia – podczas gdy jej wartość rośnie dopiero wtedy, gdy staje się codzienną umiejętnością zespołów."},
+      {"t":"p","x":"Z rozmów z menedżerami średnich i dużych firm wynika, że organizacje, które zbudowały trwałą przewagę, różnią się od pozostałych w trzech obszarach."},
+      {"t":"split","src":"cyber-zespol.jpg","pos":"60% 50%","alt":"Zespół analityków przy monitorach","cap":"Wartość AI rośnie, gdy z modeli korzystają zespoły w wielu procesach jednocześnie.","blocks":[{"t":"p","x":"Po pierwsze, **odpowiedzialność za efekty leży w biznesie.** Właścicielem projektu nie jest dział IT, lecz menedżer procesu, który ma zyskać na zmianie. To on określa, co oznacza sukces, i to on decyduje, kiedy model jest wystarczająco dobry, by z niego korzystać na co dzień."},
+      {"t":"pull","x":"Wartość sztucznej inteligencji nie rośnie z liczbą wdrożeń, lecz z liczbą decyzji, które dzięki niej zapadają lepiej i szybciej."},
+      {"t":"p","x":"Po drugie, **dane są traktowane jak wspólny zasób.** W firmach, które utknęły na etapie pilotaży, każdy zespół buduje własne zestawienia i własne definicje wskaźników. Tam, gdzie AI działa na szeroką skalę, obowiązują wspólne zasady: wiadomo, kto odpowiada za jakość danych, kto ma do nich dostęp i jak zgłaszać błędy."},
+      {"t":"p","x":"Po trzecie, **kompetencje rozwija się szeroko, a nie punktowo.** Zamiast kilkuosobowego zespołu ekspertów organizacje uczą pracy z modelami setki pracowników – od analityków po kierowników sprzedaży. Dzięki temu pomysły na zastosowania pojawiają się tam, gdzie widać realne problemy, a nie tylko w centrali."}]},
+      {"t":"figure","src":"magazyn-ai-organizacja.jpg","pos":"50% 30%","alt":"Portret kobiety na granatowym tle","cap":"Fot. materiały Akademii Leona Koźmińskiego (zdjęcie poglądowe)."},
+      {"t":"h2","x":"Od pilotażu do zdolności organizacyjnej"},
+      {"t":"p","x":"Przejście od pojedynczych projektów do trwałej zdolności nie wymaga dużej reorganizacji. Wymaga kilku decyzji, które zarząd może podjąć od razu:"},
+      {"t":"points","items":[{"title":"Wyznacz właścicieli procesów","x":"Menedżerowie odpowiadają za wykorzystanie AI w swoim obszarze i rozliczają się z efektów biznesowych, a nie technicznych."},{"title":"Ustal wspólne zasady pracy z danymi","x":"Jedna definicja kluczowych wskaźników i jasny podział odpowiedzialności za ich jakość."},{"title":"Mierz wykorzystanie, a nie liczbę projektów","x":"Miarą postępu jest odsetek decyzji wspieranych przez modele, a nie liczba uruchomionych pilotaży."}]},
+      {"t":"p","x":"Firmy, które przyjmą tę perspektywę, przestaną pytać, czy kolejny projekt się zwrócił. Zaczną pytać, w których decyzjach wciąż polegają wyłącznie na intuicji – i dlaczego."}]
   },
   {
-    id: 'nowy-kontrakt-lidera', format: 'article', topic: 'przywodztwo', access: 'metered', issue: '2026-03',
+    id: 'nowy-kontrakt-lidera', format: 'article', topic: 'ludzie', access: 'metered', issue: '2026-03',
     title: 'Nowy kontrakt lidera z zespołem',
     lead: 'Oczekiwania pracowników wobec przełożonych zmieniły się szybciej niż modele przywództwa. Jak wygląda niepisana umowa między liderem a zespołem?',
     authors: [{ id: 'piotr-nowak', role: 'autor' }], date: '2026-09-15', readTime: 9,
     image: 'lider-czyta.jpg', imageAlt: 'Mężczyzna w garniturze czytający książkę', imagePos: '40% 50%',
-    body: [
-      { t: 'p', x: 'Każdy zespół ma niepisany kontrakt z liderem: zbiór wzajemnych oczekiwań dotyczących autonomii, informacji, wsparcia i odpowiedzialności. W ostatnich latach jego treść wyraźnie się zmieniła.' },
-      { t: 'h2', x: 'Co się zmieniło' },
-      { t: 'list', items: ['Pracownicy oczekują większej przejrzystości decyzji.', 'Autonomia w organizacji pracy stała się standardem, a nie przywilejem.', 'Rozwój kompetencji jest częścią relacji, a nie dodatkiem do niej.'] },
-      { t: 'quote', x: 'Lider nie musi znać wszystkich odpowiedzi. Musi zadbać, żeby zespół wiedział, jakie pytania są ważne.', by: 'Piotr Nowak' },
-      { t: 'p', x: 'Warto regularnie rozmawiać o tym kontrakcie wprost – na przykład podczas kwartalnych spotkań, na których zespół i lider wspólnie oceniają, co działa, a co wymaga zmiany.' }
-    ]
+    body: [{"t":"p","x":"Każdy zespół ma niepisany kontrakt z liderem: zbiór wzajemnych oczekiwań dotyczących autonomii, informacji, wsparcia i odpowiedzialności. W ostatnich latach jego treść zmieniła się szybciej niż modele przywództwa, którymi posługuje się większość organizacji. Praca hybrydowa, rosnąca niepewność i nowe pokolenie pracowników sprawiły, że to, co jeszcze niedawno uchodziło za skuteczne zarządzanie, dziś bywa odbierane jako kontrola."},
+      {"t":"p","x":"Zmiana oczekiwań wynika z trzech głównych przesłanek."},
+      {"t":"p","x":"Po pierwsze, **autonomia zamiast nadzoru.** Zespoły pracujące w rozproszeniu nie mogą czekać na akceptację każdej decyzji. Oczekują jasno określonych celów i swobody w wyborze sposobu ich realizacji."},
+      {"t":"figure","layout":"side-left","src":"lider-czyta.jpg","pos":"40% 50%","alt":"Mężczyzna w garniturze czytający książkę","cap":"Lider, który dzieli się kontekstem, szybciej buduje zaufanie zespołu."},
+      {"t":"p","x":"Po drugie, **informacja zamiast hierarchii.** Pracownicy chcą rozumieć, dlaczego podejmowane są decyzje, a nie tylko poznawać ich skutki. Lider, który dzieli się kontekstem, buduje zaufanie szybciej niż ten, który dzieli się wyłącznie poleceniami."},
+      {"t":"pull","x":"Zespół nie oczekuje od lidera, że będzie znał wszystkie odpowiedzi. Oczekuje, że powie wprost, czego jeszcze nie wie."},
+      {"t":"p","x":"Po trzecie, **rozwój zamiast oceny.** Coroczna rozmowa oceniająca przestaje wystarczać. Pracownicy oczekują regularnej informacji zwrotnej i rozmów o tym, czego mogą się nauczyć w kolejnych miesiącach."},
+      {"t":"h2","x":"Jak odnowić kontrakt z zespołem"},
+      {"t":"points","items":[{"title":"Zbuduj środowisko pracy przyjazne dla mózgu","x":"Ogranicz liczbę równoległych zadań i chroń czas na pracę wymagającą skupienia."},{"title":"Rozmawiaj o oczekiwaniach wprost","x":"Raz na kwartał sprawdź z zespołem, czy wzajemne oczekiwania wciąż są aktualne."}]},
+      {"t":"p","x":"Nowy kontrakt nie powstaje w wyniku jednej rozmowy. To seria małych zmian w codziennych praktykach, które z czasem zmieniają sposób współpracy. Poniższa tabela zbiera najważniejsze z nich."},
+      {"t":"figure","src":"case-tlo.jpg","alt":"Schemat: Jak przejść od kontroli do przywództwa opartego na zaufaniu","cap":"Jak przejść od kontroli do przywództwa opartego na zaufaniu"},
+      {"t":"p","x":"Liderzy, którzy świadomie odnowią kontrakt ze swoimi zespołami, zyskają coś cenniejszego niż posłuszeństwo: zaangażowanie ludzi, którzy rozumieją, dokąd zmierza organizacja, i chcą mieć wpływ na drogę, którą do tego celu dojdzie."}]
   },
   {
-    id: 'ryzyko-modeli-rada-nadzorcza', format: 'article', topic: 'finanse', access: 'premium', issue: '2026-03',
+    id: 'ryzyko-modeli-rada-nadzorcza', format: 'article', topic: 'zarzadzanie', access: 'premium', issue: '2026-03',
     title: 'Ryzyko modeli w języku rady nadzorczej',
     lead: 'Modele statystyczne i AI wpływają na kluczowe decyzje biznesowe. Jak rada nadzorcza może sprawować nad nimi skuteczny nadzór bez specjalistycznej wiedzy technicznej?',
     authors: [{ id: 'piotr-nowak', role: 'autor' }, { id: 'anna-nowak', role: 'ekspert' }], date: '2026-09-15', readTime: 10,
@@ -270,7 +277,7 @@ KBR.data.materials = [
       { t: 'p', x: 'Firma handlowa planowała rozbudowę sieci magazynów i potrzebowała finansowania dłużnego. Bank oczekiwał rzetelnej analizy sytuacji finansowej, a zarząd chciał przy okazji lepiej zrozumieć źródła rentowności.' },
       { t: 'p', x: 'Zespół przyjął klasyczną ścieżkę analizy: od struktury bilansu, przez płynność i rentowność, po przepływy pieniężne.' },
       { t: 'h2', x: 'Etapy analizy' },
-      { t: 'steps', title: 'Etapy analizy finansowej', items: ['Analiza struktury majątku i finansowania', 'Ocena płynności i kapitału obrotowego', 'Analiza rentowności', 'Prognoza przepływów pieniężnych'], cap: 'Schemat poglądowy przygotowany na potrzeby prototypu.' },
+      { t: 'figure', src: 'case-tlo.jpg', alt: 'Schemat: Etapy analizy finansowej', cap: 'Etapy analizy finansowej.' },
       { t: 'p', x: 'Najcenniejszym wnioskiem okazało się rozpoznanie, które grupy produktów wiążą najwięcej kapitału obrotowego.' }
     ]
   },
@@ -290,7 +297,7 @@ KBR.data.materials = [
 
   /* ------------------------------------------------------------- PODCASTY */
   {
-    id: 'zjazd-absolwentow-mba-2026', format: 'podcast', topic: 'finanse', access: 'metered', duration: 32,
+    id: 'zjazd-absolwentow-mba-2026', format: 'podcast', topic: 'przywodztwo', access: 'metered', duration: 32,
     title: 'Zjazd Absolwentów i Absolwentek MBA 2026',
     lead: 'Rozmowy z uczestnikami zjazdu o tym, jak zmieniły się ich ścieżki zawodowe i co z programu MBA okazało się najbardziej przydatne.',
     authors: [{ id: 'alk', role: 'autor' }], date: '2026-09-10',
@@ -303,18 +310,17 @@ KBR.data.materials = [
     ]
   },
   {
-    id: 'vlog-pierwszy-dzien-na-uczelni', format: 'video', topic: 'finanse', access: 'metered', duration: 16,
+    id: 'vlog-pierwszy-dzien-na-uczelni', format: 'video', topic: 'ludzie', access: 'metered', duration: 16,
     title: 'VLOG: PIERWSZY DZIEŃ NA UCZELNI! *co i gdzie będę studiować?*',
     lead: 'Studencka relacja z pierwszego dnia na kampusie: budynki, sale, biblioteka i pierwsze wrażenia.',
     authors: [{ id: 'pola-lea', role: 'autor' }], date: '2026-09-05',
     image: 'wideo-vlog.jpg', imageAlt: 'Studentka nagrywająca vlog na tle budynku uczelni',
     body: [
-      { t: 'p', x: 'Materiał wideo z cyklu studenckich relacji. Autorka oprowadza po kampusie i opowiada o pierwszych zajęciach.' },
-      { t: 'p', x: 'Opis materiału ma charakter demonstracyjny.' }
+      { t: 'p', x: 'Materiał wideo z cyklu studenckich relacji. Autorka oprowadza po kampusie i opowiada o pierwszych zajęciach.' }
     ]
   },
   {
-    id: 'szkolnictwo-oczami-rektora', format: 'podcast', topic: 'finanse', access: 'premium', duration: 102,
+    id: 'szkolnictwo-oczami-rektora', format: 'podcast', topic: 'innowacje', access: 'premium', duration: 102,
     title: 'Szkolnictwo oczami Grzegorza Mazurka, Rektora Akademii Leona Koźmińskiego',
     lead: 'Długa rozmowa o przyszłości edukacji menedżerskiej, roli uczelni biznesowych i zmianach, jakie przynosi rozwój technologii.',
     authors: [{ id: 'alk', role: 'autor' }], date: '2026-08-30',
@@ -322,19 +328,17 @@ KBR.data.materials = [
     body: [
       { t: 'p', x: 'Pełny odcinek podcastu dostępny dla subskrybentów. W opisie przedstawiamy zakres tematów poruszonych w rozmowie.' },
       { t: 'h2', x: 'Zakres rozmowy' },
-      { t: 'list', items: ['rola uczelni biznesowej w zmieniającej się gospodarce,', 'kompetencje menedżerów w najbliższej dekadzie,', 'współpraca nauki i praktyki biznesowej.'] },
-      { t: 'p', x: 'Opis ma charakter demonstracyjny i nie cytuje wypowiedzi rozmówcy.' }
+      { t: 'list', items: ['rola uczelni biznesowej w zmieniającej się gospodarce,', 'kompetencje menedżerów w najbliższej dekadzie,', 'współpraca nauki i praktyki biznesowej.'] }
     ]
   },
   {
-    id: 'forum-inspiracji-cx', format: 'video', topic: 'finanse', access: 'metered', duration: 23,
+    id: 'forum-inspiracji-cx', format: 'video', topic: 'marketing', access: 'metered', duration: 23,
     title: 'Forum inspiracji i praktyki Customer Experience',
     lead: 'Zapis wystąpień z forum poświęconego projektowaniu doświadczeń klientów.',
     authors: [{ id: 'alk', role: 'autor' }], date: '2026-06-10',
     image: 'wideo-forum-cx.jpg', imageAlt: 'Plakat Forum Inspiracji i Praktyki Customer Experience',
     body: [
-      { t: 'p', x: 'Wybrane fragmenty forum, na którym praktycy i badacze rozmawiali o mierzeniu i projektowaniu doświadczeń klientów.' },
-      { t: 'p', x: 'Opis materiału ma charakter demonstracyjny.' }
+      { t: 'p', x: 'Wybrane fragmenty forum, na którym praktycy i badacze rozmawiali o mierzeniu i projektowaniu doświadczeń klientów.' }
     ]
   }
 ];

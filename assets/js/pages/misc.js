@@ -1,7 +1,7 @@
 /* Widoki podstawowe spoza głównego zakresu: magazyn, wydarzenia, kluby, strony informacyjne. */
 (function () {
   const ui = KBR.ui, C = KBR.content, I = KBR.icon, esc = ui.esc;
-  const demoNote = function (txt) { return '<p class="notice notice--demo" style="margin-bottom:32px">' + I('info', 18) + '<span>' + (txt || 'Widok podstawowy – zakres demonstracyjny. Szczegółowy projekt tej podstrony jest poza zakresem prototypu.') + '</span></p>'; };
+  const demoNote = function () { return ''; };
 
   KBR.pages.redirect = function (hash) { return { redirect: hash }; };
 
@@ -15,21 +15,30 @@
     const more = issue.tocMore || [];
     const noImg = '<span class="img-ph" aria-hidden="true"></span>';
     const archived = KBR.data.issues.filter(function (i) { return i.archived; });
-    const tocReal = toc.map(function (m) { return '<a class="toc-item" href="' + ui.materialUrl(m) + '"><span class="t-label">' + esc(C.topic(m.topic).name) + '</span><span class="t-title-card">' + esc(m.title) + '</span><span class="t-meta">' + ui.metaLine(m) + (m.access === 'premium' ? ' · <span style="color:var(--c-gold);font-weight:700">Premium</span>' : '') + '</span></a>'; }).join('');
-    const tocMore = more.map(function (x) { return '<div class="toc-item"><span class="t-label">' + esc(x.section) + '</span><span class="t-title-card">' + esc(x.title) + '</span><span class="t-meta"><span style="font-family:var(--f-tag)">' + esc(x.author) + '</span></span></div>'; }).join('');
+    const tocRow = function (inner, href, i) { return '<li>' + (href ? '<a class="mag-toc" href="' + href + '">' : '<div class="mag-toc mag-toc--static">') + '<span class="mag-toc__nr">' + String(i + 1).padStart(2, '0') + '</span>' + inner + (href ? '<span class="mag-toc__arrow" aria-hidden="true">' + I('chevRight', 18, 'stroke-width="2"') + '</span></a>' : '</div>') + '</li>'; };
+    const tocReal = toc.map(function (m, i) {
+      return tocRow('<span class="mag-toc__thumb" aria-hidden="true"><img src="' + ui.img((issue.featureImage && issue.featureImage[m.id]) || m.image) + '" alt=""></span>' +
+        '<span class="mag-toc__body"><span class="mag-toc__topic">' + esc(C.topic(m.topic).name) + '</span><span class="mag-toc__title">' + esc(m.title) + (m.access === 'premium' ? '<span class="visually-hidden"> (Premium)</span>' : '') + '</span>' +
+        '<span class="mag-toc__author">Autor: ' + esc(m.authors.filter(function (x) { return x.role === 'autor'; }).map(function (x) { return C.author(x.id).name; }).join(', ')) + '</span></span>', ui.materialUrl(m), i);
+    }).join('');
+    const tocMore = more.map(function (x, i) {
+      return tocRow('<span class="mag-toc__thumb mag-toc__thumb--ph" aria-hidden="true"></span><span class="mag-toc__body"><span class="mag-toc__topic">' + esc(x.section) + '</span><span class="mag-toc__title">' + esc(x.title) + '</span><span class="mag-toc__author">Autor: ' + esc(x.author) + '</span></span>', null, toc.length + i);
+    }).join('');
     const arch = archived.map(function (i) {
       return '<article class="arch-item" data-arch="' + esc((i.label + ' ' + i.title + ' ' + i.description + ' ' + i.articles.join(' ')).toLowerCase()) + '">' + noImg +
         '<div><h3 class="arch-item__nr">' + esc(i.label) + '</h3><p class="arch-item__title">' + esc(i.title) + '</p><p class="arch-item__desc">' + esc(i.description) + '</p>' +
         '<p class="arch-item__feat">W numerze</p><ul id="arch-' + i.id + '">' + i.articles.map(function (t, n) { return '<li data-arch-art="' + esc(t.toLowerCase()) + '"' + (n > 2 ? ' data-more hidden' : '') + '>' + esc(t) + '</li>'; }).join('') + '</ul>' +
         (i.articles.length > 3 ? '<button type="button" class="toc-toggle arch-toggle" data-arch-toggle aria-expanded="false" aria-controls="arch-' + i.id + '" data-count="' + i.articles.length + '"><span>Pokaż wszystkie artykuły (' + i.articles.length + ')</span>' + I('chevDown', 16, 'stroke-width="2"') + '</button>' : '') + '</div></article>';
     }).join('');
+    const subNow = KBR.subscription.get(), printOnly = !!(subNow && subNow.status === 'active') && !KBR.subscription.has('magazine-pdf');
     const html = '<div class="container"><header class="page-head">' + ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Magazyn' }]) + '<h1>Magazyn KBR</h1><p>Aktualny numer kwartalnika i archiwum wydań.</p></header>' +
       '<div class="issue"><div class="issue__cover"><div class="mag-cover mag-cover--page" role="img" aria-label="Okładka ' + esc(issue.label) + ': ' + esc(issue.title) + '">' + ui.magCoverBook(issue) + '<span class="mag-cover__shadow" aria-hidden="true"></span></div>' +
-        '<div class="issue__actions"><button type="button" class="btn btn--primary btn--block" data-action="mag-open">Otwórz wersję elektroniczną' + I('chevRight', 16, 'stroke-width="2"') + '</button>' +
-        '<button type="button" class="btn btn--outline btn--block" data-action="mag-download">Pobierz PDF' + I('chevRight', 16, 'stroke-width="2"') + '</button></div></div>' +
+        (printOnly ? '<div class="issue__actions"><p class="notice">' + I('info', 18) + '<span>Pakiet Drukowany obejmuje wydanie drukowane. Wersja elektroniczna i PDF są dostępne w pakietach „Cyfrowy” i „Pełny”.</span></p></div></div>' :
+        '<div class="issue__actions"><button type="button" class="btn btn--primary btn--block" data-action="mag-open">' + (KBR.subscription.has('magazine-pdf') ? 'Otwórz wersję elektroniczną' : 'Podgląd numeru') + I('chevRight', 16, 'stroke-width="2"') + '</button>' +
+        '<button type="button" class="btn btn--outline btn--block" data-action="mag-download">Pobierz PDF' + I('chevRight', 16, 'stroke-width="2"') + '</button></div></div>') +
       '<div><span class="t-label">Aktualny numer</span><h2 class="magazine__nr" style="margin-top:8px">' + esc(issue.label.toUpperCase()) + '</h2><p class="t-lead" style="margin-top:16px">' + esc(issue.title) + '</p><p style="margin-top:8px">' + esc(issue.description) + '</p>' +
-      '<h3 class="t-section" style="margin-top:32px;padding-bottom:10px;border-bottom:1px solid var(--c-border-blue)">Spis treści</h3><nav aria-label="Spis treści">' + tocReal +
-        (more.length ? '<div id="toc-more" hidden>' + tocMore + '</div><button type="button" class="toc-toggle" data-action="toc-toggle" aria-expanded="false" aria-controls="toc-more"><span>Pokaż pełny spis treści (' + (toc.length + more.length) + ')</span>' + I('chevDown', 16, 'stroke-width="2"') + '</button>' : '') +
+      '<h3 class="t-section" style="margin-top:32px;padding-bottom:10px">Spis treści</h3><nav aria-label="Spis treści"><ol class="mag__toc mag__toc--light" role="list">' + tocReal + '</ol>' +
+        (more.length ? '<ol class="mag__toc mag__toc--light mag__toc--more" id="toc-more" role="list" hidden>' + tocMore + '</ol><button type="button" class="toc-toggle" data-action="toc-toggle" aria-expanded="false" aria-controls="toc-more"><span>Pokaż pełny spis treści (' + (toc.length + more.length) + ')</span>' + I('chevDown', 16, 'stroke-width="2"') + '</button>' : '') +
       '</nav></div></div></div>' +
       '<section class="mag-archive" aria-labelledby="h-archive"><div class="container">' +
         '<div class="mag-archive__head"><h2 id="h-archive">Archiwum wydań</h2><label class="mag-search"><span class="visually-hidden">Szukaj w archiwum</span>' + I('search', 20) + '<input type="search" class="input" data-arch-search placeholder="Znajdź artykuł w archiwum"></label></div>' +
@@ -44,10 +53,12 @@
         box.hidden = !open; tg.setAttribute('aria-expanded', String(open));
         tg.querySelector('span').textContent = open ? 'Zwiń spis treści' : 'Pokaż pełny spis treści (' + (toc.length + more.length) + ')';
       });
-      root.querySelectorAll('[data-action="mag-open"],[data-action="mag-download"]').forEach(function (b) {
+      const openBtn = root.querySelector('[data-action="mag-open"]');
+      if (openBtn) openBtn.addEventListener('click', function () { ui.flipbook(issue, { total: 24, limit: KBR.subscription.has('magazine-pdf') ? 0 : 6 }); });
+      root.querySelectorAll('[data-action="mag-download"]').forEach(function (b) {
         b.addEventListener('click', function () {
           if (!KBR.subscription.has('magazine-pdf')) { KBR.app.navigate('#/subskrypcja'); setTimeout(function () { ui.toast('Magazyn w formacie PDF jest dostępny w pakietach „Cyfrowy” i „Pełny”.'); }, 60); return; }
-          ui.toast(b.dataset.action === 'mag-open' ? 'Otwieranie czytnika wydania (symulacja prototypu).' : 'Pobieranie PDF (symulacja prototypu).');
+          ui.toast(b.dataset.action === 'mag-open' ? 'Otwieranie czytnika wydania.' : 'Pobieranie PDF.');
         });
       });
       function setArch(btn, open) {
@@ -112,14 +123,76 @@
     'reklama': ['Reklama i partnerstwa', 'Współpraca reklamowa i partnerstwa merytoryczne.', '<p>Media pack i dane kontaktowe działu sprzedaży – do uzupełnienia.</p>'],
     'kontakt': ['Kontakt', 'Kontakt z redakcją KBR.', '<p>Adres redakcji, e-mail i telefon – do uzupełnienia.</p>'],
     'kanaly': ['Nasze kanały', 'Kanały społecznościowe KBR i Akademii Leona Koźmińskiego.', '<p>Adresy profili w mediach społecznościowych – do uzupełnienia.</p>'],
-    'nota-prawna': ['Nota prawna', '', '<p>Treść prawna wymaga przygotowania i zatwierdzenia przez uczelnię. Prototyp nie zawiera treści prawnych.</p>'],
-    'polityka-prywatnosci': ['Polityka prywatności', '', '<p>Treść polityki prywatności wymaga przygotowania i zatwierdzenia. Prototyp nie zawiera treści prawnych.</p>'],
-    'regulamin-serwisu': ['Regulamin serwisu', '', '<p>Treść regulaminu wymaga przygotowania i zatwierdzenia. Prototyp nie zawiera treści prawnych.</p>'],
-    'regulamin-subskrypcji': ['Regulamin subskrypcji', '', '<p>Treść regulaminu subskrypcji wymaga przygotowania i zatwierdzenia. Prototyp nie zawiera treści prawnych.</p>'],
-    'informacje-wydawnicze': ['Informacje wydawnicze', '', '<p>Wydawca: Akademia Leona Koźmińskiego. Numer ISSN i pozostałe dane wydawnicze – do uzupełnienia.</p>']
+    'nota-prawna': ['Nota prawna', '', '<h2>Postanowienia ogólne</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum. Donec ullamcorper nulla non metus auctor fringilla.</p><p>Maecenas faucibus mollis interdum. Vestibulum id ligula porta felis euismod semper. Nullam quis risus eget urna mollis ornare vel eu leo. Aenean lacinia bibendum nulla sed consectetur.</p><h2>Zakres i zasady</h2><p>Sed posuere consectetur est at lobortis. Etiam porta sem malesuada magna mollis euismod. Curabitur blandit tempus porttitor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.</p><ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li><li>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</li><li>Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</li></ul><h2>Postanowienia końcowe</h2><p>Donec sed odio dui. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>'],
+    'polityka-prywatnosci': ['Polityka prywatności', '', '<h2>Postanowienia ogólne</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum. Donec ullamcorper nulla non metus auctor fringilla.</p><p>Maecenas faucibus mollis interdum. Vestibulum id ligula porta felis euismod semper. Nullam quis risus eget urna mollis ornare vel eu leo. Aenean lacinia bibendum nulla sed consectetur.</p><h2>Zakres i zasady</h2><p>Sed posuere consectetur est at lobortis. Etiam porta sem malesuada magna mollis euismod. Curabitur blandit tempus porttitor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.</p><ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li><li>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</li><li>Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</li></ul><h2>Postanowienia końcowe</h2><p>Donec sed odio dui. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>'],
+    'polityka-cookies': ['Polityka cookies', '', '<h2>Postanowienia ogólne</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum. Donec ullamcorper nulla non metus auctor fringilla.</p><p>Maecenas faucibus mollis interdum. Vestibulum id ligula porta felis euismod semper. Nullam quis risus eget urna mollis ornare vel eu leo. Aenean lacinia bibendum nulla sed consectetur.</p><h2>Zakres i zasady</h2><p>Sed posuere consectetur est at lobortis. Etiam porta sem malesuada magna mollis euismod. Curabitur blandit tempus porttitor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.</p><ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li><li>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</li><li>Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</li></ul><h2>Postanowienia końcowe</h2><p>Donec sed odio dui. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p><p><button type="button" class="btn btn--outline" data-action="cookies">Ustawienia cookies</button></p>'],
+    'regulaminy': ['Regulaminy', '', '<ul><li><a href="#/strona/regulamin-serwisu">Regulamin serwisu</a></li><li><a href="#/strona/regulamin-subskrypcji">Regulamin subskrypcji</a></li></ul>'],
+    'regulamin-serwisu': ['Regulamin serwisu', '', '<h2>Postanowienia ogólne</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum. Donec ullamcorper nulla non metus auctor fringilla.</p><p>Maecenas faucibus mollis interdum. Vestibulum id ligula porta felis euismod semper. Nullam quis risus eget urna mollis ornare vel eu leo. Aenean lacinia bibendum nulla sed consectetur.</p><h2>Zakres i zasady</h2><p>Sed posuere consectetur est at lobortis. Etiam porta sem malesuada magna mollis euismod. Curabitur blandit tempus porttitor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.</p><ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li><li>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</li><li>Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</li></ul><h2>Postanowienia końcowe</h2><p>Donec sed odio dui. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>'],
+    'regulamin-subskrypcji': ['Regulamin subskrypcji', '', '<h2>Postanowienia ogólne</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum. Donec ullamcorper nulla non metus auctor fringilla.</p><p>Maecenas faucibus mollis interdum. Vestibulum id ligula porta felis euismod semper. Nullam quis risus eget urna mollis ornare vel eu leo. Aenean lacinia bibendum nulla sed consectetur.</p><h2>Zakres i zasady</h2><p>Sed posuere consectetur est at lobortis. Etiam porta sem malesuada magna mollis euismod. Curabitur blandit tempus porttitor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.</p><ul><li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li><li>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</li><li>Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</li></ul><h2>Postanowienia końcowe</h2><p>Donec sed odio dui. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>'],
+    'informacje-wydawnicze': ['Informacje wydawnicze', '', '<p>Wydawca: Akademia Leona Koźmińskiego. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>']
   };
+  const head = function (title, intro) {
+    return '<header class="page-head">' + ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'O KBR' }, { label: title }]) + '<h1>' + esc(title) + '</h1>' + (intro ? '<p>' + intro + '</p>' : '') + '</header>';
+  };
+  function aboutPage() {
+    const team = [
+      ['Redaktor naczelna / redaktor naczelny', 'Odpowiada za linię programową serwisu i magazynu.'],
+      ['Zastępca redaktora naczelnego', 'Koordynuje plan wydawniczy i współpracę z autorami.'],
+      ['Redaktorka prowadząca – serwis', 'Odpowiada za publikacje online, newsletter i podcasty.'],
+      ['Redaktor prowadzący – magazyn', 'Przygotowuje kolejne wydania kwartalnika.'],
+      ['Sekretarz redakcji', 'Odpowiada za redakcję językową, korektę i harmonogram.'],
+      ['Dyrektor artystyczny', 'Odpowiada za oprawę graficzną serwisu i magazynu.']
+    ];
+    const board = ['Przewodnicząca / przewodniczący rady', 'Członkini / członek rady', 'Członkini / członek rady', 'Członkini / członek rady'];
+    const html = '<div class="container">' + head('Misja i wizja', 'Kozminski Business Review to polska platforma wiedzy biznesowej dla menedżerów, liderek i liderów, wydawana przez Akademię Leona Koźmińskiego.') +
+      '<div class="about">' + demoNote() +
+      '<section class="about-mv" aria-label="Misja i wizja">' +
+        '<div class="about-mv__item"><span class="t-label">Misja</span><p class="about-mv__text">Łączymy wyniki badań naukowych z praktyką zarządzania, aby pomagać liderom podejmować lepsze decyzje.</p><p>Publikujemy analizy, studia przypadków i rozmowy, w których badacze Akademii Leona Koźmińskiego i praktycy biznesu dzielą się wiedzą sprawdzoną w działaniu. Piszemy przystępnie, ale bez uproszczeń.</p></div>' +
+        '<div class="about-mv__item"><span class="t-label">Wizja</span><p class="about-mv__text">Chcemy być pierwszym źródłem wiedzy, po które sięgają polscy menedżerowie, gdy stają przed ważną decyzją.</p><p>Budujemy miejsce, w którym nauka i biznes rozmawiają ze sobą na równych prawach – w serwisie, w kwartalniku drukowanym i podczas spotkań społeczności KBR.</p></div>' +
+      '</section>' +
+      '<section class="about-team" aria-labelledby="h-team"><h2 class="t-section col-head" id="h-team">Redakcja</h2><ul class="team-grid" role="list">' +
+        team.map(function (t) { return '<li class="team-card"><span class="team-card__photo" aria-hidden="true"></span><span class="team-card__name">Imię i nazwisko</span><span class="team-card__role">' + esc(t[0]) + '</span><span class="team-card__desc">' + esc(t[1]) + '</span></li>'; }).join('') +
+      '</ul></section>' +
+      '<section class="about-team" aria-labelledby="h-board"><h2 class="t-section col-head" id="h-board">Rada programowa</h2><ul class="team-grid team-grid--compact" role="list">' +
+        board.map(function (t) { return '<li class="team-card"><span class="team-card__name">Imię i nazwisko</span><span class="team-card__role">' + esc(t) + '</span></li>'; }).join('') +
+      '</ul></section>' +
+      '<div class="about-links"><a class="btn btn--primary" href="#/autorzy">Autorzy i eksperci' + KBR.icon('chevRight', 16, 'stroke-width="2"') + '</a><a class="btn btn--ghost" href="#/strona/kontakt">Kontakt z redakcją</a></div>' +
+      '</div></div>';
+    return { title: 'Misja i wizja – KBR', html: html };
+  }
+  function contactPage() {
+    const box = function (id, label, title, text, mail, extra) {
+      return '<section class="contact-box" id="' + id + '" aria-labelledby="h-' + id + '"><span class="t-label">' + label + '</span><h2 id="h-' + id + '">' + title + '</h2><p>' + text + '</p>' +
+        '<a class="contact-box__mail" href="mailto:' + mail + '">' + KBR.icon('mail', 18) + mail + '</a>' + (extra || '') + '</section>';
+    };
+    const html = '<div class="container">' + head('Kontakt', 'Napisz do nas w sprawie publikacji, współpracy reklamowej lub partnerstwa.') +
+      '<div class="contact">' + demoNote() +
+      '<div class="contact-grid">' +
+        box('redakcja', 'Redakcja', 'Kontakt z redakcją', 'Pytania o publikacje, sprostowania, prośby o komentarz eksperta i sprawy prasowe.', 'redakcja@kbr.example') +
+        box('reklama', 'Reklama i partnerstwa', 'Współpraca reklamowa i partnerstwa', 'Kampanie w serwisie, newsletterze i magazynie, projekty specjalne oraz partnerstwa merytoryczne i wydarzenia. Na prośbę prześlemy media kit z zasięgami i cennikiem.', 'reklama@kbr.example',
+          '<ul class="contact-box__list"><li>Reklama w serwisie i newsletterze</li><li>Reklama w magazynie drukowanym</li><li>Artykuły i raporty partnerskie</li><li>Patronaty i wydarzenia</li></ul>') +
+      '</div>' +
+      '<section class="contact-author" id="zostan-autorem" aria-labelledby="h-author"><div class="contact-author__intro"><span class="t-label">Dla autorów</span><h2 id="h-author">Zostań autorem KBR</h2>' +
+        '<p>Publikujemy teksty badaczy, ekspertów i praktyków biznesu. Szukamy autorów, którzy mają do powiedzenia coś nowego i potrafią poprzeć to badaniami lub doświadczeniem.</p>' +
+        '<ul class="contact-box__list"><li>Prześlij krótki opis tematu (do 300 słów) i informację o sobie.</li><li>Redakcja odpowiada w ciągu 14 dni.</li><li>Teksty do serwisu: 8–15 tys. znaków, do magazynu: 15–25 tys. znaków.</li></ul>' +
+        '<a class="contact-box__mail" href="mailto:autorzy@kbr.example">' + KBR.icon('mail', 18) + 'autorzy@kbr.example</a></div>' +
+        '</section></div></div>';
+    return { title: 'Kontakt – KBR', html: html, mount: function (root) {
+      const f = root.querySelector('[data-author-form]');
+      if (f) f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const bad = Array.prototype.filter.call(f.querySelectorAll('[required]'), function (el) { return !el.value.trim() || (el.type === 'email' && !/^\S+@\S+\.\S+$/.test(el.value)); });
+        f.querySelectorAll('.input').forEach(function (el) { el.setAttribute('aria-invalid', bad.indexOf(el) !== -1 ? 'true' : 'false'); });
+        if (bad.length) { bad[0].focus(); ui.toast('Uzupełnij wymagane pola.'); return; }
+        f.reset(); ui.toast('Dziękujemy! Propozycja została wysłana (demo).');
+      });
+    } };
+  }
   KBR.pages.info = function (route) {
-    const p = INFO[route.params.slug];
+    const slug = route.params.slug;
+    if (slug === 'o-kbr' || slug === 'redakcja') return aboutPage();
+    if (slug === 'kontakt' || slug === 'reklama' || slug === 'dla-autorow') return contactPage();
+    const p = INFO[slug];
     if (!p) return KBR.pages.notFound();
     return simplePage(p[0], [{ label: p[0] }], p[1], p[2]);
   };

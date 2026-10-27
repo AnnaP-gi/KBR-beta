@@ -10,15 +10,21 @@
     const cur = function (p) { return path === p || path.indexOf(p + '/') === 0 ? ' aria-current="page"' : ''; };
     const topics = KBR.data.topics.map(function (t) { return '<li><a href="#/tematy/' + t.slug + '"' + cur('/tematy/' + t.slug) + '>' + esc(t.name) + '</a></li>'; }).join('');
 
+    const subRec = sub && KBR.subscription.get ? KBR.subscription.get() : null;
+    const subPlan = subRec ? KBR.subscription.plan(subRec.planId) : null;
+    const subTag = !subPlan ? '' : (subPlan.entitlements.indexOf('premium') !== -1 ? '<span class="hdr-premium">Premium</span>' : '<span class="hdr-premium hdr-premium--print">Prenumerata</span>');
+    const today = new Date();
+    const MON = ['sty', 'lut', 'mar', 'kwi', 'maj', 'cze', 'lip', 'sie', 'wrz', 'paź', 'lis', 'gru'];
+    const NAV_IDS = ['przywodztwo', 'strategia', 'zarzadzanie', 'przedsiebiorczosc', 'ai', 'technologie', 'innowacje', 'marketing', 'finanse'];
+    const navTopics = KBR.data.topics.filter(function (t) { return NAV_IDS.indexOf(t.id) !== -1; });
+    const moreTopics = KBR.data.topics.filter(function (t) { return NAV_IDS.indexOf(t.id) === -1; }).map(function (t) { return '<li><a href="#/tematy/' + t.slug + '"' + cur('/tematy/' + t.slug) + '>' + esc(t.name) + '</a></li>'; }).join('');
     const account = user
       ? '<div class="menu"><button type="button" class="hdr-link" data-action="menu" aria-expanded="false" aria-controls="account-menu" aria-haspopup="true">' + I('userPlain', 20) +
-        '<span>Moje konto</span>' + (sub ? '<span class="hdr-premium">Premium</span>' : '') + '<span class="chev">' + I('chevDown', 14) + '</span></button>' +
+        '<span>' + esc(user.firstName || 'Moje konto') + '</span>' + subTag + '<span class="chev">' + I('chevDown', 14) + '</span></button>' +
         '<div class="menu__panel" id="account-menu" hidden>' +
-        '<div class="menu__head"><strong>' + esc(user.firstName || 'Czytelnik') + '</strong>' + esc(user.email) + '<br>' + (sub ? 'Subskrypcja aktywna' : 'Konto bez subskrypcji') + '</div>' +
+        '<div class="menu__head"><strong>' + esc(user.firstName || 'Czytelnik') + '</strong>' + esc(user.email) + '<br>' + (subPlan ? 'Pakiet ' + esc(subPlan.name) + ' – aktywny' : 'Konto bez subskrypcji') + '</div>' +
         '<a href="#/konto/subskrypcja">' + I('card', 18) + 'Moja subskrypcja</a>' +
         '<a href="#/konto/dane">' + I('userPlain', 18) + 'Moje dane</a>' +
-        '<a href="#/konto/platnosci">' + I('mail', 18) + 'Płatności i faktury</a>' +
-        '<a href="#/konto/preferencje">' + I('info', 18) + 'Newslettery i preferencje</a>' +
         '<hr><button type="button" data-action="logout">' + I('logout', 18) + 'Wyloguj się</button></div></div>'
       : '<a class="hdr-link" href="#/logowanie" data-action="auth-link">' + I('user', 20) + '<span>Zaloguj się</span></a>';
 
@@ -28,18 +34,19 @@
       (KBR.storage.get('topbarClosed', false, 'session') ? '' : '<div class="topbar"><div class="container topbar__inner"><a href="#/magazyn"><span class="topbar__dot"></span><span class="topbar__strong">Nowe wydanie magazynu już dostępne</span><span class="topbar__divider"></span><span class="topbar__text">Technologie, AI i nowe spojrzenie na przywództwo. Odkryj tematy najnowszego numeru</span></a>' +
         '<button type="button" class="topbar__close" data-action="close-topbar" aria-label="Zamknij pasek informacyjny">' + I('close', 16, 'stroke-width="2"') + '</button></div></div>') +
       '<div class="container masthead">' +
+        '<div class="masthead__date" aria-hidden="true"><span class="masthead__day">' + today.getDate() + '</span><span class="masthead__mon">' + MON[today.getMonth()] + '</span></div>' +
         '<a class="logo" href="#/" aria-label="Kozminski Business Review – strona główna"><img class="logo__img" src="assets/img/kbr-logo.svg" alt="" width="208" height="56"></a>' +
-        '<nav class="mainnav" aria-label="Menu główne" style="border-top:0;flex:1;min-width:0"><ul class="mainnav__list" style="height:auto;justify-content:center;gap:64px;padding:0 32px">' +
-          '<li><a class="mainnav__link" href="#/artykuly"' + cur('/artykuly') + '>Artykuły</a></li>' +
-          '<li><a class="mainnav__link" href="#/magazyn"' + cur('/magazyn') + '>Magazyn</a></li>' +
-          '<li class="menu mainnav__split"><a class="mainnav__link" href="#/tematy"' + (path.indexOf('/tematy') === 0 ? ' aria-current="page"' : '') + '>Tematy</a><button type="button" class="mainnav__link mainnav__chev" data-action="menu" aria-expanded="false" aria-controls="topics-menu" aria-haspopup="true" aria-label="Rozwiń listę tematów">' + I('chevDown', 16) + '</button>' +
-            '<ul class="menu__panel" id="topics-menu" hidden style="min-width:340px">' + topics + '</ul></li>' +
-        '</ul></nav>' +
         '<div class="masthead__actions">' +
           account + subscribeBtn +
           '<button type="button" class="icon-btn" data-action="toggle-drawer" aria-expanded="false" aria-controls="mobile-drawer"><span class="visually-hidden">Menu</span>' + I('menu', 24) + '</button>' +
         '</div>' +
       '</div>' +
+      '<nav class="container mainnav" aria-label="Menu główne"><ul class="mainnav__list">' +
+        '<li><a class="mainnav__link mainnav__link--issue" href="#/magazyn"' + cur('/magazyn') + '>' + I('newspaper', 20) + 'Nowy numer</a></li>' +
+        navTopics.map(function (t, i) { return '<li' + (i >= 7 ? ' class="mainnav__opt mainnav__opt--2"' : i >= 5 ? ' class="mainnav__opt"' : '') + '><a class="mainnav__link" href="#/tematy/' + t.slug + '"' + cur('/tematy/' + t.slug) + '>' + esc(t.name) + '</a></li>'; }).join('') +
+        '<li class="menu"><button type="button" class="mainnav__link" data-action="menu" aria-expanded="false" aria-controls="topics-menu" aria-haspopup="true">Więcej' + I('chevDown', 14) + '</button>' +
+          '<ul class="menu__panel menu__panel--cols" id="topics-menu" hidden>' + navTopics.slice(5).map(function (t, i) { return '<li class="menu__opt' + (i >= 2 ? ' menu__opt--2' : '') + '"><a href="#/tematy/' + t.slug + '">' + esc(t.name) + '</a></li>'; }).join('') + moreTopics + '<li class="menu__sep"><a href="#/tematy">Wszystkie tematy</a></li></ul></li>' +
+      '</ul></nav>' +
       '<nav class="mobile-drawer" id="mobile-drawer" aria-label="Menu główne (mobilne)"><div class="container"><ul class="mobile-drawer__list">' +
         '<li><a href="#/artykuly">Artykuły' + I('chevRight', 18) + '</a></li>' +
         '<li><a href="#/magazyn">Magazyn' + I('chevRight', 18) + '</a></li>' +
@@ -66,9 +73,9 @@
         '<p>Polska platforma wiedzy biznesowej dla menedżerów, liderek i liderów, wydawana przez Akademię Leona Koźmińskiego.</p>' +
         '<ul class="socials" aria-label="Kanały społecznościowe">' + socials.map(function (s) { return '<li><a href="#/strona/kanaly" aria-label="' + s[1] + ' (adres do uzupełnienia)"><img src="assets/img/social-' + s[0] + '.png" alt=""></a></li>'; }).join('') + '</ul>' +
         '<div class="footer-cols">' +
-          '<div><h2>O KBR</h2><ul><li><a href="#/strona/o-kbr">Misja i wizja</a></li><li><a href="#/strona/redakcja">Redakcja i rada programowa</a></li><li><a href="#/autorzy">Autorzy i eksperci</a></li><li><a href="#/strona/dla-autorow">Dla autorów</a></li><li><a href="#/strona/reklama">Reklama i partnerstwa</a></li><li><a href="#/strona/kontakt">Kontakt</a></li></ul></div>' +
+          '<div><h2>O KBR</h2><ul><li><a href="#/strona/o-kbr">Misja i wizja</a></li><li><a href="#/autorzy">Autorzy i eksperci</a></li><li><a href="#/strona/kontakt">Kontakt</a></li></ul></div>' +
           '<div><h2>Koźmiński</h2><ul>' +
-            ['O uczelni', 'Studia i szkolenia', 'Nauka i badania', 'Dla biznesu'].map(function (t) { return '<li><a href="https://www.kozminski.edu.pl/pl" target="_blank" rel="noopener">' + t + '<span class="visually-hidden"> (serwis uczelni, otwiera się w nowej karcie)</span></a></li>'; }).join('') +
+            ['O uczelni', 'Studia i szkolenia', 'Nauka i badania', 'Dla biznesu'].map(function (t) { return '<li><a class="ext-link" href="https://www.kozminski.edu.pl/pl" target="_blank" rel="noopener">' + t + '<span aria-hidden="true">' + I('external', 14, 'stroke-width="2"') + '</span><span class="visually-hidden"> (serwis uczelni, otwiera się w nowej karcie)</span></a></li>'; }).join('') +
           '</ul></div>' +
           '<div><h2>Dostęp</h2><ul><li><a href="#/subskrypcja">Subskrypcja</a></li></ul></div>' +
         '</div>' +
@@ -76,8 +83,8 @@
       '<div class="footer-news">' + ui.newsletterForm('footer') + '</div>' +
       '</div>' +
       '<div class="footer-bottom"><ul>' +
-        '<li><a href="#/strona/nota-prawna">Nota prawna</a></li><li><a href="#/strona/polityka-prywatnosci">Polityka prywatności (RODO)</a></li><li><a href="#/strona/regulamin-serwisu">Regulamin serwisu</a></li><li><a href="#/strona/regulamin-subskrypcji">Regulamin subskrypcji</a></li><li><a href="#/strona/informacje-wydawnicze">Informacje wydawnicze</a></li><li><button type="button" data-action="cookies">Ustawienia cookies</button></li>' +
-      '</ul><p>© 2026 Akademia Leona Koźmińskiego · ISSN: [do uzupełnienia]</p></div>' +
+        '<li><a href="#/strona/polityka-prywatnosci">Polityka prywatności</a></li><li><a href="#/strona/polityka-cookies">Polityka cookies</a></li><li><a href="#/strona/regulaminy">Regulaminy</a></li>' +
+      '</ul><p class="footer-copy">© 2026 Akademia Leona Koźmińskiego · ISSN: [do uzupełnienia]</p></div>' +
       '</div></footer>';
   };
 
@@ -93,7 +100,7 @@
     const id = 'nl-' + variant;
     if (variant === 'footer') {
       return '<form data-form="newsletter" novalidate aria-labelledby="' + id + '-title"><h2 class="label" id="' + id + '-title">Newsletter KBR</h2>' +
-        '<p>Raz w tygodniu najnowsze artykuły Kozminski Business Review – wybór redakcji prosto na Twoją skrzynkę.</p>' +
+        '<p>Najnowsze artykuły Kozminski Business Review – wybór redakcji prosto na Twoją skrzynkę.</p>' +
         '<label class="check check--small" for="' + id + '-consent"><input type="checkbox" id="' + id + '-consent" name="consent"><span>Wyrażam zgodę na otrzymywanie za pośrednictwem poczty e-mail newslettera Kozminski Business Review. Administratorem Pani/Pana danych osobowych jest Akademia Leona Koźmińskiego. <a href="#/strona/polityka-prywatnosci">Szczegółowe informacje na temat przetwarzania Pani/Pana danych osobowych.</a> (wymagane)</span></label>' +
         '<div class="nl-row" data-error-anchor><label class="visually-hidden" for="' + id + '-email">Adres e-mail</label><input class="input input--dark" type="email" id="' + id + '-email" name="email" placeholder="Adres e-mail" autocomplete="email"><button class="btn btn--primary" type="submit">Zapisz się' + I('chevRight', 16, 'stroke-width="2" style="color:#e9aab9"') + '</button></div>' +
         '<div class="nl-status" role="status"></div></form>';
@@ -153,6 +160,7 @@
   };
   ui.metaLine = function (m) { return '<span style="font-family:var(--f-tag)">' + esc(ui.authorLine(m)) + '</span> · <time datetime="' + m.date + '">' + ui.dateShort(m.date) + '</time>'; };
   ui.plMat = function (n) { const r = n % 10, r100 = n % 100; return n + ' ' + (n === 1 ? 'materiał' : (r >= 2 && r <= 4 && (r100 < 12 || r100 > 14)) ? 'materiały' : 'materiałów'); };
+  ui.premiumTag = function (m) { return m.access === 'premium' ? '<span class="badge badge--premium badge--sm">' + ui.lockIcon(m, 12) + 'Premium</span>' : ''; };
   ui.lockIcon = function (m, size) {
     if (m.access !== 'premium') return '';
     const open = KBR.subscription.has('premium');
@@ -196,7 +204,7 @@
     opts = opts || {};
     return '<article class="card">' +
       (opts.noImage ? '' : ui.media(m, opts)) +
-      ui.topicLabel(m) +
+      (opts.noImage && m.access === 'premium' ? ui.topicLabel(m).replace(/^<a class="t-label card__cat"/, '<span class="card__cat card__cat--prem"><a class="t-label"').replace(/<\/a>$/, '</a>' + ui.premiumTag(m) + '</span>') : ui.topicLabel(m)) +
       ui.titleLink(m, '', opts.tag) +
       (opts.lead ? '<p class="t-body card__lead">' + esc(m.lead) + '</p>' : '') +
       '<p class="t-meta card__author">' + ui.metaLine(m) + '</p>' +
