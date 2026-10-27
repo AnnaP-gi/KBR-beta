@@ -27,6 +27,8 @@
 .card__saved { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 2px; background: var(--c-navy); color: #fff; }
 .card__saved svg { filter: none; }
 .card__cat { margin-top: 24px; display: block; }
+.card__cat--prem, .toc-item__cat { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.badge--sm { height: 20px; padding: 0 8px 0 7px; font-size: 11px; line-height: 14px; gap: 4px; }
 .card__date { margin-top: 5px; display: block; color: var(--c-date); }
 .card__date + .card__title { margin-top: 12px; }
 .card__title { margin-top: 9px; display: block; }
@@ -107,3 +109,6 @@
 .tabs [role="tab"]:hover { color: #3252B5; }
 .tabs [role="tab"][aria-selected="true"] { color: var(--c-ink); border-bottom-color: var(--c-gold); }
 .tabs .count { font-size: 12px; min-width: 22px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--c-tint); color: var(--c-navy); display: inline-grid; place-items: center; }
+
+.ext-link { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.ext-link svg { opacity: .7; flex: none; }

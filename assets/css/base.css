@@ -11,7 +11,7 @@ body {
   line-height: 1.5;
   color: var(--c-text);
   background: var(--c-white);
-  overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
 img, svg { display: block; max-width: 100%; }
