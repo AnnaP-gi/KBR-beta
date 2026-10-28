@@ -48,12 +48,12 @@ Unikalną nazwę ustawisz tak: pole → Właściwości → Zaawansowane → Unik
 
 1. Dodaj pole płatności wybranej bramki (np. Stripe, PayPal, PayU – sprawdź, które bramki i metody, np. BLIK lub Przelewy24, są dostępne w Twoim planie i kraju).
 2. Typ płatności: **Sprzedaż produktów** (Sell Products). **Nie** wybieraj subskrypcji ani płatności cyklicznych.
-3. Produkty: dodaj trzy produkty z cenami z `config.js` (199 zł, 249 zł, 349 zł). Ceny są demonstracyjne, do zatwierdzenia.
+3. Produkty: dodaj trzy produkty z cenami z `config.js` (Cyfrowy 160 zł, Drukowany 160 zł, Pełny 280 zł). Ceny są demonstracyjne, do zatwierdzenia.
    - Cyfrowy — 12 miesięcy: magazyn w PDF do pobrania i dostęp do artykułów z magazynu.
    - Drukowany — 12 miesięcy: magazyn drukowany wysyłany na podany adres i dostęp online do artykułów z magazynu.
    - Pełny — 12 miesięcy: magazyn w PDF, wydanie drukowane z dostawą i dostęp do wszystkich artykułów w serwisie.
 4. W każdym produkcie usuń opcję **Ilość** (Quantity) i inne opcje. Włącz wybór **jednego** produktu (Single product selection).
-5. Opis produktu lub pole tekstowe pod sumą: „Jednorazowa opłata za 12 miesięcy. Bez automatycznego odnawiania”.
+5. Opis produktu lub pole tekstowe pod sumą: „Jednorazowa opłata za 12 miesięcy.”.
 6. Zaznaczenie właściwego produktu:
    - **Wariant A (jeden formularz):** sprawdź w swoim planie, czy produkt da się zaznaczyć warunkiem lub parametrem w adresie na podstawie `kodPakietu`, a pozostałe produkty ukryć. Jeśli tak, serwis używa `jotform.formUrl`.
    - **Wariant B (zalecany, jeśli A nie działa):** sklonuj formularz trzy razy, po jednym na pakiet, z jednym produktem w każdym. W formularzu Cyfrowy usuń pola adresu dostawy. Wpisz trzy linki w `jotform.formUrlByPlan`. Pole `pakiet` nadal jest przekazywane.
