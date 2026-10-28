@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>KBR – Punkt widzenia: telefon i tablet</title>
+<link rel="icon" type="image/png" href="../assets/img/kbr-mark.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&amp;display=swap">
+<style>body{margin:0;font-family:'Open Sans',sans-serif;color:#030928;background:#eef0f4}a{color:#3252b5}a:hover{color:#263f8f}</style></head>
+<body><div style="padding:40px 32px 56px;display:flex;flex-direction:column;gap:28px">
+<div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+<figure style="margin:0;display:flex;flex-direction:column;gap:10px"><figcaption style="display:flex;justify-content:space-between;gap:12px;font-size:13px"><strong>Telefon</strong><span style="color:#596176">375 × 760</span></figcaption><div style="background:#030928;padding:10px;border-radius:28px;box-shadow:0 12px 32px rgba(3,9,40,.18)"><iframe src="../index.html#/" title="Telefon" width="375" height="760" style="display:block;border:0;border-radius:20px;background:#fff"></iframe></div></figure>
+<figure style="margin:0;display:flex;flex-direction:column;gap:10px"><figcaption style="display:flex;justify-content:space-between;gap:12px;font-size:13px"><strong>Duży telefon</strong><span style="color:#596176">430 × 760</span></figcaption><div style="background:#030928;padding:10px;border-radius:28px;box-shadow:0 12px 32px rgba(3,9,40,.18)"><iframe src="../index.html#/" title="Duży telefon" width="430" height="760" style="display:block;border:0;border-radius:20px;background:#fff"></iframe></div></figure>
+<figure style="margin:0;display:flex;flex-direction:column;gap:10px"><figcaption style="display:flex;justify-content:space-between;gap:12px;font-size:13px"><strong>Tablet pionowo</strong><span style="color:#596176">768 × 760</span></figcaption><div style="background:#030928;padding:10px;border-radius:28px;box-shadow:0 12px 32px rgba(3,9,40,.18)"><iframe src="../index.html#/" title="Tablet pionowo" width="768" height="760" style="display:block;border:0;border-radius:20px;background:#fff"></iframe></div></figure>
+<figure style="margin:0;display:flex;flex-direction:column;gap:10px"><figcaption style="display:flex;justify-content:space-between;gap:12px;font-size:13px"><strong>Tablet poziomo</strong><span style="color:#596176">1024 × 760</span></figcaption><div style="background:#030928;padding:10px;border-radius:28px;box-shadow:0 12px 32px rgba(3,9,40,.18)"><iframe src="../index.html#/" title="Tablet poziomo" width="1024" height="760" style="display:block;border:0;border-radius:20px;background:#fff"></iframe></div></figure>
+</div></div>
+<script>
+function jump(f){var n=0,s=0;(function t(){var w=f.contentWindow,h=w&&w.document&&w.document.getElementById('h-quote');if(h){var top=h.getBoundingClientRect().top;if(Math.abs(top-24)<=4)s++;else{s=0;w.scrollTo(0,top+w.scrollY-24);}if(s>=6)return;}if(++n<80)setTimeout(t,150);})();}
+var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting)jump(x.target);});},{threshold:0.05});
+document.querySelectorAll('iframe').forEach(function(f){io.observe(f);f.addEventListener('load',function(){jump(f);});});
+</script></body></html>
