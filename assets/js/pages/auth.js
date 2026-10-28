@@ -27,11 +27,11 @@
   }
 
   /* Wspólne dokończenie po zalogowaniu / rejestracji */
-  function afterAuth(user, isNew) {
+  function afterAuth(user, isNew, activated) {
     const pending = KBR.flow.takePending();
     let ret = KBR.flow.takeReturn() || '#/';
     if (/^#\/(logowanie|rejestracja|reset-hasla)/.test(ret)) ret = '#/';
-    let msg = isNew ? 'Konto zostało utworzone. Witaj, ' + esc(user.firstName || user.email) + '!' : 'Zalogowano jako ' + esc(user.email) + '.';
+    let msg = isNew ? (activated ? 'Konto zostało aktywowane. Witaj, ' : 'Konto zostało utworzone. Witaj, ') + esc(user.firstName || user.email) + '!' : 'Zalogowano jako ' + esc(user.email) + '.';
     if (pending && pending.type === 'save' && C.get(pending.id)) {
       KBR.library.save(pending.id);
       msg = (isNew ? 'Konto zostało utworzone, a ' : '') + (isNew ? 'materiał' : 'Materiał') + ' „' + esc(C.get(pending.id).title) + '” zapisano w Twojej bibliotece. <a href="#/konto/biblioteka">Przejdź do biblioteki</a>';
@@ -130,6 +130,7 @@
           '<label class="check" for="reg-newsletter"><input type="checkbox" id="reg-newsletter" name="newsletter"><span>Chcę otrzymywać newsletter KBR.</span></label>' +
           '<label class="check" for="reg-marketing"><input type="checkbox" id="reg-marketing" name="marketing"><span>Chcę otrzymywać informacje o ofercie edukacyjnej Akademii Leona Koźmińskiego.</span></label></div></div>' +
         '<button class="btn btn--primary" type="submit">Załóż bezpłatne konto' + I('chevRight', 16, 'stroke-width="2"') + '</button>' +
+        '<p class="hint" style="margin-top:12px;display:flex;gap:8px;align-items:flex-start">' + I('mail', 16) + '<span>Na podany adres wyślemy link aktywacyjny. Konto zacznie działać po kliknięciu linku.</span></p>' +
       '</form><p class="alt">Masz już konto? <a href="#/logowanie">Zaloguj się</a></p></div>' + side() + '</div>';
     return { title: 'Rejestracja – KBR', html: html, mount: function (root) {
       bindPwToggles(root); bindSocial(root); rememberEmail(root, 'reg-email');
@@ -147,9 +148,39 @@
         try {
           const user = await KBR.auth.register({ firstName: form.firstName.value, email: form.email.value, newsletter: form.newsletter.checked, marketing: form.marketing.checked });
           form.querySelector('#reg-password').value = '';   // hasło nie jest nigdzie przechowywane
-          afterAuth(user, true);
+          KBR.app.navigate('#/rejestracja/aktywacja?email=' + encodeURIComponent(user.email));
         } catch (err) { F.busy(btn, false); F.serverError(form, err.field === 'email' ? 'reg-email' : null, err.message); }
       });
+    } };
+  };
+
+  /* Rejestracja e-mailem: konto czeka na aktywację linkiem z wiadomości */
+  KBR.pages.activate = function (route) {
+    const email = route.query.email || '';
+    if (KBR.auth.currentUser()) return KBR.pages.redirect('#/konto/subskrypcja');
+    if (!email) return KBR.pages.redirect('#/rejestracja');
+    const inactive = route.query.nieaktywne === '1';
+    const html = '<div class="container auth-wrap"><div class="auth-card">' +
+      ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Rejestracja', href: '#/rejestracja' }, { label: 'Aktywacja konta' }]) +
+      '<h1 style="margin-top:20px">Aktywuj konto</h1>' +
+      '<div class="notice notice--success" role="status" style="margin-top:24px">' + I('mail', 20) + '<div><strong>' + (inactive ? 'Konto nie zostało jeszcze aktywowane.' : 'Sprawdź skrzynkę e-mail.') + '</strong><br>Wysłaliśmy link aktywacyjny na adres <strong>' + esc(email) + '</strong>. Kliknij go, aby aktywować konto' + (KBR.flow.peekReturn && KBR.flow.peekReturn() ? ' i wrócić do lektury' : '') + '.</div></div>' +
+      '<p style="margin-top:20px;font-size:15px;line-height:23px">Nie widzisz wiadomości? Sprawdź folder spam lub oferty. Wiadomość może dotrzeć z kilkuminutowym opóźnieniem.</p>' +
+      contextBox() +
+      '<div class="btn-row" style="margin-top:24px"><button type="button" class="btn btn--primary" data-act="open">Symulacja: otwórz link z wiadomości</button><button type="button" class="btn btn--outline" data-act="resend">Wyślij link ponownie</button></div>' +
+      '<p class="alt">Błąd w adresie? <a href="#/rejestracja" data-act="change">Zmień adres e-mail</a></p>' +
+      '</div>' + side() + '</div>';
+    return { title: 'Aktywacja konta – KBR', html: html, mount: function (root) {
+      root.querySelector('[data-act="open"]').addEventListener('click', async function (e) {
+        const b = e.currentTarget; F.busy(b, true, 'Aktywowanie…');
+        try { const user = await KBR.auth.activate(email); afterAuth(user, true, true); }
+        catch (err) { F.busy(b, false); ui.toast(esc(err.message)); }
+      });
+      root.querySelector('[data-act="resend"]').addEventListener('click', async function (e) {
+        const b = e.currentTarget; F.busy(b, true, 'Wysyłanie…');
+        await KBR.auth.resendActivation(email); F.busy(b, false);
+        ui.toast('Wysłaliśmy nowy link aktywacyjny na adres ' + esc(email) + '.', { kind: 'success' });
+      });
+      root.querySelector('[data-act="change"]').addEventListener('click', function () { KBR.auth.discardPending(email); });
     } };
   };
 
@@ -177,7 +208,11 @@
         if (!ok) return;
         const btn = form.querySelector('[type="submit"]'); F.busy(btn, true, 'Logowanie…');
         try { const user = await KBR.auth.login({ email: form.email.value }); form.querySelector('#login-password').value = ''; afterAuth(user, false); }
-        catch (err) { F.busy(btn, false); F.serverError(form, null, err.message + ' Sprawdź dane albo załóż konto.'); }
+        catch (err) {
+          F.busy(btn, false);
+          if (err.code === 'inactive') { KBR.app.navigate('#/rejestracja/aktywacja?email=' + encodeURIComponent(err.email) + '&nieaktywne=1'); return; }
+          F.serverError(form, null, err.message + ' Sprawdź dane albo załóż konto.');
+        }
       });
     } };
   };

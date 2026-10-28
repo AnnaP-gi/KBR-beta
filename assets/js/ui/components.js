@@ -75,7 +75,7 @@
         '<div class="footer-cols">' +
           '<div><h2>O KBR</h2><ul><li><a href="#/strona/o-kbr">Misja i wizja</a></li><li><a href="#/autorzy">Autorzy i eksperci</a></li><li><a href="#/strona/kontakt">Kontakt</a></li></ul></div>' +
           '<div><h2>Koźmiński</h2><ul>' +
-            ['O uczelni', 'Studia i szkolenia', 'Nauka i badania', 'Dla biznesu'].map(function (t) { return '<li><a class="ext-link" href="https://www.kozminski.edu.pl/pl" target="_blank" rel="noopener">' + t + '<span aria-hidden="true">' + I('external', 14, 'stroke-width="2"') + '</span><span class="visually-hidden"> (serwis uczelni, otwiera się w nowej karcie)</span></a></li>'; }).join('') +
+            [['O uczelni', 'https://www.kozminski.edu.pl/pl/o-uczelni'], ['Studia i szkolenia', 'https://www.kozminski.edu.pl/pl/oferta-edukacyjna'], ['Nauka i badania', 'https://www.kozminski.edu.pl/pl/nauka-i-badania'], ['Dla biznesu', 'https://www.kozminski.edu.pl/pl/wspolpraca-strategiczna-i-fundusze-stypendialne']].map(function (l) { const t = l[0]; return '<li><a class="ext-link" href="' + l[1] + '" target="_blank" rel="noopener">' + t + '<span aria-hidden="true">' + I('external', 14, 'stroke-width="2"') + '</span><span class="visually-hidden"> (serwis uczelni, otwiera się w nowej karcie)</span></a></li>'; }).join('') +
           '</ul></div>' +
           '<div><h2>Dostęp</h2><ul><li><a href="#/subskrypcja">Subskrypcja</a></li></ul></div>' +
         '</div>' +

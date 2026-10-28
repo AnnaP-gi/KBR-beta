@@ -60,7 +60,7 @@ KBR.pages.home = function () {
   const firstAuthor = function (x) { const a = x.authors.filter(function (y) { return y.role === 'autor'; })[0]; return a ? C.author(a.id) : null; };
   const usedA = {};
   const withQuotes = (qSrc ? [qSrc] : []).concat(C.list({ formats: ['article'] }).filter(function (x) { return x !== qSrc && pullOf(x); }))
-    .filter(function (x) { const p = firstAuthor(x); if (!p || p.id === 'alk' || usedA[p.id]) return false; usedA[p.id] = 1; return true; }).slice(0, 10);
+    .filter(function (x) { const p = firstAuthor(x); if (!p || p.id === 'alk' || usedA[p.id]) return false; usedA[p.id] = 1; return true; }).slice(0, 4);
   const opFrom = function (x) { return '<span class="op__from">Z artykułu: <span class="op__from-title">' + esc(x.title) + '</span>' + (x.access === 'premium' ? ' ' + ui.premiumTag(x) : '') + '</span>'; };
   const feat = withQuotes[0], rest = withQuotes.slice(1);
   const quoteBand = feat ? '<section class="container home-quote" aria-labelledby="h-quote">' +
@@ -74,6 +74,15 @@ KBR.pages.home = function () {
         return '<li><a class="op op-hit" href="' + ui.materialUrl(x) + '">' + '<span class="op__quote">„' + esc(pullOf(x)) + '”</span>' +
           '<span class="op__cap">' + ui.personPhoto(p, 'person-photo--56') + '<span class="op__who"><span class="op__name">' + esc(p.name) + '</span>' + (p.role ? '<span class="op__role">' + esc(p.role) + '</span>' : '') + '</span></span>' + opFrom(x) + '</a></li>';
       }).join('') + '</ul>' : '') +
+      '<div class="op-m"><ul class="op-m__list" role="list" aria-label="Punkt widzenia">' + withQuotes.map(function (x, k) {
+        const p = firstAuthor(x);
+        return '<li id="op-m-' + k + '" aria-label="' + (k + 1) + ' z ' + withQuotes.length + '"><a class="op-m__card op-hit" href="' + ui.materialUrl(x) + '">' +
+          '<span class="op-m__who">' + ui.personPhoto(p, 'person-photo--56') + '<span class="op__who"><span class="op__name">' + esc(p.name) + '</span>' + (p.role ? '<span class="op__role">' + esc(p.role) + '</span>' : '') + '</span></span>' +
+          '<span class="op__quote">„' + esc(pullOf(x)) + '”</span>' + opFrom(x) + '</a></li>';
+      }).join('') + '</ul>' +
+      (withQuotes.length > 1 ? '<div class="op-m__bar"><div class="op-m__dots">' + withQuotes.map(function (x, k) { return '<button type="button" class="op-m__dot" data-op-dot="' + k + '" aria-label="Opinia ' + (k + 1) + ' z ' + withQuotes.length + '"' + (k === 0 ? ' aria-current="true"' : '') + '></button>'; }).join('') + '</div>' +
+        '<div class="op-nav"><button type="button" class="op-nav__btn" data-op-m-prev aria-label="Poprzednia opinia" disabled>' + I('chevLeft', 20, 'stroke-width="2"') + '</button><button type="button" class="op-nav__btn" data-op-m-next aria-label="Następna opinia">' + I('chevRight', 20, 'stroke-width="2"') + '</button></div></div>' : '') +
+      '</div>' +
     '</section>' : '';
   const recPool = C.list({ formats: ['article', 'case'] }).filter(function (x) { return x.id !== lead.id; });
   const recFeat = recPool.filter(function (x) { return x.access === 'premium'; })[0] || recPool[0];
@@ -151,6 +160,20 @@ KBR.pages.home = function () {
         opList.addEventListener('scroll', sync, { passive: true });
         window.addEventListener('resize', sync);
         sync();
+      }
+      if (!document.__kbrOpM) {
+        document.__kbrOpM = true;
+        const parts = function () { const l = document.querySelector('.op-m__list'); return l ? { l: l, items: l.children, dots: document.querySelectorAll('[data-op-dot]'), prev: document.querySelector('[data-op-m-prev]'), next: document.querySelector('[data-op-m-next]') } : null; };
+        const cur = function (p) { let best = 0, d = 1e9; for (let k = 0; k < p.items.length; k++) { const v = Math.abs(p.items[k].offsetLeft - p.l.offsetLeft - p.l.scrollLeft); if (v < d) { d = v; best = k; } } return best; };
+        const go = function (p, k) { const li = p.items[Math.max(0, Math.min(p.items.length - 1, k))]; p.l.scrollTo({ left: li.offsetLeft - p.l.offsetLeft, behavior: 'smooth' }); };
+        const msync = function () { const p = parts(); if (!p) return; const k = cur(p); p.dots.forEach(function (b, j) { if (j === k) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); }); if (p.prev) { p.prev.disabled = k === 0; p.next.disabled = k === p.items.length - 1; } };
+        document.addEventListener('click', function (ev) {
+          const b = ev.target.closest && ev.target.closest('[data-op-dot],[data-op-m-prev],[data-op-m-next]'); if (!b) return;
+          const p = parts(); if (!p) return;
+          if (b.hasAttribute('data-op-dot')) go(p, +b.getAttribute('data-op-dot'));
+          else go(p, cur(p) + (b.hasAttribute('data-op-m-next') ? 1 : -1));
+        });
+        let t; document.addEventListener('scroll', function (ev) { if (ev.target && ev.target.classList && ev.target.classList.contains('op-m__list')) { clearTimeout(t); t = setTimeout(msync, 60); } }, { capture: true, passive: true });
       }
       const sec = root.querySelector('.mag');
       if (!sec) return;

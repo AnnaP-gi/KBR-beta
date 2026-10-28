@@ -31,17 +31,32 @@
         id: uid('u'), firstName: String(data.firstName || '').trim(), lastName: String(data.lastName || '').trim(), email: email,
         createdAt: new Date().toISOString(),
         consents: { terms: true, newsletter: !!data.newsletter, marketing: !!data.marketing },
-        interests: []
+        interests: [],
+        pendingActivation: true   /* konto aktywne dopiero po kliknięciu linku aktywacyjnego z e-maila */
       };
       users[email] = user; S.set('users', users);
-      S.set('session', { userId: user.id });
+      return user;
+    },
+    /* Aktywacja konta linkiem z e-maila – po aktywacji użytkownik jest zalogowany */
+    activate: async function (email) {
+      await delay(300);
+      const users = S.get('users', {}); const user = users[normEmail(email)];
+      if (!user) { const err = new Error('missing'); err.message = 'Link aktywacyjny jest nieprawidłowy lub wygasł.'; throw err; }
+      delete user.pendingActivation; user.activatedAt = new Date().toISOString();
+      S.set('users', users); S.set('session', { userId: user.id });
       KBR.bus.emit('auth:change', user);
       return user;
+    },
+    resendActivation: async function () { await delay(300); },
+    discardPending: function (email) {
+      const users = S.get('users', {}); const e = normEmail(email);
+      if (users[e] && users[e].pendingActivation) { delete users[e]; S.set('users', users); }
     },
     login: async function (data) {
       await delay(300);
       const user = KBR.auth.findByEmail(data.email);
       if (!user) { const err = new Error('invalid'); err.message = 'Nieprawidłowy adres e-mail lub hasło.'; throw err; }
+      if (user.pendingActivation) { const err = new Error('inactive'); err.code = 'inactive'; err.email = user.email; err.message = 'Konto nie zostało jeszcze aktywowane.'; throw err; }
       S.set('session', { userId: user.id });
       KBR.bus.emit('auth:change', user);
       return user;

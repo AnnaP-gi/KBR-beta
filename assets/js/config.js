@@ -34,7 +34,7 @@ KBR.config = {
       name: 'Drukowany',
       description: 'Drukowane wydanie magazynu wysyłane na podany adres. Bez dostępu do serwisu i artykułów online.',
       cta: 'Wybieram drukowany',
-      prices: { year: 149 },
+      prices: { year: 160 },
       entitlements: [],
       print: true,
       includes: [false, true, false, false]
@@ -44,7 +44,7 @@ KBR.config = {
       name: 'Cyfrowy',
       description: 'Pełny dostęp do magazynu w PDF oraz do wszystkich artykułów w serwisie.',
       cta: 'Wybieram cyfrowy',
-      prices: { year: 249 },
+      prices: { year: 160 },
       entitlements: ['premium', 'magazine-pdf', 'magazine-articles'],
       includes: [true, false, true, true]
     },
@@ -54,7 +54,7 @@ KBR.config = {
       name: 'Pełny',
       description: 'Wersja cyfrowa i drukowana razem: magazyn w PDF, wydanie drukowane z dostawą i dostęp do wszystkich artykułów.',
       cta: 'Wybieram pełny',
-      prices: { year: 349 },
+      prices: { year: 280 },
       entitlements: ['premium', 'magazine-pdf', 'magazine-articles'],
       print: true,
       includes: [true, true, true, true]
@@ -68,10 +68,10 @@ KBR.config = {
     next: '1–7 grudnia 2026 (Nr 04 / 2026)'
   },
 
-  /* Zakup: jednorazowa płatność za 12 miesięcy, bez odnawiania. */
+  /* Zakup: jednorazowa płatność za 12 miesięcy. */
   purchase: {
     months: 12,
-    priceNote: 'Jednorazowa opłata za 12 miesięcy. Bez automatycznego odnawiania',
+    priceNote: 'Jednorazowa opłata za 12 miesięcy.',
     /* Zgody w formularzu – TREŚCI DO DOSTARCZENIA (teksty zastępcze). */
     consents: [
       { id: 'terms', required: true, text: 'Akceptuję Regulamin subskrypcji KBR.', link: '#/strona/regulamin-subskrypcji' },

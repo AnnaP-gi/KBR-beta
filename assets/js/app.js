@@ -16,6 +16,7 @@ KBR.app = (function () {
     [/^\/autor\/([\w-]+)$/, P.author, ['id']],
     [/^\/tag\/([\w-]+)$/, P.tag, ['slug']],
     [/^\/rejestracja$/, P.register],
+    [/^\/rejestracja\/aktywacja$/, P.activate],
     [/^\/logowanie$/, P.login],
     [/^\/reset-hasla$/, P.resetRequest],
     [/^\/reset-hasla\/nowe$/, P.resetNew],

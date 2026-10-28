@@ -112,7 +112,7 @@
         '<section class="panel" aria-labelledby="h-sub"><div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center"><h2 id="h-sub">Aktualny plan</h2><span class="status-pill status-pill--ok">' + I('checkCircle', 16) + 'Aktywna</span></div>' +
         '<p class="t-serif" style="font-size:36px;line-height:40px;margin-top:16px">' + esc(p.name) + '</p>' +
         '<dl class="dl"><dt>Źródło dostępu</dt><dd>Zakup indywidualny</dd><dt>Okres i płatność</dt><dd>12 miesięcy, płatność jednorazowa (' + ui.money(sub.amount) + ')</dd>' +
-        '<dt>Aktywna od</dt><dd>' + ui.dateLong(sub.startedAt) + '</dd><dt>Dostęp ważny do</dt><dd>' + ui.dateLong(sub.validUntil) + '</dd><dt>Odnawianie</dt><dd>Brak – po wygaśnięciu możesz kupić kolejne 12 miesięcy</dd>' +
+        '<dt>Aktywna od</dt><dd>' + ui.dateLong(sub.startedAt) + '</dd><dt>Dostęp ważny do</dt><dd>' + ui.dateLong(sub.validUntil) + '</dd>' +
         '<dt>Numer zamówienia</dt><dd>' + esc(sub.orderId) + '</dd><dt>Zakres</dt><dd>' + p.features.filter(function (x) { return x.included; }).map(function (x) { return esc(x.text); }).join('<br>') + '</dd></dl>' +
         '<div class="btn-row" style="margin-top:24px"><a class="btn btn--primary" href="#/subskrypcja">Porównaj pakiety</a></div>' +
         '</section>' +

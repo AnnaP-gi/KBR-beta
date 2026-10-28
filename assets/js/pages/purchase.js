@@ -236,7 +236,7 @@
       KBR.checkout.clear();
       body = '<div class="result__icon result__icon--ok">' + I('checkCircle', 40) + '</div>' +
         '<h1>Subskrypcja jest aktywna</h1>' +
-        '<p>Płatność za zamówienie <strong>' + esc(o.orderId) + '</strong> została potwierdzona. Pakiet <strong>' + esc(p.name) + '</strong> jest aktywny do <strong>' + ui.dateLong(o.validUntil) + '</strong>. Subskrypcja nie odnowi się automatycznie.</p>' +
+        '<p>Płatność za zamówienie <strong>' + esc(o.orderId) + '</strong> została potwierdzona. Pakiet <strong>' + esc(p.name) + '</strong> jest aktywny do <strong>' + ui.dateLong(o.validUntil) + '</strong>.</p>' +
         (src ? '<div class="context-box" style="max-width:560px;margin:28px auto 0;text-align:left"><img src="' + ui.img(src.image) + '" alt=""><div><span class="t-label">Możesz dokończyć lekturę</span><strong>' + esc(src.title) + '</strong></div></div>' : '') +
         '<div class="btn-row">' + (src ? '<a class="btn btn--primary" href="' + ui.materialUrl(src) + '">Wróć do artykułu' + I('chevRight', 16, 'stroke-width="2"') + '</a>' : '<a class="btn btn--primary" href="#/magazyn">Przejdź do magazynu' + I('chevRight', 16, 'stroke-width="2"') + '</a>') +
         '<a class="btn btn--outline" href="#/konto/subskrypcja">Moja subskrypcja</a></div>';

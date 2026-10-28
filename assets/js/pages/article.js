@@ -133,7 +133,7 @@ KBR.pages.article = function (route) {
   }
 
   const tagList = C.tags(m);
-  const tagsHtml = tagList.length ? '<nav class="chips tags-row" aria-label="Tagi" style="margin-top:20px;display:flex;flex-wrap:wrap;gap:8px">' + tagList.map(function (tg) { return '<a class="chip" style="width:auto;white-space:nowrap" href="#/tag/' + C.tagSlug(tg) + '">#' + esc(tg) + '</a>'; }).join('') + '</nav>' : '';
+  const tagsHtml = tagList.length ? '<div class="chips tags-row" aria-label="Tagi" style="margin-top:20px;display:flex;flex-wrap:wrap;gap:8px">' + tagList.map(function (tg, k) { return '<span class="chip" style="width:auto;white-space:nowrap;cursor:default"' + (k >= 5 ? ' data-more-tag hidden' : '') + '>#' + esc(tg) + '</span>'; }).join('') + (tagList.length > 5 ? '<button type="button" class="chip" style="width:auto" aria-label="Pokaż pozostałe tagi (' + (tagList.length - 5) + ')" onclick="this.parentNode.querySelectorAll(\'[data-more-tag]\').forEach(function (x) { x.hidden = false; }); this.remove();">+' + (tagList.length - 5) + '</button>' : '') + '</div>' : '';
   const byRole = function (r) { return people.filter(function (x) { return x.role === r; }); };
   const credited = byRole('autor').slice(0, 2).concat(byRole('ekspert').slice(0, 1));
   const authorsTop = '<div class="byline-people">' + credited.map(function (x) {
