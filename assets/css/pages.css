@@ -269,14 +269,21 @@ a:hover > .person-photo--cut::before, .byline-person:hover .person-photo--cut::b
 .episodes__row:hover > svg { transform: translateX(6px); }
 
 /* Wyszukiwanie – zakres i wyniki niemateriałowe */
-.search-scope { display: flex; gap: 32px; box-shadow: inset 0 -1px 0 var(--c-border-strong); margin-bottom: 24px; overflow-x: auto; scrollbar-width: none; }
-.search-scope a { display: inline-flex; align-items: center; gap: 8px; padding: 14px 0 12px; position: relative; color: var(--c-text); font-weight: 400; font-size: 14px; line-height: 19px; text-transform: uppercase; letter-spacing: 0; white-space: nowrap; text-decoration: none; }
-.search-scope a:hover { color: #3252B5; text-decoration: none; }
-.search-scope a[aria-current="page"] { color: var(--c-ink); }
-.search-scope a[aria-current="page"]::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 5px; border-top: 1px solid var(--c-gold); box-shadow: inset 0 -1px 0 var(--c-gold); }
-.search-scope__n { min-width: 22px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--c-tint); color: var(--c-navy); font-size: 12px; line-height: 20px; text-align: center; letter-spacing: 0; }
+.search-scope { display: flex; gap: 28px; border-bottom: 1px solid var(--c-border); margin-bottom: 8px; overflow-x: auto; scrollbar-width: none; }
+.search-scope a { display: inline-flex; align-items: center; gap: 10px; height: 48px; position: relative; color: var(--c-muted); font-weight: 400; font-size: 12px; line-height: 16px; text-transform: uppercase; letter-spacing: .03em; white-space: nowrap; text-decoration: none; transition: color .2s ease; }
+.search-scope a:hover { color: var(--c-ink); text-decoration: none; }
+.search-scope a[aria-current="page"] { color: var(--c-navy); font-weight: 700; }
+.search-scope a[aria-current="page"]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--c-navy); }
+.search-scope__n { min-width: 24px; height: 24px; padding: 0 6px; border-radius: var(--radius); background: var(--c-tint); color: var(--c-navy); font-size: 12px; line-height: 24px; font-weight: 700; text-align: center; letter-spacing: 0; }
+.search-scope a[aria-current="page"] .search-scope__n { background: var(--c-navy); color: #fff; }
+.search-head__form { max-width: 640px; margin-top: 20px; }
+.search-head__form .search { display: block; margin: 0; }
+.search-head__form .search input { height: 48px; font-size: 15px; }
 .search-group + .search-group { margin-top: 48px; }
-.search-group .section-head { margin: 0 0 4px; }
+.search-group { margin-top: 40px; }
+.search-scope + .rows, .search-scope + .hits, .search-scope + .empty { margin-top: 40px; }
+.search-scope + .hits .hit:first-child, .search-group .hits .hit:first-child { padding-top: 0; }
+.search-group .section-head { margin: 0 0 24px; padding-bottom: 0; border-bottom: 0; }
 .hits { display: grid; }
 .hit { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 20px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--c-border); color: var(--c-navy); text-decoration: none; }
 .hit > svg { color: var(--c-blue); transition: transform .2s ease; }
@@ -496,7 +503,8 @@ button.gate__soc { width: 100%; background: #fff; font-family: inherit; cursor: 
 .price-opt--month strong { font-size: 18px; font-weight: 700; color: var(--c-ink); }
 .plan .price-note { font-size: 13px; line-height: 18px; color: var(--c-muted); margin-top: 8px; }
 .plan .btn { margin-top: 24px; height: 48px; }
-.plan__ship { margin-top: 12px; display: flex; gap: 8px; align-items: flex-start; font-size: 13px; line-height: 19px; color: var(--c-text); }
+.plan__ship { margin-top: 12px; display: grid; gap: 6px; font-size: 13px; line-height: 19px; color: var(--c-text); }
+.plan__ship p { margin: 0; display: flex; gap: 8px; align-items: flex-start; }
 .plan__ship svg { flex: none; margin-top: 1px; color: var(--c-gold); }
 .plan ul { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--c-border); display: grid; gap: 12px; }
 .plan li { display: grid; grid-template-columns: 20px 1fr; gap: 10px; font-size: 15px; line-height: 22px; color: var(--c-ink); }
@@ -1120,3 +1128,22 @@ html.fb-open { overflow: hidden; }
 
 .plan--featured { border: 2px solid var(--c-gold); padding: 31px 27px; background: linear-gradient(180deg, #fbf6f0 0%, #fff 220px); box-shadow: 0 18px 40px -24px rgba(145,101,63,.55); }
 .plan--featured .plan__flag.badge--premium { background: var(--c-gold); color: #fff; border-color: var(--c-gold); }
+
+/* Wideo YouTube osadzone w treści (ładowane po kliknięciu, domena youtube-nocookie.com) */
+.prose .yt { margin: 32px 0; }
+.yt__frame { position: relative; aspect-ratio: 16 / 9; background: #030928; overflow: hidden; }
+.yt__frame iframe, .yt__facade { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.yt__facade { padding: 0; cursor: pointer; background: #030928; display: block; }
+.yt__facade img { width: 100%; height: 100%; object-fit: cover; opacity: .85; }
+.yt__play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 72px; height: 72px; border-radius: 50%; background: var(--c-gold); color: #fff; display: flex; align-items: center; justify-content: center; }
+.yt__facade:hover .yt__play, .yt__facade:focus-visible .yt__play { background: var(--c-navy); }
+.yt__note { position: absolute; left: 12px; bottom: 12px; padding: 4px 8px; background: rgba(3, 9, 40, .8); color: #fff; font-size: 12px; line-height: 16px; }
+.yt figcaption { margin-top: 8px; font-size: 13px; line-height: 19px; color: var(--c-muted); }
+.benefits-list { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 10px; }
+.benefits-list li { display: flex; gap: 10px; align-items: flex-start; }
+.benefits-list svg { color: var(--c-gold); flex: none; margin-top: 2px; }
+
+/* Cytat w treści: zawsze na środku, między akapitami – tekst go nie opływa */
+.prose .pull, .prose .pull--wide { float: none !important; width: auto !important; max-width: 600px; clear: both; margin: 36px auto !important; text-align: center; }
+
+@media (max-width: 1023px) { .promo { grid-template-columns: minmax(0, 1fr); } .promo__body { min-width: 0; } .promo__body .btn { max-width: 100%; white-space: normal; } }

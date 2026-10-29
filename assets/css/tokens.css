@@ -57,7 +57,7 @@
   /* Kształty */
   --radius: 2px;
   --radius-btn: 3px;
-  --shadow-nav: 0 4px 10px rgba(3, 9, 40, 0.04);
+  --shadow-nav: 0 4px 14px rgba(3, 9, 40, 0.09);
   --shadow-card: 0 2px 8px rgba(22, 36, 71, 0.14);
 }
 
