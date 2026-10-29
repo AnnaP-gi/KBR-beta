@@ -23,15 +23,15 @@ Unikalną nazwę ustawisz tak: pole → Właściwości → Zaawansowane → Unik
 | Pole w Jotform | Typ | Unikalna nazwa | Wymagane | Uwagi |
 |---|---|---|---|---|
 | Pakiet | Krótki tekst, ukryte | `pakiet` | – | Wypełniane przez serwis, np. „Cyfrowy — 12 miesięcy” |
-| Kod pakietu | Krótki tekst, ukryte | `kodPakietu` | – | `cyfrowy` / `drukowany` / `pelny`, używane w warunkach |
+| Kod pakietu | Krótki tekst, ukryte | `kodPakietu` | – | `cyfrowy` / `drukowany` / `premium`, używane w warunkach |
 | Numer zamówienia | Krótki tekst, ukryte | `numerZamowienia` | – | Wiąże płatność z zamówieniem i kontem KBR |
 | ID konta | Krótki tekst, ukryte | `idKonta` | – | Kontrola po stronie serwera |
 | Kwota | Krótki tekst, ukryte | `kwota` | – | Kontrola po stronie serwera, nie wpływa na cenę |
 | Imię i nazwisko | Imię i nazwisko (Full Name) | `imieNazwisko` | tak | Wypełniane: `imieNazwisko[first]`, `imieNazwisko[last]` |
 | E-mail | E-mail | `email` | tak | Wypełniany adresem konta. Ustaw „Tylko do odczytu” |
-| Nagłówek „Adres dostawy magazynu” | Nagłówek | – | – | Widoczny tylko dla Drukowany i Pełny |
+| Nagłówek „Adres dostawy magazynu” | Nagłówek | – | – | Widoczny tylko dla Drukowany i Premium + |
 | Adres dostawy | Adres | `adresDostawy` | tak, warunkowo | Kraj: tylko Polska |
-| Telefon dla kuriera | Telefon | `telefon` | nie | Widoczny tylko dla Drukowany i Pełny |
+| Telefon dla kuriera | Telefon | `telefon` | nie | Widoczny tylko dla Drukowany i Premium + |
 | Faktura na firmę | Pole wyboru (1 opcja) | `faktura` | nie | „Chcę otrzymać fakturę na firmę” |
 | Nazwa firmy | Krótki tekst | `firma` | tak, warunkowo | Widoczne po zaznaczeniu `faktura` |
 | NIP | Krótki tekst | `nip` | tak, warunkowo | Walidacja: 10 cyfr |
@@ -41,17 +41,17 @@ Unikalną nazwę ustawisz tak: pole → Właściwości → Zaawansowane → Unik
 
 ### Warunki (Ustawienia → Warunki → Pokaż/ukryj pole)
 
-- Jeśli `kodPakietu` **jest równe** `drukowany` **lub** `pelny` → pokaż nagłówek „Adres dostawy magazynu”, `adresDostawy` i `telefon` oraz ustaw `adresDostawy` jako wymagane (warunek „Wymagaj pola”).
+- Jeśli `kodPakietu` **jest równe** `drukowany` **lub** `premium` → pokaż nagłówek „Adres dostawy magazynu”, `adresDostawy` i `telefon` oraz ustaw `adresDostawy` jako wymagane (warunek „Wymagaj pola”).
 - Jeśli `faktura` **jest zaznaczone** → pokaż i wymagaj `firma`, `nip`, `adresFirmy`.
 
 ## 3. Płatność: jeden pakiet, płatność jednorazowa
 
 1. Dodaj pole płatności wybranej bramki (np. Stripe, PayPal, PayU – sprawdź, które bramki i metody, np. BLIK lub Przelewy24, są dostępne w Twoim planie i kraju).
 2. Typ płatności: **Sprzedaż produktów** (Sell Products). **Nie** wybieraj subskrypcji ani płatności cyklicznych.
-3. Produkty: dodaj trzy produkty z cenami z `config.js` (Cyfrowy 160 zł, Drukowany 160 zł, Pełny 280 zł). Ceny są demonstracyjne, do zatwierdzenia.
-   - Cyfrowy — 12 miesięcy: magazyn w PDF do pobrania i dostęp do artykułów z magazynu.
-   - Drukowany — 12 miesięcy: magazyn drukowany wysyłany na podany adres i dostęp online do artykułów z magazynu.
-   - Pełny — 12 miesięcy: magazyn w PDF, wydanie drukowane z dostawą i dostęp do wszystkich artykułów w serwisie.
+3. Produkty: dodaj trzy produkty z cenami z `config.js` (Cyfrowy 120 zł, Drukowany 160 zł, Premium + 280 zł).
+   - Cyfrowy — 12 miesięcy: dostęp do wszystkich artykułów w serwisie, magazyn online i w PDF.
+   - Drukowany — 12 miesięcy: to, co w pakiecie Cyfrowym, oraz wydanie drukowane wysyłane na podany adres.
+   - Premium + — 12 miesięcy: to, co w pakiecie Drukowanym, oraz zniżki na szkolenia i zaproszenia na wydarzenia Uczelni (e-mailem).
 4. W każdym produkcie usuń opcję **Ilość** (Quantity) i inne opcje. Włącz wybór **jednego** produktu (Single product selection).
 5. Opis produktu lub pole tekstowe pod sumą: „Jednorazowa opłata za 12 miesięcy.”.
 6. Zaznaczenie właściwego produktu:
@@ -99,7 +99,7 @@ W prototypie ten krok symuluje `KBR.server.paymentWebhook()` w `assets/js/servic
    ```js
    jotform: {
      formUrl: 'https://form.jotform.com/251234567890123',
-     formUrlByPlan: { cyfrowy: '', drukowany: '', pelny: '' }, // wariant B
+     formUrlByPlan: { cyfrowy: '', drukowany: '', premium: '' }, // wariant B
      ...
    }
    ```
