@@ -97,54 +97,32 @@
 
   KBR.pages.search = function (route) {
     const term = (route.query.q || '').trim();
-    const scope = route.query.w || '';
-    const topic = route.query.temat ? C.topicBySlug(route.query.temat) : null;
-    const role = route.query.rola || '';
-    const R = { materialy: [], osoby: [], wydarzenia: [], oferta: [] };
+    const R = { materialy: [], osoby: [] };
     if (term) {
-      R.materialy = C.search(term, { topic: topic && topic.id, formats: formatsFromQuery(route), sort: route.query.sort });
-      R.osoby = KBR.data.authors.filter(function (a) { return matches(term, [a.name, a.bio]); })
-        .filter(function (a) { const r = personRoles(a); return !role || r[role] > 0; });
-      R.wydarzenia = KBR.data.events.filter(function (e) { return matches(term, [e.title, e.category, e.place]); });
-      R.oferta = (KBR.data.offer || []).filter(function (o) { return matches(term, [o.title, o.kind, o.lead]); });
+      R.materialy = C.search(term);
+      R.osoby = KBR.data.authors.filter(function (a) { return !a.institution && matches(term, [a.name]); })
+        .filter(function (a) { const r = personRoles(a); return r.autor + r.ekspert > 0; });
     }
-    const total = R.materialy.length + R.osoby.length + R.wydarzenia.length + R.oferta.length;
     const SCOPES = [
-      { id: '', label: 'Wszystko', n: total },
-      { id: 'materialy', label: 'Materiały', n: R.materialy.length, render: ui.row, wrap: 'rows', count: function (n) { return countLabel(n); } },
-      { id: 'osoby', label: 'Autorzy i eksperci', n: R.osoby.length, render: personHit, wrap: 'hits', count: function (n) { return plural(n, 'osoba', 'osoby', 'osób'); } },
-      { id: 'wydarzenia', label: 'Wydarzenia', n: R.wydarzenia.length, render: eventHit, wrap: 'hits', count: function (n) { return plural(n, 'wydarzenie', 'wydarzenia', 'wydarzeń'); } },
-      { id: 'oferta', label: 'Oferta ALK', n: R.oferta.length, render: offerHit, wrap: 'hits', count: function (n) { return plural(n, 'program', 'programy', 'programów'); } }
+      { id: '', label: 'Wszystko', n: R.materialy.length + R.osoby.length },
+      { id: 'materialy', label: 'Artykuły', n: R.materialy.length, render: ui.row, wrap: 'rows' },
+      { id: 'osoby', label: 'Autorzy i eksperci', n: R.osoby.length, render: personHit, wrap: 'hits' }
     ];
-    const cur = SCOPES.find(function (s) { return s.id === scope; }) || SCOPES[0];
-
-    const tabs = '<nav class="search-scope" aria-label="Szukaj w">' + SCOPES.map(function (s) {
-      return '<a href="' + q(route, { w: s.id, temat: '', format: '', sort: '', rola: '' }) + '"' + (s === cur ? ' aria-current="page"' : '') + '>' + s.label + '<span class="search-scope__n">' + s.n + '</span></a>';
+    const cur = SCOPES.find(function (s) { return s.id === (route.query.w || ''); }) || SCOPES[0];
+    const tabs = '<nav class="search-scope" aria-label="Wyniki wyszukiwania">' + SCOPES.map(function (s) {
+      return '<a href="' + q(route, { w: s.id }) + '"' + (s === cur ? ' aria-current="page"' : '') + '>' + s.label + '<span class="search-scope__n">' + s.n + '</span></a>';
     }).join('') + '</nav>';
-
-    let filters = '';
-    if (cur.id === 'materialy') filters = topicChips(route, topic && topic.id) + formatChips(route) +
-      chips('Sortowanie', [{ label: 'Trafność', href: q(route, { sort: '' }), active: !route.query.sort }, { label: 'Najnowsze', href: q(route, { sort: 'date' }), active: route.query.sort === 'date' }]);
-    if (cur.id === 'osoby') filters = chips('Rola', [{ label: 'Wszystkie', href: q(route, { rola: '' }), active: !role }, { label: 'Autorzy', href: q(route, { rola: 'autor' }), active: role === 'autor' }, { label: 'Eksperci', href: q(route, { rola: 'ekspert' }), active: role === 'ekspert' }]);
-
-    function listOf(s, items) { return '<div class="' + s.wrap + '">' + items.map(s.render).join('') + '</div>'; }
-    let results;
-    if (!term) results = '';
-    else if (!cur.id) {
-      results = SCOPES.slice(1).filter(function (s) { return s.n; }).map(function (s) {
-        const items = R[s.id];
-        return '<section class="search-group" aria-labelledby="sg-' + s.id + '">' + ui.sectionHead(s.label, s.n > 3 ? { href: q(route, { w: s.id }), label: 'Pokaż wszystkie (' + s.n + ')' } : null, { id: 'sg-' + s.id }) + listOf(s, items.slice(0, 3)) + '</section>';
-      }).join('');
-    } else results = R[cur.id].length ? listOf(cur, R[cur.id]) : '';
-
+    const listOf = function (sc, items) { return '<div class="' + sc.wrap + '">' + items.map(sc.render).join('') + '</div>'; };
+    const results = !cur.id
+      ? (cur.n ? SCOPES.slice(1).filter(function (sc) { return sc.n; }).map(function (sc) {
+          return '<section class="search-group" aria-labelledby="sg-' + sc.id + '">' + ui.sectionHead(sc.label, sc.n > 3 ? { href: q(route, { w: sc.id }), label: 'Pokaż wszystkie (' + sc.n + ')' } : null, { id: 'sg-' + sc.id }) + listOf(sc, R[sc.id].slice(0, 3)) + '</section>';
+        }).join('') : '')
+      : (R[cur.id].length ? listOf(cur, R[cur.id]) : '');
     const empty = '<div class="empty" role="status">' + I('search', 40) + '<h2>' + (term ? 'Brak wyników' : 'Wpisz szukaną frazę') + '</h2><p>' +
-      (term ? (cur.id && total ? 'W tej kategorii nie ma wyników. Sprawdź pozostałe zakładki powyżej.' : 'Nie znaleźliśmy wyników dla tej frazy. Sprawdź pisownię lub użyj innego słowa.')
-        : 'Szukaj wśród materiałów, autorów i ekspertów, wydarzeń oraz oferty Akademii Leona Koźmińskiego.') + '</p><a class="btn btn--primary" href="#/artykuly">Przeglądaj artykuły' + I('chevRight', 16, 'stroke-width="2"') + '</a></div>';
-
-    return { title: 'Wyszukiwanie – KBR', html: '<div class="container"><header class="page-head">' + ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Wyszukiwanie' }]) +
-      '<h1>' + (term ? 'Wyniki dla: „' + esc(term) + '”' : 'Wyszukiwanie') + '</h1><div style="max-width:640px;margin-top:20px">' + ui.searchForm('q-page', term).replace('class="search"', 'class="search" style="margin:0"') + '</div></header>' +
-      '<div class="list-layout">' + (term ? tabs + '<div class="list-toolbar">' + filters + '<p class="result-count" role="status">' + (cur.id ? cur.count(cur.n) : plural(total, 'wynik', 'wyniki', 'wyników')) + '</p></div>' : '') +
-      (results || empty) + '</div></div>' };
+        (term ? 'Nie znaleźliśmy wyników dla tej frazy. Sprawdź pisownię lub użyj innego słowa.' : 'Wpisz fragment tytułu, temat, tag albo imię lub nazwisko.') + '</p></div>';
+    return { title: 'Wyszukiwanie – KBR', html: '<div class="container"><header class="page-head search-head">' + ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Wyszukiwanie' }]) +
+      '<h1>' + (term ? 'Wyniki dla: „' + esc(term) + '”' : 'Wyszukiwanie') + '</h1><div class="search-head__form">' + ui.searchForm('q-page', term) + '</div></header>' +
+      '<div class="list-layout">' + (term ? tabs : '') + (results || empty) + '</div></div>' };
   };
 
   KBR.pages.tag = function (route) {

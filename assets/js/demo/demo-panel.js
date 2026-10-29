@@ -22,9 +22,11 @@ KBR.demo = (function () {
         '<div><h3>Przełącz stan</h3><div class="demo__grid">' +
           '<button type="button" class="btn btn--outline" data-demo="guest">' + I('userPlain', 18) + 'Gość (wyloguj)</button>' +
           '<button type="button" class="btn btn--outline" data-demo="free">' + I('bookmark', 18) + 'Konto bez subskrypcji</button>' +
-          '<button type="button" class="btn btn--outline" data-demo="sub">' + I('unlock', 18) + 'Aktywny subskrybent (plan Pełny)</button></div>' +
+          '<button type="button" class="btn btn--outline" data-demo="sub" data-plan="cyfrowy">' + I('unlock', 18) + 'Subskrybent: Cyfrowy (rola Cyfrowa)</button>' +
+          '<button type="button" class="btn btn--outline" data-demo="sub" data-plan="drukowany">' + I('unlock', 18) + 'Subskrybent: Drukowany (rola Prenumerata)</button>' +
+          '<button type="button" class="btn btn--outline" data-demo="sub" data-plan="premium">' + I('unlock', 18) + 'Subskrybent: Premium + (rola Premium +)</button></div>' +
           '<p style="margin-top:8px;font-size:12px;color:var(--c-muted)">Konto testowe: ' + ui.esc(KBR.config.demoAccount.email) + '.</p></div>' +
-        '<div><h3>Limit bezpłatnych materiałów (założenie)</h3><form class="demo__row" id="demo-meter"><label for="demo-limit">Limit / miesiąc</label><input class="input" id="demo-limit" type="number" min="0" max="20" value="' + meter.limit + '"><button class="btn btn--outline" type="submit">Zastosuj</button></form>' +
+        '<div><h3>Limit bezpłatnych materiałów (założenie)</h3><form class="demo__row" id="demo-meter"><label for="demo-limit">Limit na przeglądarkę</label><input class="input" id="demo-limit" type="number" min="0" max="20" value="' + meter.limit + '"><button class="btn btn--outline" type="submit">Zastosuj</button></form>' +
           '<p style="margin-top:6px;font-size:12px;color:var(--c-muted)">Wykorzystano: ' + meter.used + '. 0 = licznik wyłączony.</p>' +
           '<button type="button" class="btn btn--ghost" data-demo="meter-reset" style="margin-top:4px">Wyzeruj licznik</button></div>' +
         '<div><h3>Szybkie przejścia</h3><div class="demo__grid">' +
@@ -32,7 +34,8 @@ KBR.demo = (function () {
           '<a class="btn btn--ghost" href="#/artykul/gmina-plan-ogolny" data-close>Artykuł otwarty</a>' +
           '<a class="btn btn--ghost" href="#/artykul/nowy-kontrakt-lidera" data-close>Artykuł w ramach limitu</a></div></div>' +
         '<div><h3>Dokumentacja projektu</h3><div class="demo__grid">' +
-          '<a class="btn btn--ghost" href="dokumentacja/sciezka-uzytkownika.html" target="_blank" rel="noopener">Ścieżka użytkownika (BPMN), artykuły i strona główna' + I('chevRight', 16, 'stroke-width="2"') + '</a>' +
+          '<a class="btn btn--ghost" href="dokumentacja/sciezka-uzytkownika.html" target="_blank" rel="noopener">Ścieżka użytkownika (BPMN), role i Premium +' + I('chevRight', 16, 'stroke-width="2"') + '</a>' +
+          '<a class="btn btn--ghost" href="dokumentacja/funkcjonalnosci-platformy.html" target="_blank" rel="noopener">Funkcjonalności platformy: artykuły, strona główna, wyszukiwarka' + I('chevRight', 16, 'stroke-width="2"') + '</a>' +
           '<a class="btn btn--ghost" href="dokumentacja/decyzje-i-materialy.html" target="_blank" rel="noopener">Decyzje i materiały do dostarczenia' + I('chevRight', 16, 'stroke-width="2"') + '</a>' +
           '<a class="btn btn--ghost" href="dokumentacja/powiadomienia-i-e-maile.html" target="_blank" rel="noopener">Powiadomienia i e-maile' + I('chevRight', 16, 'stroke-width="2"') + '</a>' +
           '<a class="btn btn--ghost" href="dokumentacja/punkt-widzenia.html" target="_blank" rel="noopener">Punkt widzenia na telefonie i tablecie' + I('chevRight', 16, 'stroke-width="2"') + '</a>' +
@@ -48,7 +51,7 @@ KBR.demo = (function () {
       const a = b.dataset.demo;
       if (a === 'guest') { KBR.auth.logout(); ui.toast('Stan demo: gość.'); }
       if (a === 'free') { KBR.auth.demoSignIn(KBR.config.demoAccount); KBR.subscription.demoClear(); ui.toast('Stan demo: konto bez subskrypcji.'); }
-      if (a === 'sub') { KBR.auth.demoSignIn(KBR.config.demoAccount); KBR.subscription.demoActivate('pelny'); ui.toast('Stan demo: aktywny subskrybent.'); }
+      if (a === 'sub') { KBR.auth.demoSignIn(KBR.config.demoAccount); KBR.subscription.demoClear(); KBR.subscription.demoActivate(b.dataset.plan); ui.toast('Stan demo: subskrybent, pakiet ' + KBR.subscription.plan(b.dataset.plan).name + '.'); }
       if (a === 'meter-reset') { KBR.access.resetMeter(); ui.toast('Licznik bezpłatnych materiałów wyzerowany.'); }
       if (a === 'reset') { KBR.resetDemo(); ui.toast('Dane demo zostały zresetowane.'); d.close(); KBR.app.navigate('#/'); return; }
       d.querySelector('#demo-state').textContent = stateLabel().replace(/&amp;/g, '&');

@@ -35,10 +35,10 @@ KBR.ui = KBR.ui || {};
   ui.authorLine = function (m, withRoles) {
     const C = KBR.content;
     const authors = m.authors.filter(function (a) { return a.role === 'autor'; }).map(function (a) { return C.author(a.id).name; });
-    let s = 'Autor: ' + authors.join(', ');
+    let s = (authors.length > 1 ? 'Autorzy: ' : 'Autor: ') + (authors.length > 2 ? authors.slice(0, 2).join(', ') + ' i in.' : authors.join(', '));
     if (withRoles) {
       const experts = m.authors.filter(function (a) { return a.role === 'ekspert'; }).map(function (a) { return C.author(a.id).name; });
-      if (experts.length) s += ' · Ekspert: ' + experts.join(', ');
+      if (experts.length) s += (experts.length > 1 ? ' · Eksperci: ' : ' · Ekspert: ') + experts.join(', ');
     }
     return s;
   };

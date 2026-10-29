@@ -4,7 +4,7 @@ KBR.pages.home = function () {
   const ui = KBR.ui, C = KBR.content, H = KBR.data.home, I = KBR.icon, esc = ui.esc;
   const get = function (id) { return C.get(id); };
   const lead = get(H.lead);
-  const subscribed = KBR.subscription.has('premium');
+  const subscribed = KBR.subscription.has('content');
 
   const picks = H.picks.map(get);
   /* zdjęcie przy środkowym artykule kolumny */
@@ -140,7 +140,7 @@ KBR.pages.home = function () {
       '<div class="topic-mosaic">' + topicTiles + '</div></section>' +
 
 
-    (KBR.subscription.has('premium') ? '<div class="cta-wide" aria-hidden="true"></div>' : '<div class="container cta-wide"><a class="btn btn--primary btn--lg" href="#/subskrypcja">Wybierz subskrypcję i czytaj bez ograniczeń' + I('chevRight', 24, 'stroke-width="2.25"') + '</a></div>');
+    (KBR.subscription.has('content') ? '<div class="cta-wide" aria-hidden="true"></div>' : '<div class="container cta-wide"><a class="btn btn--primary btn--lg" href="#/subskrypcja">Wybierz subskrypcję i czytaj bez ograniczeń' + I('chevRight', 24, 'stroke-width="2.25"') + '</a></div>');
 
   return {
     title: 'Kozminski Business Review',
@@ -186,8 +186,8 @@ KBR.pages.home = function () {
       ui.magCoverMotion(sec.querySelector('.mag-cover'));
       const dl = sec.querySelector('[data-action="mag-download"]');
       if (dl) dl.addEventListener('click', function () {
-        if (!KBR.subscription.has('magazine-pdf')) { KBR.app.navigate('#/subskrypcja'); setTimeout(function () { ui.toast('Magazyn w formacie PDF jest dostępny w pakietach „Cyfrowy” i „Pełny”.'); }, 150); }
-        else ui.toast('Pobieranie PDF – plik demonstracyjny niedostępny.');
+        if (!KBR.subscription.has('magazine-pdf')) { KBR.app.navigate('#/subskrypcja'); setTimeout(function () { ui.toast('Aby pobrać magazyn w PDF, wykup subskrypcję.'); }, 150); }
+        else ui.toast('Pobrano PDF.');
       });
       const spines = sec.querySelectorAll('.spine'), cap = sec.querySelector('.mag__shelf-caption');
       function pick(sp) {

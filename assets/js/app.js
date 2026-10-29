@@ -15,6 +15,7 @@ KBR.app = (function () {
     [/^\/autorzy$/, P.authors],
     [/^\/autor\/([\w-]+)$/, P.author, ['id']],
     [/^\/tag\/([\w-]+)$/, P.tag, ['slug']],
+    [/^\/wyszukiwanie$/, P.search],
     [/^\/rejestracja$/, P.register],
     [/^\/rejestracja\/aktywacja$/, P.activate],
     [/^\/logowanie$/, P.login],
@@ -189,10 +190,12 @@ KBR.app = (function () {
         t.innerHTML = I(show ? 'eyeOff' : 'eye', 18) + '<span>' + (show ? 'Ukryj' : 'Pokaż') + '</span><span class="visually-hidden"> hasło</span>';
         break;
       }
+      case 'toggle-search':
       case 'toggle-drawer': {
         const el = document.getElementById(t.getAttribute('aria-controls'));
         const open = !el.classList.contains('is-open');
         el.classList.toggle('is-open', open); t.setAttribute('aria-expanded', String(open));
+        if (open && el.id === 'mobile-drawer') { const fit = function () { if (!el.classList.contains('is-open')) return window.removeEventListener('resize', fit); el.style.setProperty('--drawer-max', Math.max(200, window.innerHeight - el.getBoundingClientRect().top) + 'px'); }; fit(); window.addEventListener('resize', fit); window.addEventListener('scroll', fit, { passive: true, once: true }); }
         if (open && a === 'toggle-search') el.querySelector('input').focus();
         break;
       }

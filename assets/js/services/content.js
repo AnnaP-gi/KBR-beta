@@ -32,17 +32,21 @@ KBR.content = (function () {
     return sortByDate(out);
   }
 
+  /* Wyszukiwarka: ciąg znaków w tytule, temacie i tagach artykułu oraz w imionach i nazwiskach autorów i ekspertów.
+     Bez rozróżniania wielkości liter i polskich znaków; każde słowo frazy musi wystąpić w którymś z pól. */
+  function norm(s) { return (s || '').toLocaleLowerCase('pl').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ł/g, 'l'); }
   function search(q, opts) {
     opts = opts || {};
-    const norm = function (s) { return (s || '').toLocaleLowerCase('pl').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l'); };
     const terms = norm(q).split(/\s+/).filter(Boolean);
     if (!terms.length) return [];
     let res = D.materials.map(function (m) {
-      const hay = norm([m.title, m.lead, topic(m.topic).name, m.authors.map(function (a) { return author(a.id).name; }).join(' '),
-        (m.body || []).map(function (b) { return b.x || (b.items || []).join(' '); }).join(' ')].join(' '));
-      const title = norm(m.title);
+      const f = { title: norm(m.title), topic: norm(topic(m.topic).name), tags: norm(tags(m).join(' ')),
+        people: norm(m.authors.map(function (a) { return author(a.id).name; }).join(' ')) };
       let score = 0;
-      for (const t of terms) { if (hay.indexOf(t) === -1) return null; score += title.indexOf(t) !== -1 ? 3 : 1; }
+      for (const t of terms) {
+        const s = (f.title.indexOf(t) !== -1 ? 3 : 0) + (f.tags.indexOf(t) !== -1 ? 2 : 0) + (f.topic.indexOf(t) !== -1 ? 2 : 0) + (f.people.indexOf(t) !== -1 ? 2 : 0);
+        if (!s) return null; score += s;
+      }
       return { m: m, score: score };
     }).filter(Boolean);
     if (opts.topic) res = res.filter(function (r) { return r.m.topic === opts.topic; });

@@ -33,6 +33,7 @@ KBR.pages.article = function (route) {
       case 'points': return '<ol class="points">' + b.items.map(function (x, k) { return '<li><span class="points__nr" aria-hidden="true">' + (k + 1) + '</span><div><p class="points__title">' + esc(x.title) + '</p>' + (x.x ? '<p>' + rich(x.x) + '</p>' : '') + '</div></li>'; }).join('') + '</ol>';
       case 'steps': return '<figure class="figure-chart"><h3>' + esc(b.title) + '</h3><ol class="steps-figure">' +
         b.items.map(function (x, i) { return '<li><span class="n">' + (i + 1) + '</span><span>' + esc(x) + '</span></li>'; }).join('') + '</ol><figcaption>' + esc(b.cap) + '</figcaption></figure>';
+      case 'youtube': return '<figure class="yt"><div class="yt__frame"><button type="button" class="yt__facade" data-yt="' + esc(b.id) + '" aria-label="Odtwórz wideo: ' + esc(b.title || m.title) + '"><img src="https://i.ytimg.com/vi/' + esc(b.id) + '/hqdefault.jpg" alt="" loading="lazy"><span class="yt__play" aria-hidden="true">' + I('play', 30) + '</span><span class="yt__note">Odtworzenie wczyta film z serwisu YouTube</span></button></div>' + (b.cap ? '<figcaption>' + esc(b.cap) + '</figcaption>' : '') + '</figure>';
       default: return '';
     }
   }
@@ -135,7 +136,7 @@ KBR.pages.article = function (route) {
   const tagList = C.tags(m);
   const tagsHtml = tagList.length ? '<div class="chips tags-row" aria-label="Tagi" style="margin-top:20px;display:flex;flex-wrap:wrap;gap:8px">' + tagList.map(function (tg, k) { return '<span class="chip" style="width:auto;white-space:nowrap;cursor:default"' + (k >= 5 ? ' data-more-tag hidden' : '') + '>#' + esc(tg) + '</span>'; }).join('') + (tagList.length > 5 ? '<button type="button" class="chip" style="width:auto" aria-label="Pokaż pozostałe tagi (' + (tagList.length - 5) + ')" onclick="this.parentNode.querySelectorAll(\'[data-more-tag]\').forEach(function (x) { x.hidden = false; }); this.remove();">+' + (tagList.length - 5) + '</button>' : '') + '</div>' : '';
   const byRole = function (r) { return people.filter(function (x) { return x.role === r; }); };
-  const credited = byRole('autor').slice(0, 2).concat(byRole('ekspert').slice(0, 1));
+  const credited = byRole('autor').slice(0, 4).concat(byRole('ekspert').slice(0, 2));
   const authorsTop = '<div class="byline-people">' + credited.map(function (x) {
     return '<div class="byline-person"><a href="#/autor/' + x.p.id + '" tabindex="-1" aria-hidden="true">' + ui.personPhoto(x.p, 'person-photo--56') + '</a>' +
       '<span class="byline-person__body"><span class="t-label">' + (x.role === 'ekspert' ? 'Specjalista' : 'Autor') + '</span>' +
@@ -293,6 +294,16 @@ KBR.pages.article = function (route) {
         window.addEventListener('scroll', onScroll, { passive: true });
         update();
       }
+      root.querySelectorAll('[data-yt]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          const f = document.createElement('iframe');
+          f.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(btn.dataset.yt) + '?autoplay=1&rel=0';
+          f.title = btn.getAttribute('aria-label').replace(/^Odtwórz wideo: /, 'Wideo: ');
+          f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+          f.allowFullscreen = true; f.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+          btn.replaceWith(f); f.focus();
+        });
+      });
       const p = root.querySelector('[data-player]');
       if (p) {
         let t0 = 0, timer = null; const dur = +p.dataset.duration * 60;

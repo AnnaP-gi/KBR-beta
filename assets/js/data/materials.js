@@ -23,6 +23,7 @@ KBR.data.materials = [
         'Opóźnienie gminy może oznaczać realne koszty po stronie inwestora.',
         'Przed wyborem drogi prawnej warto udokumentować przebieg procedury planistycznej.'
       ] },
+      { t: 'youtube', id: 'aqz-KE-bpKQ', title: 'Plan ogólny gminy – komentarz eksperta', cap: 'Wideo demonstracyjne. W CMS redakcja wkleja link do filmu w serwisie YouTube.' },
       { t: 'h2', x: 'Jakie działania rozważyć' },
       { t: 'p', x: 'Pierwszym krokiem jest sprawdzenie, na jakim etapie znajduje się procedura w danej gminie: czy podjęto uchwałę o przystąpieniu do sporządzania planu, czy projekt był wyłożony i czy zebrano uwagi. Od tych informacji zależy, jaka ścieżka będzie adekwatna.' },
       { t: 'quote', x: 'Opóźnienie w planowaniu przestrzennym przestaje być sprawą urzędu. Staje się czynnikiem ryzyka, który trzeba ująć w harmonogramie inwestycji.', by: 'Redakcja KBR' },
@@ -202,7 +203,7 @@ KBR.data.materials = [
     id: 'ai-zdolnosc-organizacyjna', format: 'article', topic: 'ai', access: 'premium', issue: '2026-03',
     title: 'AI jako zdolność organizacyjna, nie projekt IT',
     lead: 'Firmy, które traktują sztuczną inteligencję jako jednorazowe wdrożenie, rzadko osiągają trwałe efekty. Pokazujemy, jak budować kompetencję, która rośnie razem z organizacją.',
-    authors: [{ id: 'anna-nowak', role: 'autor' }, { id: 'tomasz-zielinski', role: 'autor' }, { id: 'marta-wisniewska', role: 'ekspert' }], date: '2026-09-15', readTime: 12,
+    authors: [{ id: 'anna-nowak', role: 'autor' }, { id: 'tomasz-zielinski', role: 'autor' }, { id: 'katarzyna-lewandowska', role: 'autor' }, { id: 'piotr-nowak', role: 'autor' }, { id: 'marta-wisniewska', role: 'ekspert' }, { id: 'pola-lea', role: 'ekspert' }], date: '2026-09-15', readTime: 12,
     image: 'magazyn-ai-organizacja.jpg', imageAlt: 'Portret kobiety w dżinsowej koszuli na granatowym tle', imagePos: '50% 30%',
     body: [{"t":"p","x":"Wiele firm rozpoczęło pracę ze sztuczną inteligencją od projektów pilotażowych. Część przyniosła obiecujące wyniki, ale niewiele z nich zmieniło sposób, w jaki organizacja podejmuje decyzje. Problem rzadko leży w samej technologii. Zarządy traktują AI jak wdrożenie systemu – z budżetem, harmonogramem i datą zakończenia – podczas gdy jej wartość rośnie dopiero wtedy, gdy staje się codzienną umiejętnością zespołów."},
       {"t":"p","x":"Z rozmów z menedżerami średnich i dużych firm wynika, że organizacje, które zbudowały trwałą przewagę, różnią się od pozostałych w trzech obszarach."},

@@ -62,6 +62,6 @@ KBR.data.authors = [
     bio: 'Doradca strategiczny, specjalizuje się w planowaniu scenariuszowym i zarządzaniu portfelem projektów.' },
   { id: 'katarzyna-lewandowska', name: 'Katarzyna Lewandowska', initials: 'KL', photo: 'portret-02.png', role: 'Ekspertka cyberbezpieczeństwa i odporności operacyjnej', email: 'katarzyna.lewandowska@kozminski.edu.pl',
     bio: 'Zajmuje się cyberbezpieczeństwem i odpornością operacyjną organizacji.' },
-  { id: 'pola-lea', name: 'Pola Amelia Lea', initials: 'PL',
+  { id: 'pola-lea', name: 'Pola Amelia Lea', initials: 'PL', role: 'Ekspertka zarządzania danymi w sektorze publicznym',
     bio: 'Autorka materiału wideo z cyklu studenckich relacji.' }
 ];

@@ -142,7 +142,8 @@
   function subKey(u) { return 'subscription.' + u.id; }
   function ordersKey(u) { return 'orders.' + u.id; }
   KBR.subscription = {
-    plan: function (id) { return KBR.config.plans.find(function (p) { return p.id === id; }) || null; },
+    plan: function (id) { id = (KBR.config.planAliases || {})[id] || id; return KBR.config.plans.find(function (p) { return p.id === id; }) || null; },
+    role: function () { const s = KBR.subscription.get(); if (!s || s.status !== 'active') return null; const p = KBR.subscription.plan(s.planId); return p ? p.role : null; },
     price: function (planId, period) { const p = KBR.subscription.plan(planId); return p ? p.prices[period] : 0; },
     get: function (user) {
       user = user || KBR.auth.currentUser(); if (!user) return null;
@@ -217,7 +218,7 @@
     resetMeter: function () { S.remove(METER_KEY); },
     /* Ocena dostępu do materiału. consume=true nalicza wejście w limicie przeglądarki. */
     resolve: function (m, consume) {
-      const subscribed = KBR.subscription.has('premium') || (!!m.issue && KBR.subscription.has('magazine-articles'));
+      const subscribed = KBR.subscription.has('content') || (!!m.issue && KBR.subscription.has('magazine-articles'));
       if (m.access === 'open') return { full: true, kind: 'open' };
       if (subscribed) return { full: true, kind: 'subscriber' };
       if (m.access === 'premium') return { full: false, kind: 'premium' };

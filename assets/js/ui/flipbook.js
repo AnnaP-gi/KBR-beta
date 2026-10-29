@@ -15,7 +15,7 @@
       if (i === 0) return '<div class="fb-page fb-page--cover"><div class="mag-cover">' + ui.magCoverBook(issue) + '</div></div>';
       if (limit && i === limit) {
         return '<div class="fb-page fb-page--cta"><span class="t-label">Podgląd zakończony</span><p class="fb-cta__title">Czytaj cały numer ' + esc(issue.label) + '</p>' +
-          '<p class="fb-cta__text">Pełne wydanie w wersji elektronicznej jest dostępne w pakietach „Cyfrowy” i „Pełny”.</p>' +
+          '<p class="fb-cta__text">Pełne wydanie w wersji elektronicznej jest dostępne w każdym pakiecie subskrypcji.</p>' +
           '<a class="btn btn--primary" href="#/subskrypcja" data-fb-close>Zobacz pakiety' + I('chevRight', 16, 'stroke-width="2"') + '</a></div>';
       }
       return '<div class="fb-page' + (i % 2 ? ' fb-page--l' : ' fb-page--r') + '"><span class="fb-page__label">Treść</span><span class="fb-page__nr">' + i + '</span></div>';

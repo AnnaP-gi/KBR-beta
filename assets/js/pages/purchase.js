@@ -58,17 +58,17 @@
           '<p class="price-opt price-opt--year"><strong>' + num(p.prices.year) + ' ' + CFG.currency + '</strong><span>/ rok</span></p>' +
           '<p class="price-opt price-opt--month">' + esc(CFG.purchase.priceNote) + '</p>' +
         '</div>' +
-        (p.print ? '<p class="plan__ship">' + I('mail', 16) + '<span>' + esc(CFG.printShipping.short) + '</span></p>' : '') +
+        (p.print || p.benefits ? '<div class="plan__ship">' + (p.print ? '<p>' + I('mail', 16) + '<span>' + esc(CFG.printShipping.short) + '</span></p>' : '') + (p.benefits ? '<p>' + I('mail', 16) + '<span>' + esc(CFG.benefits.short) + '</span></p>' : '') + '</div>' : '') +
         (active
           ? (current ? '<p class="btn btn--outline" aria-disabled="true" style="margin-top:24px;height:48px">Aktywny plan</p>'
-            : '<div class="plan__change"><p>Zmiana pakietu:</p><a class="contact-box__mail" href="mailto:subskrypcje@kbr.example?subject=' + encodeURIComponent('Zmiana pakietu na ' + p.name) + '">' + I('mail', 18) + 'subskrypcje@kbr.example</a></div>')
+            : '<p class="plan__change" style="margin-top:24px">Dostępny po zakończeniu obecnej subskrypcji.</p>')
           : '<button type="button" class="btn btn--primary" data-action="select-plan" data-plan="' + p.id + '">' + esc(p.cta || ('Wybierz: ' + p.name)) + I('chevRight', 16, 'stroke-width="2"') + '</button>') +
         '<ul>' + p.features.map(function (f) { return '<li class="' + (f.included ? 'yes' : 'no') + '">' + I(f.included ? 'check' : 'dash', 20) + '<span>' + (f.included ? '' : '<span class="visually-hidden">Nie obejmuje: </span>') + esc(f.text) + '</span></li>'; }).join('') + '</ul></article>';
     }).join('');
 
     const html = '<div class="container">' +
       '<header class="plans-head">' + ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Subskrypcja' }]).replace('<nav class="crumbs"', '<nav class="crumbs" style="display:flex;justify-content:center"') +
-        '<h1 style="margin-top:20px">Wybierz subskrypcję magazynu KBR</h1><p>Trzy warianty subskrypcji magazynu. Wydanie drukowane, cyfrowe z dostępem do wszystkich artykułów lub oba razem.</p>' +
+        '<h1 style="margin-top:20px">Wybierz subskrypcję magazynu KBR</h1><p>Każdy pakiet daje pełny dostęp do serwisu i magazynu online. Drukowany dodaje wysyłkę wydania papierowego, a Premium + – także zniżki na szkolenia i zaproszenia na wydarzenia Uczelni.</p>' +
         (active ? '<div class="notice notice--success" style="max-width:760px;margin:24px auto 0;text-align:left">' + I('checkCircle', 18) + '<span>Masz aktywną subskrypcję. <a class="link" href="#/konto/subskrypcja">Zobacz szczegóły w koncie</a></span></div>' : '') +
         sourceBox(src, 'Wybierasz subskrypcję, aby przeczytać') +
       '</header>' +
@@ -81,7 +81,7 @@
             return '<td style="text-align:center;color:' + (on ? 'var(--c-gold)' : 'var(--c-border-strong)') + '">' + I(on ? 'check' : 'dash', 20) + '<span class="visually-hidden">' + (on ? 'Tak' : 'Nie') + '</span></td>';
           }).join('') + '</tr>';
         }).join('') + '</tbody></table></div>' +
-        '<p class="notice" style="margin-top:20px">' + I('info', 18) + '<span>Pakiet Drukowany obejmuje wyłącznie drukowane wydanie magazynu – bez wersji PDF i bez dostępu do artykułów w serwisie. Pakiet Pełny łączy wersję cyfrową i drukowaną.</span></p></section>' +
+        '<p class="notice" style="margin-top:20px">' + I('info', 18) + '<span>Pakiet wybierasz na 12 miesięcy. Zniżki i zaproszenia w pakiecie Premium + przychodzą e-mailem na adres konta.</span></p></section>' +
       '<div style="height:96px"></div></div>';
 
     return { title: 'Subskrypcja – KBR', html: html, mount: function (root) {
@@ -164,7 +164,12 @@
   KBR.pages.order = function (route) {
     const r = requireDraft(route); if (r) return r;
     const u = KBR.auth.currentUser();
-    if (KBR.subscription.isActive()) return KBR.pages.redirect('#/konto/subskrypcja');
+    if (KBR.subscription.isActive()) {
+      const cur = KBR.subscription.get(), cp = KBR.subscription.plan(cur.planId), want = KBR.subscription.plan((KBR.checkout.get() || {}).planId);
+      KBR.checkout.clear();
+      setTimeout(function () { ui.toast('To konto ma już aktywny pakiet ' + cp.name + ' (do ' + ui.dateLong(cur.validUntil) + ')' + (want && want.id !== cp.id ? '. Pakiet ' + want.name + ' możesz kupić po jego zakończeniu.' : '.'), { timeout: 9000 }); }, 80);
+      return KBR.pages.redirect('#/konto/subskrypcja');
+    }
     let d = KBR.checkout.get();
     let o = d.orderId && KBR.orders.get(d.orderId);
     if (!o || o.planId !== d.planId || ['created', 'awaiting_payment'].indexOf(o.status) === -1) {

@@ -12,7 +12,8 @@
 
     const subRec = sub && KBR.subscription.get ? KBR.subscription.get() : null;
     const subPlan = subRec ? KBR.subscription.plan(subRec.planId) : null;
-    const subTag = !subPlan ? '' : (subPlan.entitlements.indexOf('premium') !== -1 ? '<span class="hdr-premium">Premium</span>' : '<span class="hdr-premium hdr-premium--print">Prenumerata</span>');
+    const subRole = subPlan && KBR.config.roles[subPlan.role];
+    const subTag = !subRole ? '' : '<span class="hdr-premium' + (subRole.cls ? ' ' + subRole.cls : '') + '">' + subRole.label + '</span>';
     const today = new Date();
     const MON = ['sty', 'lut', 'mar', 'kwi', 'maj', 'cze', 'lip', 'sie', 'wrz', 'paź', 'lis', 'gru'];
     const NAV_IDS = ['przywodztwo', 'strategia', 'zarzadzanie', 'przedsiebiorczosc', 'ai', 'technologie', 'innowacje', 'marketing', 'finanse'];
@@ -37,31 +38,35 @@
         '<div class="masthead__date" aria-hidden="true"><span class="masthead__day">' + today.getDate() + '</span><span class="masthead__mon">' + MON[today.getMonth()] + '</span></div>' +
         '<a class="logo" href="#/" aria-label="Kozminski Business Review – strona główna"><img class="logo__img" src="assets/img/kbr-logo.svg" alt="" width="208" height="56"></a>' +
         '<div class="masthead__actions">' +
+          '<button type="button" class="hdr-link hdr-search-btn" data-action="toggle-search" aria-expanded="false" aria-controls="site-search">' + I('search', 20) + '<span>Szukaj</span></button>' +
           account + subscribeBtn +
-          '<button type="button" class="icon-btn" data-action="toggle-drawer" aria-expanded="false" aria-controls="mobile-drawer"><span class="visually-hidden">Menu</span>' + I('menu', 24) + '</button>' +
+          '<button type="button" class="icon-btn" data-action="toggle-drawer" aria-expanded="false" aria-controls="mobile-drawer"><span class="visually-hidden">Menu</span><span class="icon-btn__open">' + I('menu', 24) + '</span><span class="icon-btn__close">' + I('close', 24) + '</span></button>' +
         '</div>' +
       '</div>' +
-      '<nav class="container mainnav" aria-label="Menu główne"><ul class="mainnav__list">' +
+            '<nav class="container mainnav" aria-label="Menu główne"><ul class="mainnav__list">' +
         '<li><a class="mainnav__link mainnav__link--issue" href="#/magazyn"' + cur('/magazyn') + '>' + I('newspaper', 20) + 'Nowy numer</a></li>' +
         navTopics.map(function (t, i) { return '<li' + (i >= 7 ? ' class="mainnav__opt mainnav__opt--2"' : i >= 5 ? ' class="mainnav__opt"' : '') + '><a class="mainnav__link" href="#/tematy/' + t.slug + '"' + cur('/tematy/' + t.slug) + '>' + esc(t.name) + '</a></li>'; }).join('') +
         '<li class="menu"><button type="button" class="mainnav__link" data-action="menu" aria-expanded="false" aria-controls="topics-menu" aria-haspopup="true">Więcej' + I('chevDown', 14) + '</button>' +
           '<ul class="menu__panel menu__panel--cols" id="topics-menu" hidden>' + navTopics.slice(5).map(function (t, i) { return '<li class="menu__opt' + (i >= 2 ? ' menu__opt--2' : '') + '"><a href="#/tematy/' + t.slug + '">' + esc(t.name) + '</a></li>'; }).join('') + moreTopics + '<li class="menu__sep"><a href="#/tematy">Wszystkie tematy</a></li></ul></li>' +
+        '<li class="mainnav__search"><button type="button" class="mainnav__search-btn" data-action="toggle-search" aria-expanded="false" aria-controls="site-search" aria-label="Szukaj" title="Szukaj">' + I('search', 20) + '</button></li>' +
       '</ul></nav>' +
-      '<nav class="mobile-drawer" id="mobile-drawer" aria-label="Menu główne (mobilne)"><div class="container"><ul class="mobile-drawer__list">' +
-        '<li><a href="#/artykuly">Artykuły' + I('chevRight', 18) + '</a></li>' +
-        '<li><a href="#/magazyn">Magazyn' + I('chevRight', 18) + '</a></li>' +
-        '<li><button type="button" class="drawer-toggle" data-action="drawer-sub" aria-expanded="false" aria-controls="drawer-topics">Tematy' + I('chevDown', 18) + '</button><ul class="mobile-drawer__sub" id="drawer-topics" hidden>' + topics + '</ul></li>' +
-      '</ul><div class="mobile-drawer__account">' +
-        (user
-          ? '<a class="btn btn--outline" href="#/konto/subskrypcja">' + I('card', 18) + 'Moja subskrypcja</a><button type="button" class="btn btn--ghost" data-action="logout">' + I('logout', 18) + 'Wyloguj się</button>'
-          : '<a class="btn btn--outline" href="#/logowanie" data-action="auth-link">' + I('userPlain', 18) + 'Zaloguj się</a><a class="btn btn--ghost" href="#/rejestracja" data-action="auth-link">Załóż bezpłatne konto</a>') +
-      '</div></div></nav>';
+      '<div class="site-search" id="site-search"><div class="container">' + ui.searchForm('q-desktop', route && route.path === '/wyszukiwanie' ? route.query.q : '') + '</div></div>' +
+      '<nav class="mobile-drawer" id="mobile-drawer" aria-label="Menu główne (mobilne)"><div class="container">' +
+        '<div class="mobile-drawer__search">' + ui.searchForm('q-mobile', route && route.path === '/wyszukiwanie' ? route.query.q : '') + '</div>' +
+        '<ul class="mobile-drawer__list">' +
+          '<li><a class="mobile-drawer__issue" href="#/magazyn"' + cur('/magazyn') + '>' + I('newspaper', 20) + '<span>Nowy numer</span>' + I('chevRight', 18) + '</a></li>' +
+        '</ul>' +
+        '<div class="mobile-drawer__topics"><p class="mobile-drawer__label">Tematy</p>' +
+          '<ul class="mobile-drawer__grid">' + navTopics.concat(KBR.data.topics.filter(function (t) { return NAV_IDS.indexOf(t.id) === -1; })).map(function (t) { return '<li><a href="#/tematy/' + t.slug + '"' + cur('/tematy/' + t.slug) + '>' + esc(t.name) + '</a></li>'; }).join('') + '</ul>' +
+          '<a class="mobile-drawer__all" href="#/tematy"' + cur('/tematy') + '>Wszystkie tematy' + I('chevRight', 16, 'stroke-width="2"') + '</a>' +
+        '</div>' +
+      '</div></nav>';
   };
 
   ui.searchForm = function (id, value) {
     const names = { 'q-desktop': 'Wyszukiwarka serwisu', 'q-mobile': 'Wyszukiwarka serwisu (mobilna)', 'q-page': 'Wyszukiwarka na stronie wyników' };
-    return '<form class="search" role="search" aria-label="' + (names[id] || 'Wyszukiwarka') + '" data-form="search" action="#/wyszukiwanie"><label class="visually-hidden" for="' + id + '">Szukaj artykułów i tematów</label>' +
-      '<span class="search__icon">' + I('search', 18) + '</span><input id="' + id + '" name="q" type="search" placeholder="Szukaj materiałów, osób, wydarzeń" autocomplete="off" value="' + esc(value || '') + '"></form>';
+    return '<form class="search" role="search" aria-label="' + (names[id] || 'Wyszukiwarka') + '" data-form="search" action="#/wyszukiwanie"><label class="visually-hidden" for="' + id + '">Szukaj artykułów, tematów, tagów i osób</label>' +
+      '<span class="search__icon">' + I('search', 18) + '</span><input id="' + id + '" name="q" type="search" placeholder="Szukaj" autocomplete="off" value="' + esc(value || '') + '"></form>';
   };
 
   /* ------------------------------------------------------------ Stopka */
@@ -163,7 +168,7 @@
   ui.premiumTag = function (m) { return m.access === 'premium' ? '<span class="badge badge--premium badge--sm">' + ui.lockIcon(m, 12) + 'Premium</span>' : ''; };
   ui.lockIcon = function (m, size) {
     if (m.access !== 'premium') return '';
-    const open = KBR.subscription.has('premium');
+    const open = KBR.subscription.has('content');
     return '<span title="' + (open ? 'Masz dostęp do tego materiału' : 'Materiał Premium') + '">' + I(open ? 'unlock' : 'lock', size || 24) + '</span>';
   };
   ui.savedFlag = function (m) {

@@ -20,7 +20,7 @@
 
   function accessNote(m) {
     if (m.access !== 'premium') return '';
-    return KBR.subscription.has('premium')
+    return KBR.subscription.has('content')
       ? '<span class="unlock-note">' + I('unlock', 16) + 'Premium – pełny dostęp w ramach subskrypcji</span>'
       : '<span class="lock-note">' + I('lock', 16) + 'Premium – pełna treść po wykupieniu subskrypcji</span>';
   }
@@ -88,6 +88,15 @@
     } };
   };
 
+  function benefitsPanel() {
+    const u = KBR.auth.currentUser();
+    return '<section class="panel" aria-labelledby="h-benefits"><h2 id="h-benefits">Korzyści Premium +</h2>' +
+      '<ul class="benefits-list"><li>' + I('check', 18) + '<span><strong>Zniżki na szkolenia</strong> Akademii Leona Koźmińskiego – kod zniżkowy w wiadomości e-mail.</span></li>' +
+      '<li>' + I('check', 18) + '<span><strong>Zaproszenia na wydarzenia</strong> organizowane przez Uczelnię – wysyłane e-mailem przed każdym wydarzeniem.</span></li></ul>' +
+      '<div class="ship-next" style="margin-top:16px">' + I('mail', 22) + '<div><span class="t-label">Wiadomości wysyłamy na adres</span><strong>' + esc(u.email) + '</strong><span class="t-meta" style="font-weight:400">Adres konta (login). Dodaj nadawcę do zaufanych, aby wiadomości nie trafiały do spamu.</span></div></div>' +
+      '<p class="hint" style="margin-top:16px">' + esc(KBR.config.benefits.details) + '</p></section>';
+  }
+
   function printPanel() {
     const sh = KBR.subscription.shipments(), addr = KBR.subscription.shippingAddress();
     return '<section class="panel" aria-labelledby="h-print"><h2 id="h-print">Drukowane wydanie magazynu</h2>' +
@@ -108,20 +117,17 @@
     let inner = '<h1>Moja subskrypcja</h1>';
     if (sub && sub.status === 'active') {
       const p = KBR.subscription.plan(sub.planId), per = KBR.config.periods[sub.period];
-      inner += '<p class="sub">' + (p.entitlements.indexOf('premium') !== -1 ? 'Masz pełny dostęp do materiałów Premium.' : 'Otrzymujesz drukowane wydanie magazynu. Pakiet nie obejmuje dostępu do treści Premium w serwisie.') + '</p>' +
+      inner += '<p class="sub">' + ({ cyfrowa: 'Masz pełny dostęp do wszystkich artykułów i magazynu online.', prenumerata: 'Masz pełny dostęp do serwisu i otrzymujesz drukowane wydanie magazynu.', premium: 'Masz pełny dostęp do serwisu, drukowane wydanie magazynu oraz zniżki i zaproszenia Akademii Leona Koźmińskiego.' }[p.role] || '') + '</p>' +
         '<section class="panel" aria-labelledby="h-sub"><div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center"><h2 id="h-sub">Aktualny plan</h2><span class="status-pill status-pill--ok">' + I('checkCircle', 16) + 'Aktywna</span></div>' +
         '<p class="t-serif" style="font-size:36px;line-height:40px;margin-top:16px">' + esc(p.name) + '</p>' +
         '<dl class="dl"><dt>Źródło dostępu</dt><dd>Zakup indywidualny</dd><dt>Okres i płatność</dt><dd>12 miesięcy, płatność jednorazowa (' + ui.money(sub.amount) + ')</dd>' +
         '<dt>Aktywna od</dt><dd>' + ui.dateLong(sub.startedAt) + '</dd><dt>Dostęp ważny do</dt><dd>' + ui.dateLong(sub.validUntil) + '</dd>' +
-        '<dt>Numer zamówienia</dt><dd>' + esc(sub.orderId) + '</dd><dt>Zakres</dt><dd>' + p.features.filter(function (x) { return x.included; }).map(function (x) { return esc(x.text); }).join('<br>') + '</dd></dl>' +
-        '<div class="btn-row" style="margin-top:24px"><a class="btn btn--primary" href="#/subskrypcja">Porównaj pakiety</a></div>' +
+        '<dt>Rola konta</dt><dd>' + esc((KBR.config.roles[p.role] || {}).label || '–') + '</dd><dt>Numer zamówienia</dt><dd>' + esc(sub.orderId) + '</dd><dt>Zakres</dt><dd>' + p.features.filter(function (x) { return x.included; }).map(function (x) { return esc(x.text); }).join('<br>') + '</dd></dl>' +
         '</section>' +
         (function () { const ord = KBR.orders && KBR.orders.get ? KBR.orders.get(sub.orderId) : null; const inv = ord && ord.invoice;
           return '<section class="panel" aria-labelledby="h-invoice"><h2 id="h-invoice">Faktura</h2><p style="margin-top:12px">' +
             (inv ? 'Faktura na firmę <strong>' + esc(inv.company) + '</strong> (NIP ' + esc(inv.nip) + ') została wystawiona w Krajowym Systemie e-Faktur (KSeF). Znajdziesz ją w KSeF w kontekście NIP swojej firmy.'
                  : 'Faktura nie była zamawiana przy tym zakupie. Jeśli zamówisz fakturę na firmę, zostanie ona wystawiona w Krajowym Systemie e-Faktur (KSeF).') + '</p></section>'; })() +
-        '<section class="panel" aria-labelledby="h-change"><h2 id="h-change">Zmiana pakietu</h2><p style="margin-top:12px">Chcesz zmienić pakiet w trakcie okresu dostępu? Napisz do nas – podaj numer zamówienia <strong>' + esc(sub.orderId) + '</strong> i pakiet, na który chcesz przejść. Skontaktujemy się z Tobą.</p>' +
-          '<a class="contact-box__mail" style="margin-top:12px" href="mailto:subskrypcje@kbr.example?subject=' + encodeURIComponent('Zmiana pakietu – zamówienie ' + sub.orderId) + '">' + I('mail', 18) + 'subskrypcje@kbr.example</a></section>' +
         (p.print ? printPanel() : '');
     } else {
       inner += '<p class="sub">Na tym koncie nie ma aktywnej subskrypcji. Możesz czytać materiały otwarte i korzystać z darmowego limitu.</p>' +
@@ -156,7 +162,7 @@
     if (!addr && !(p && p.print)) return '';
     const v = addr || {};
     return '<form class="panel" id="ship-form" novalidate aria-labelledby="h-shipaddr"><h2 id="h-shipaddr">Adres wysyłki magazynu</h2>' +
-      '<p style="margin-top:12px">Na ten adres wysyłamy drukowane wydanie kwartalnika w ramach planu ' + esc(p ? p.name : 'Pełny dostęp') + '.</p>' +
+      '<p style="margin-top:12px">Na ten adres wysyłamy drukowane wydanie kwartalnika w ramach planu ' + esc(p ? p.name : 'Drukowany') + '.</p>' +
       '<div class="field" style="margin-top:20px"><label for="sa-name">Imię i nazwisko odbiorcy</label><input class="input" id="sa-name" autocomplete="shipping name" value="' + esc(v.name || '') + '"></div>' +
       '<div class="field"><label for="sa-street">Ulica, numer domu i lokalu</label><input class="input" id="sa-street" autocomplete="shipping street-address" value="' + esc(v.street || '') + '"></div>' +
       '<div class="two-col"><div class="field"><label for="sa-postal">Kod pocztowy</label><input class="input" id="sa-postal" autocomplete="shipping postal-code" placeholder="00-000" value="' + esc(v.postal || '') + '"></div>' +

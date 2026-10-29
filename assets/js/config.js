@@ -14,56 +14,74 @@ KBR.config = {
      0 = licznik wyłączony (materiały „w ramach limitu” są wtedy otwarte). */
   meter: {
     defaultLimit: 3,
-    period: 'bez odnawiania (na przeglądarkę)',
+    period: 'bez odnawiania – licznik zapisany w przeglądarce (po wyczyszczeniu historii lub cookies liczy się od nowa; ryzyko zaakceptowane)',
     appliesTo: 'gość (niezalogowany); po limicie wymagane bezpłatne konto'
   },
 
   currency: 'zł',
 
-  /* Trzy warianty subskrypcji magazynu – wyłącznie rozliczenie roczne. Ceny DEMONSTRACYJNE.
-     Kolejność features jest wspólna dla wszystkich planów (tabela porównawcza). */
+  /* Trzy pakiety – wyłącznie rozliczenie roczne. Każdy pakiet daje pełny dostęp do serwisu.
+     Zmiana pakietu w trakcie okresu dostępu NIE jest przewidziana w MVP.
+     role: rola konta nadawana po opłaceniu (cyfrowa | prenumerata | premium). */
   featureList: [
-    'Magazyn w formacie PDF do pobrania',
+    'Dostęp do wszystkich artykułów w serwisie',
+    'Magazyn online: czytnik wydania i PDF do pobrania',
     'Drukowane wydanie magazynu wysyłane na podany adres',
-    'Dostęp online do artykułów opublikowanych w magazynie',
-    'Dostęp do wszystkich artykułów w serwisie'
+    'Zniżki na szkolenia Akademii Leona Koźmińskiego',
+    'Zaproszenia na wydarzenia organizowane przez Uczelnię'
   ],
+  roles: {
+    cyfrowa: { label: 'Cyfrowa', cls: 'hdr-premium--digital' },
+    prenumerata: { label: 'Prenumerata', cls: 'hdr-premium--print' },
+    premium: { label: 'Premium +', cls: '' }
+  },
   plans: [
     {
+      id: 'cyfrowy',
+      role: 'cyfrowa',
+      name: 'Cyfrowy',
+      description: 'Pełny dostęp do wszystkich artykułów w serwisie oraz do magazynu online i w PDF.',
+      cta: 'Wybieram cyfrowy',
+      prices: { year: 120 },
+      entitlements: ['content', 'magazine-pdf', 'magazine-articles'],
+      includes: [true, true, false, false, false]
+    },
+    {
       id: 'drukowany',
+      role: 'prenumerata',
       name: 'Drukowany',
-      description: 'Drukowane wydanie magazynu wysyłane na podany adres. Bez dostępu do serwisu i artykułów online.',
+      description: 'Wszystko, co w pakiecie Cyfrowym, oraz drukowane wydanie magazynu wysyłane na podany adres.',
       cta: 'Wybieram drukowany',
       prices: { year: 160 },
-      entitlements: [],
+      entitlements: ['content', 'magazine-pdf', 'magazine-articles', 'print'],
       print: true,
-      includes: [false, true, false, false]
+      includes: [true, true, true, false, false]
     },
     {
-      id: 'cyfrowy',
-      name: 'Cyfrowy',
-      description: 'Pełny dostęp do magazynu w PDF oraz do wszystkich artykułów w serwisie.',
-      cta: 'Wybieram cyfrowy',
-      prices: { year: 160 },
-      entitlements: ['premium', 'magazine-pdf', 'magazine-articles'],
-      includes: [true, false, true, true]
-    },
-    {
-      id: 'pelny',
+      id: 'premium',
+      role: 'premium',
       featured: true,
-      name: 'Pełny',
-      description: 'Wersja cyfrowa i drukowana razem: magazyn w PDF, wydanie drukowane z dostawą i dostęp do wszystkich artykułów.',
-      cta: 'Wybieram pełny',
+      name: 'Premium +',
+      description: 'Pakiet Drukowany oraz zniżki na szkolenia i zaproszenia na wydarzenia Uczelni.',
+      cta: 'Wybieram Premium +',
       prices: { year: 280 },
-      entitlements: ['premium', 'magazine-pdf', 'magazine-articles'],
+      entitlements: ['content', 'magazine-pdf', 'magazine-articles', 'print', 'benefits'],
       print: true,
-      includes: [true, true, true, true]
+      benefits: true,
+      includes: [true, true, true, true, true]
     }
   ],
+  /* Korzyści Premium – wysyłane e-mailem na adres konta. */
+  benefits: {
+    short: 'Zniżki i zaproszenia otrzymasz e-mailem.',
+    details: 'Kody zniżkowe na szkolenia i zaproszenia na wydarzenia Akademii Leona Koźmińskiego wysyłamy e-mailem na adres Twojego konta przez cały okres pakietu. Po wygaśnięciu pakietu wiadomości przestają przychodzić.'
+  },
+  /* Identyfikatory pakietów z wcześniejszych wersji prototypu (dane w localStorage). */
+  planAliases: { pelny: 'premium' },
 
   /* Wysyłka drukowanego wydania – DANE DEMONSTRACYJNE. */
   printShipping: {
-    short: 'Wysyłka drukowanego wydania raz na kwartał.',
+    short: 'Wydanie drukowane raz na kwartał.',
     details: 'Kwartalnik wysyłamy Pocztą Polską. Pierwszy egzemplarz otrzymasz z najbliższej wysyłki po opłaceniu zamówienia. Dostawa na terenie Polski trwa 3–5 dni roboczych.',
     next: '1–7 grudnia 2026 (Nr 04 / 2026)'
   },
@@ -89,10 +107,10 @@ KBR.config = {
              Wartości poniżej to nazwy do ustawienia w Jotform – muszą być identyczne. */
   jotform: {
     formUrl: '',
-    formUrlByPlan: { cyfrowy: '', drukowany: '', pelny: '' },
+    formUrlByPlan: { cyfrowy: '', drukowany: '', premium: '' },
     fields: {
       plan: 'pakiet',              // ukryte, np. „Cyfrowy — 12 miesięcy”
-      planCode: 'kodPakietu',      // ukryte: cyfrowy | drukowany | pelny
+      planCode: 'kodPakietu',      // ukryte: cyfrowy | drukowany | premium
       orderId: 'numerZamowienia',  // ukryte: numer zamówienia KBR (powiązanie z kontem)
       userId: 'idKonta',           // ukryte: identyfikator konta KBR
       amount: 'kwota',             // ukryte: kwota w zł (kontrola po stronie serwera)
