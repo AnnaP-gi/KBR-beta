@@ -40,7 +40,7 @@ KBR.config = {
       id: 'cyfrowy',
       role: 'cyfrowa',
       name: 'Cyfrowy',
-      description: 'Pełny dostęp do wszystkich artykułów w serwisie oraz do magazynu online i w PDF.',
+      description: 'Dostęp do wszystkich treści serwisu i magazynu online.',
       cta: 'Wybieram cyfrowy',
       prices: { year: 120 },
       entitlements: ['content', 'magazine-pdf', 'magazine-articles'],
@@ -50,7 +50,7 @@ KBR.config = {
       id: 'drukowany',
       role: 'prenumerata',
       name: 'Drukowany',
-      description: 'Wszystko, co w pakiecie Cyfrowym, oraz drukowane wydanie magazynu wysyłane na podany adres.',
+      description: 'Pełny dostęp online oraz drukowane wydanie magazynu z dostawą pod wskazany adres.',
       cta: 'Wybieram drukowany',
       prices: { year: 160 },
       entitlements: ['content', 'magazine-pdf', 'magazine-articles', 'print'],
@@ -62,7 +62,7 @@ KBR.config = {
       role: 'premium',
       featured: true,
       name: 'Premium +',
-      description: 'Pakiet Drukowany oraz zniżki na szkolenia i zaproszenia na wydarzenia Uczelni.',
+      description: 'Wszystko z pakietu Drukowany, a do tego zniżki na szkolenia i zaproszenia na wydarzenia Uczelni.',
       cta: 'Wybieram Premium +',
       prices: { year: 280 },
       entitlements: ['content', 'magazine-pdf', 'magazine-articles', 'print', 'benefits'],
@@ -73,7 +73,7 @@ KBR.config = {
   ],
   /* Korzyści Premium – wysyłane e-mailem na adres konta. */
   benefits: {
-    short: 'Zniżki i zaproszenia otrzymasz e-mailem.',
+    short: 'Kody zniżkowe i zaproszenia trafiają prosto na skrzynkę e-mail.',
     details: 'Kody zniżkowe na szkolenia i zaproszenia na wydarzenia Akademii Leona Koźmińskiego wysyłamy e-mailem na adres Twojego konta przez cały okres pakietu. Po wygaśnięciu pakietu wiadomości przestają przychodzić.'
   },
   /* Identyfikatory pakietów z wcześniejszych wersji prototypu (dane w localStorage). */
@@ -81,7 +81,7 @@ KBR.config = {
 
   /* Wysyłka drukowanego wydania – DANE DEMONSTRACYJNE. */
   printShipping: {
-    short: 'Wydanie drukowane raz na kwartał.',
+    short: 'Nowe wydanie drukowane co kwartał.',
     details: 'Kwartalnik wysyłamy Pocztą Polską. Pierwszy egzemplarz otrzymasz z najbliższej wysyłki po opłaceniu zamówienia. Dostawa na terenie Polski trwa 3–5 dni roboczych.',
     next: '1–7 grudnia 2026 (Nr 04 / 2026)'
   },

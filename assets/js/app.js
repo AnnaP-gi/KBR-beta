@@ -150,6 +150,9 @@ KBR.app = (function () {
 
   function onClick(e) {
     const t = e.target.closest('[data-action]');
+    const drawer = document.querySelector('.mobile-drawer.is-open');
+    if (drawer && !e.target.closest('.site-header')) { e.preventDefault(); const b = document.querySelector('[data-action="toggle-drawer"]'); drawer.classList.remove('is-open'); if (b) b.setAttribute('aria-expanded', 'false'); return; }
+    if (window.matchMedia('(max-width: 1023px)').matches && document.querySelector('[data-action="menu"][aria-expanded="true"]') && !e.target.closest('.menu')) { e.preventDefault(); closeMenus(); return; }
     if (!t) { if (!e.target.closest('.menu__panel')) closeMenus(); return; }
     const a = t.dataset.action;
     switch (a) {
