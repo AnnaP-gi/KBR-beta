@@ -77,7 +77,7 @@ KBR.ui = KBR.ui || {};
     const region = document.getElementById('toast-region');
     const el = document.createElement('div');
     el.className = 'toast' + (opts.kind ? ' toast--' + opts.kind : '');
-    el.innerHTML = '<span style="display:flex;gap:10px;align-items:center">' + (opts.kind === 'success' ? '<span class="toast__icon">' + I('checkCircle', 20) + '</span>' : '') + '<span>' + html + '</span></span>' +
+    el.innerHTML = '<span style="display:flex;gap:8px;align-items:center">' + (opts.kind === 'success' ? '<span class="toast__icon">' + I('checkCircle', 20) + '</span>' : '') + '<span>' + html + '</span></span>' +
       '<button type="button" aria-label="Zamknij komunikat">' + I('close', 18) + '</button>';
     el.querySelector('button').addEventListener('click', function () { el.remove(); });
     region.appendChild(el);

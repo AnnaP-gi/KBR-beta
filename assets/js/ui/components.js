@@ -32,7 +32,7 @@
     const subscribeBtn = sub ? '' : '<a class="btn btn--primary" href="#/subskrypcja"><span class="btn-long">Subskrybuj</span><span class="btn-short">Subskr.</span>' + I('chevRight', 16, 'stroke-width="2.25"') + '</a>';
 
     return '' +
-      (KBR.storage.get('topbarClosed', false, 'session') ? '' : '<div class="topbar"><div class="container topbar__inner"><a href="#/magazyn"><span class="topbar__dot"></span><span class="topbar__strong">Nowe wydanie magazynu już dostępne</span><span class="topbar__divider"></span><span class="topbar__text">Technologie, AI i nowe spojrzenie na przywództwo. Odkryj tematy najnowszego numeru</span></a>' +
+      (KBR.storage.get('topbarClosed', false, 'session') ? '' : '<div class="topbar"><div class="container topbar__inner"><a href="#/magazyn"><span class="topbar__dot"></span><span class="topbar__strong">Nowe wydanie: ' + esc((KBR.content.currentIssue() || {}).title || 'Magazyn KBR') + '</span><span class="topbar__divider"></span><span class="topbar__text">' + esc((KBR.content.currentIssue() || {}).label || '') + ' – odkryj tematy najnowszego numeru</span></a>' +
         '<button type="button" class="topbar__close" data-action="close-topbar" aria-label="Zamknij pasek informacyjny">' + I('close', 16, 'stroke-width="2"') + '</button></div></div>') +
       '<div class="container masthead">' +
         '<div class="masthead__date" aria-hidden="true"><span class="masthead__day">' + today.getDate() + '</span><span class="masthead__mon">' + MON[today.getMonth()] + '</span></div>' +
@@ -71,12 +71,13 @@
 
   /* ------------------------------------------------------------ Stopka */
   ui.footer = function () {
-    const socials = [['facebook', 'Facebook'], ['linkedin', 'LinkedIn'], ['x', 'X (Twitter)'], ['instagram', 'Instagram'], ['youtube', 'YouTube'], ['flickr', 'Flickr']];
+    /* Adresy profili – do uzupełnienia, gdy zostaną przekazane */
+    const socials = [['linkedin', 'LinkedIn', ''], ['x', 'X (Twitter)', ''], ['youtube', 'YouTube', '']];
     return '<footer class="site-footer" aria-labelledby="footer-title"><h2 id="footer-title" class="visually-hidden">Stopka serwisu</h2><div class="container"><div class="footer-grid">' +
       '<div class="footer-brand">' +
         '<a class="logo" href="#/" aria-label="Kozminski Business Review – strona główna"><img class="logo__img" src="assets/img/kbr-logo-light.svg" alt="" width="208" height="56"></a>' +
         '<p>Polska platforma wiedzy biznesowej dla menedżerów, liderek i liderów, wydawana przez Akademię Leona Koźmińskiego.</p>' +
-        '<ul class="socials" aria-label="Kanały społecznościowe">' + socials.map(function (s) { return '<li><a href="#/strona/kanaly" aria-label="' + s[1] + ' (adres do uzupełnienia)"><img src="assets/img/social-' + s[0] + '.png" alt=""></a></li>'; }).join('') + '</ul>' +
+        '<ul class="socials" aria-label="Kanały społecznościowe">' + socials.map(function (s) { return '<li><a href="' + (s[2] || '#') + '"' + (s[2] ? ' target="_blank" rel="noopener" aria-label="' + s[1] + ' (otwiera się w nowej karcie)"' : ' onclick="return false" aria-label="' + s[1] + ' (adres do uzupełnienia)"') + '><img src="assets/img/social-' + s[0] + '.png" alt=""></a></li>'; }).join('') + '</ul>' +
         '<div class="footer-cols">' +
           '<div><h2>O KBR</h2><ul><li><a href="#/strona/o-kbr">Misja i wizja</a></li><li><a href="#/autorzy">Autorzy i eksperci</a></li><li><a href="#/strona/kontakt">Kontakt</a></li></ul></div>' +
           '<div><h2>Koźmiński</h2><ul>' +
@@ -110,7 +111,7 @@
         '<div class="nl-row" data-error-anchor><label class="visually-hidden" for="' + id + '-email">Adres e-mail</label><input class="input input--dark" type="email" id="' + id + '-email" name="email" placeholder="Adres e-mail" autocomplete="email"><button class="btn btn--primary" type="submit">Zapisz się' + I('chevRight', 16, 'stroke-width="2" style="color:#e9aab9"') + '</button></div>' +
         '<div class="nl-status" role="status"></div></form>';
     }
-    return '<form class="nl-box" data-form="newsletter" novalidate aria-labelledby="' + id + '-title"><h2 class="t-label" id="' + id + '-title">Newsletter KBR</h2>' +
+    return '<form class="nl-box" data-form="newsletter" novalidate aria-labelledby="' + id + '-title"><h2 class="visually-hidden" id="' + id + '-title">Newsletter KBR</h2>' +
       '<p>Badania i nowe artykuły - dołącz do grona osób, które jako pierwsze otrzymują informacje prosto na swoją skrzynkę.</p>' +
       '<label class="check" for="' + id + '-consent"><input type="checkbox" id="' + id + '-consent" name="consent"><span>Wyrażam zgodę na otrzymywanie za pośrednictwem poczty e-mail powiadomień i informacji handlowych. Administratorem Pani/Pana danych osobowych jest Akademia Leona Koźmińskiego. <a href="#/strona/polityka-prywatnosci">Szczegółowe informacje na temat przetwarzania Pani/Pana danych osobowych.</a> (wymagane)</span></label>' +
       '<label class="visually-hidden" for="' + id + '-email">Adres e-mail</label><input class="input" type="email" id="' + id + '-email" name="email" placeholder="Adres e-mail" autocomplete="email">' +
@@ -163,7 +164,7 @@
     cover.addEventListener('pointerenter', function () { cover.classList.add('is-hover'); });
     cover.addEventListener('pointerleave', function () { cancelAnimationFrame(raf); cover.classList.remove('is-hover'); if (opts.tilt) book.style.transform = ''; });
   };
-  ui.metaLine = function (m) { return '<span style="font-family:var(--f-tag)">' + esc(ui.authorLine(m)) + '</span> · <time datetime="' + m.date + '">' + ui.dateShort(m.date) + '</time>'; };
+  ui.metaLine = function (m) { return '<span style="font-family:var(--f-tag)">' + esc(ui.authorLine(m)) + '</span> · <time datetime="' + m.date + '">' + ui.dateShort(m.date) + '</time>' + (m.readTime && document.documentElement.classList.contains('kbr-v2') ? ' · ' + m.readTime + ' min' : ''); };
   ui.plMat = function (n) { const r = n % 10, r100 = n % 100; return n + ' ' + (n === 1 ? 'materiał' : (r >= 2 && r <= 4 && (r100 < 12 || r100 > 14)) ? 'materiały' : 'materiałów'); };
   ui.premiumTag = function (m) { return m.access === 'premium' ? '<span class="badge badge--premium badge--sm">' + ui.lockIcon(m, 12) + 'Premium</span>' : ''; };
   ui.lockIcon = function (m, size) {
