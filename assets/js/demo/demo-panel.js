@@ -38,7 +38,8 @@ KBR.demo = (function () {
           '<a class="btn btn--ghost" href="dokumentacja/funkcjonalnosci-platformy.html" target="_blank" rel="noopener">Funkcjonalności platformy: artykuły, strona główna, wyszukiwarka' + I('chevRight', 16, 'stroke-width="2"') + '</a>' +
           '<a class="btn btn--ghost" href="dokumentacja/decyzje-i-materialy.html" target="_blank" rel="noopener">Decyzje i materiały do dostarczenia' + I('chevRight', 16, 'stroke-width="2"') + '</a>' +
           '<a class="btn btn--ghost" href="dokumentacja/powiadomienia-i-e-maile.html" target="_blank" rel="noopener">Powiadomienia i e-maile' + I('chevRight', 16, 'stroke-width="2"') + '</a>' +
-          '<a class="btn btn--ghost" href="dokumentacja/punkt-widzenia.html" target="_blank" rel="noopener">Punkt widzenia na telefonie i tablecie' + I('chevRight', 16, 'stroke-width="2"') + '</a>' +
+          '<a class="btn btn--ghost" href="dokumentacja/podglad-mobile.html" target="_blank" rel="noopener">Punkt widzenia na telefonie i tablecie' + I('chevRight', 16, 'stroke-width="2"') + '</a>' +
+          '<a class="btn btn--ghost" href="dokumentacja/dokumenty-sprzedazy-i-marketing.html" target="_blank" rel="noopener">Dokumenty sprzedaży i marketing' + I('chevRight', 16, 'stroke-width="2"') + '</a>' +
           '</div><p style="margin-top:6px;font-size:12px;color:var(--c-muted)">Otwierają się w nowej karcie.</p></div>' +
         '<div><h3>Dane</h3><button type="button" class="btn btn--primary" data-demo="reset">Resetuj wszystkie dane demo</button></div>' +
       '</div>';
