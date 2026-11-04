@@ -63,25 +63,25 @@
           ? (current ? '<p class="btn btn--outline" aria-disabled="true" style="margin-top:24px;height:48px">Aktywny plan</p>'
             : '<p class="plan__change" style="margin-top:24px">Dostępny po zakończeniu obecnej subskrypcji.</p>')
           : '<button type="button" class="btn btn--primary" data-action="select-plan" data-plan="' + p.id + '">' + esc(p.cta || ('Wybierz: ' + p.name)) + I('chevRight', 16, 'stroke-width="2"') + '</button>') +
-        '<ul>' + p.features.map(function (f) { return '<li class="' + (f.included ? 'yes' : 'no') + '">' + I(f.included ? 'check' : 'dash', 20) + '<span>' + (f.included ? '' : '<span class="visually-hidden">Nie obejmuje: </span>') + esc(f.text) + '</span></li>'; }).join('') + '</ul></article>';
+        '</article>';
     }).join('');
 
     const html = '<div class="container">' +
       '<header class="plans-head">' + ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Subskrypcja' }]).replace('<nav class="crumbs"', '<nav class="crumbs" style="display:flex;justify-content:center"') +
-        '<h1 style="margin-top:20px">Wybierz subskrypcję magazynu KBR</h1><p>Każdy pakiet daje pełny dostęp do serwisu i magazynu online. Drukowany dodaje wysyłkę wydania papierowego, a Premium + – także zniżki na szkolenia i zaproszenia na wydarzenia Uczelni.</p>' +
+        '<h1 style="margin-top:16px">Wybierz subskrypcję magazynu KBR</h1><p>Każdy pakiet daje pełny dostęp do serwisu i magazynu online. Drukowany dodaje wysyłkę wydania papierowego, a Premium + – także zniżki na szkolenia i zaproszenia na wydarzenia Uczelni.</p>' +
         (active ? '<div class="notice notice--success" style="max-width:760px;margin:24px auto 0;text-align:left">' + I('checkCircle', 18) + '<span>Masz aktywną subskrypcję. <a class="link" href="#/konto/subskrypcja">Zobacz szczegóły w koncie</a></span></div>' : '') +
         sourceBox(src, 'Wybierasz subskrypcję, aby przeczytać') +
       '</header>' +
       '<div class="plans">' + plans + '</div>' +
       '<section aria-labelledby="h-compare" style="margin-top:64px"><h2 class="t-section col-head" id="h-compare">Porównanie pakietów</h2>' +
-        '<div class="table-wrap"><table class="table" style="min-width:560px"><thead><tr><th scope="col">Zakres</th>' + CFG.plans.map(function (p) { return '<th scope="col" style="text-align:center">' + esc(p.name) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+        '<div class="table-wrap"><table class="table compare-table" style="min-width:560px"><thead><tr><th scope="col">Zakres</th>' + CFG.plans.map(function (p) { return '<th scope="col" style="text-align:center">' + esc(p.name) + '</th>'; }).join('') + '</tr></thead><tbody>' +
         CFG.featureList.map(function (t, i) {
           return '<tr><th scope="row" style="font-size:15px;text-transform:none;letter-spacing:0;color:var(--c-ink);font-weight:400">' + esc(t) + '</th>' + CFG.plans.map(function (p) {
             const on = p.includes[i];
-            return '<td style="text-align:center;color:' + (on ? 'var(--c-gold)' : 'var(--c-border-strong)') + '">' + I(on ? 'check' : 'dash', 20) + '<span class="visually-hidden">' + (on ? 'Tak' : 'Nie') + '</span></td>';
+            return '<td data-label="' + esc(p.name) + '" style="text-align:center;color:' + (on ? 'var(--c-gold)' : 'var(--c-border-strong)') + '">' + I(on ? 'check' : 'dash', 20) + '<span class="visually-hidden">' + (on ? 'Tak' : 'Nie') + '</span></td>';
           }).join('') + '</tr>';
         }).join('') + '</tbody></table></div>' +
-        '<p class="notice" style="margin-top:20px">' + I('info', 18) + '<span>Pakiet wybierasz na 12 miesięcy. Zniżki i zaproszenia w pakiecie Premium + przychodzą e-mailem na adres konta.</span></p></section>' +
+        '<p class="notice" style="margin-top:16px">' + I('info', 18) + '<span>Pakiet wybierasz na 12 miesięcy. Zniżki i zaproszenia w pakiecie Premium + przychodzą e-mailem na adres konta.</span></p></section>' +
       '<div style="height:96px"></div></div>';
 
     return { title: 'Subskrypcja – KBR', html: html, mount: function (root) {
@@ -141,7 +141,7 @@
           : '') +
         '<section class="form-section" aria-labelledby="h-invoice"><h2 id="h-invoice">Faktura</h2>' +
           '<label class="check" for="o-inv"><input type="checkbox" id="o-inv" aria-controls="inv-fields" aria-expanded="false"><span>Chcę otrzymać fakturę na firmę</span></label>' +
-          '<div id="inv-fields" hidden style="margin-top:20px">' +
+          '<div id="inv-fields" hidden style="margin-top:16px">' +
             '<div class="field"><label for="o-company">Nazwa firmy</label><input class="input" id="o-company" autocomplete="organization"></div>' +
             '<div class="field"><label for="o-nip">NIP</label><input class="input" id="o-nip" inputmode="numeric" aria-describedby="o-nip-hint"><p class="hint" id="o-nip-hint">10 cyfr, np. 5260250274 (numer testowy).</p></div>' +
             '<div class="field"><label for="o-street">Adres firmy</label><input class="input" id="o-street" autocomplete="street-address"></div>' +
@@ -242,7 +242,7 @@
       body = '<div class="result__icon result__icon--ok">' + I('checkCircle', 40) + '</div>' +
         '<h1>Subskrypcja jest aktywna</h1>' +
         '<p>Płatność za zamówienie <strong>' + esc(o.orderId) + '</strong> została potwierdzona. Pakiet <strong>' + esc(p.name) + '</strong> jest aktywny do <strong>' + ui.dateLong(o.validUntil) + '</strong>.</p>' +
-        (src ? '<div class="context-box" style="max-width:560px;margin:28px auto 0;text-align:left"><img src="' + ui.img(src.image) + '" alt=""><div><span class="t-label">Możesz dokończyć lekturę</span><strong>' + esc(src.title) + '</strong></div></div>' : '') +
+        (src ? '<div class="context-box" style="max-width:560px;margin:24px auto 0;text-align:left"><img src="' + ui.img(src.image) + '" alt=""><div><span class="t-label">Możesz dokończyć lekturę</span><strong>' + esc(src.title) + '</strong></div></div>' : '') +
         '<div class="btn-row">' + (src ? '<a class="btn btn--primary" href="' + ui.materialUrl(src) + '">Wróć do artykułu' + I('chevRight', 16, 'stroke-width="2"') + '</a>' : '<a class="btn btn--primary" href="#/magazyn">Przejdź do magazynu' + I('chevRight', 16, 'stroke-width="2"') + '</a>') +
         '<a class="btn btn--outline" href="#/konto/subskrypcja">Moja subskrypcja</a></div>';
     } else if (o.status === 'failed' || o.status === 'canceled') {
@@ -302,18 +302,18 @@
       '<h1>Dostęp dla firm</h1><p>Pakiet KBR dla wielu pracowników: wspólny dostęp do treści Premium, wydań magazynu i raportów. Ofertę przygotowuje doradca – nie prowadzimy zakupu zespołowego online.</p></header>' +
       '<div class="info-grid info"><div>' +
         (sent ? '<div class="notice notice--success" role="status">' + I('checkCircle', 20) + '<div><strong>Dziękujemy za zapytanie.</strong><br>Doradca skontaktuje się z Tobą w ciągu 2 dni roboczych (termin do potwierdzenia). W prototypie wiadomość nie została wysłana.</div></div><div class="btn-row" style="margin-top:24px"><a class="btn btn--outline" href="#/">Wróć na stronę główną</a></div>'
-        : '<form id="corp-form" novalidate><h2 class="t-section" style="margin-bottom:20px">Formularz zapytania</h2>' +
+        : '<form id="corp-form" novalidate><h2 class="t-section" style="margin-bottom:16px">Formularz zapytania</h2>' +
           '<div class="two-col"><div class="field"><label for="c-company">Nazwa firmy</label><input class="input" id="c-company" autocomplete="organization"></div>' +
           '<div class="field"><label for="c-size">Liczba osób z dostępem</label><select class="input" id="c-size"><option value="">Wybierz</option><option>5–20</option><option>21–100</option><option>101–500</option><option>Powyżej 500</option></select></div></div>' +
           '<div class="two-col"><div class="field"><label for="c-name">Imię i nazwisko</label><input class="input" id="c-name" autocomplete="name"></div>' +
           '<div class="field"><label for="c-email">Służbowy e-mail</label><input class="input" id="c-email" type="email" autocomplete="email"></div></div>' +
           '<div class="field"><label for="c-phone">Telefon <span style="font-weight:400;color:var(--c-muted)">(opcjonalnie)</span></label><input class="input" id="c-phone" type="tel" autocomplete="tel"></div>' +
-          '<div class="field"><label for="c-msg">Wiadomość <span style="font-weight:400;color:var(--c-muted)">(opcjonalnie)</span></label><textarea class="input" id="c-msg" rows="4" style="height:auto;padding:10px 12px"></textarea></div>' +
+          '<div class="field"><label for="c-msg">Wiadomość <span style="font-weight:400;color:var(--c-muted)">(opcjonalnie)</span></label><textarea class="input" id="c-msg" rows="4" style="height:auto;padding:12px 12px"></textarea></div>' +
           '<div class="consents"><label class="check" for="c-consent"><input type="checkbox" id="c-consent"><span>Wyrażam zgodę na kontakt w sprawie oferty (wymagane).</span></label></div>' +
-          '<div class="btn-row" style="margin-top:28px"><button class="btn btn--primary" type="submit" style="height:48px">Wyślij zapytanie' + I('chevRight', 16, 'stroke-width="2"') + '</button></div></form>') +
+          '<div class="btn-row" style="margin-top:24px"><button class="btn btn--primary" type="submit" style="height:48px">Wyślij zapytanie' + I('chevRight', 16, 'stroke-width="2"') + '</button></div></form>') +
       '</div><aside><div class="auth-side"><h2>Twój doradca</h2><p style="margin-top:12px;font-size:15px;line-height:22px;color:var(--c-ink)"><strong>[Imię i nazwisko doradcy]</strong><br>Opiekun klientów korporacyjnych KBR<br>[e-mail] · [telefon]</p><p class="demo-tag" style="margin-top:12px">Dane do uzupełnienia</p>' +
         '<ul><li>' + I('check', 18) + 'Pakiet dla wielu pracowników</li><li>' + I('check', 18) + 'Oferta dopasowana do wielkości zespołu</li><li>' + I('check', 18) + 'Rozliczenie na podstawie umowy</li></ul></div>' +
-        '<p class="notice" style="margin-top:20px">' + I('info', 18) + '<span>Kupujesz tylko dla siebie, ale potrzebujesz faktury na firmę? <a class="link" href="#/subskrypcja">Wybierz plan indywidualny</a> i zaznacz fakturę w zamówieniu.</span></p></aside></div></div>';
+        '<p class="notice" style="margin-top:16px">' + I('info', 18) + '<span>Kupujesz tylko dla siebie, ale potrzebujesz faktury na firmę? <a class="link" href="#/subskrypcja">Wybierz plan indywidualny</a> i zaznacz fakturę w zamówieniu.</span></p></aside></div></div>';
     return { title: 'Dostęp dla firm – KBR', html: html, mount: function (root) {
       const form = root.querySelector('#corp-form'); if (!form) return;
       form.addEventListener('submit', async function (e) {

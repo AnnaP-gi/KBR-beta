@@ -95,7 +95,7 @@ KBR.pages.article = function (route) {
       '<p class="meter-box__text">Bez logowania masz ' + ui.plMat(access.limit) + '. Potem wystarczy bezpłatne konto, aby czytać dalej materiały bezpłatne.</p>' +
       '<a class="t-link" href="#/rejestracja" data-action="auth-link">Załóż bezpłatne konto' + I('chevRight', 14, 'stroke-width="2.25"') + '</a></aside>';
   }
-  if (access.kind === 'subscriber' && m.access === 'premium') accessNote = '<p class="unlock-note" style="margin-top:0;margin-bottom:20px">' + I('unlock', 16) + 'Materiał Premium – masz dostęp dzięki subskrypcji</p>';
+  if (access.kind === 'subscriber' && m.access === 'premium') accessNote = '<p class="unlock-note" style="margin-top:0;margin-bottom:16px">' + I('unlock', 16) + 'Materiał Premium – masz dostęp dzięki subskrypcji</p>';
 
   /* Odtwarzacz (symulacja) */
   const isVideo = m.format === 'video';
@@ -134,7 +134,7 @@ KBR.pages.article = function (route) {
   }
 
   const tagList = C.tags(m);
-  const tagsHtml = tagList.length ? '<div class="chips tags-row" aria-label="Tagi" style="margin-top:20px;display:flex;flex-wrap:wrap;gap:8px">' + tagList.map(function (tg, k) { return '<span class="chip" style="width:auto;white-space:nowrap;cursor:default"' + (k >= 5 ? ' data-more-tag hidden' : '') + '>#' + esc(tg) + '</span>'; }).join('') + (tagList.length > 5 ? '<button type="button" class="chip" style="width:auto" aria-label="Pokaż pozostałe tagi (' + (tagList.length - 5) + ')" onclick="this.parentNode.querySelectorAll(\'[data-more-tag]\').forEach(function (x) { x.hidden = false; }); this.remove();">+' + (tagList.length - 5) + '</button>' : '') + '</div>' : '';
+  const tagsHtml = tagList.length ? '<div class="chips tags-row" aria-label="Tagi" style="margin-top:16px;display:flex;flex-wrap:wrap;gap:8px">' + tagList.map(function (tg, k) { return '<span class="chip" style="width:auto;white-space:nowrap;cursor:default"' + (k >= 5 ? ' data-more-tag hidden' : '') + '>#' + esc(tg) + '</span>'; }).join('') + (tagList.length > 5 ? '<button type="button" class="chip" style="width:auto" aria-label="Pokaż pozostałe tagi (' + (tagList.length - 5) + ')" onclick="this.parentNode.querySelectorAll(\'[data-more-tag]\').forEach(function (x) { x.hidden = false; }); this.remove();">+' + (tagList.length - 5) + '</button>' : '') + '</div>' : '';
   const byRole = function (r) { return people.filter(function (x) { return x.role === r; }); };
   const credited = byRole('autor').slice(0, 4).concat(byRole('ekspert').slice(0, 2));
   const authorsTop = '<div class="byline-people">' + credited.map(function (x) {
@@ -181,7 +181,7 @@ KBR.pages.article = function (route) {
     '<header class="article-head">' +
       ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: f.plural, href: f.route }, { label: t.name, href: '#/tematy/' + t.slug }, { label: m.title }]) +
       '<div class="article-head__inner">' +
-        (m.access === 'premium' ? '<span class="badge badge--premium article-head__premium">' + I('lock', 13) + 'Premium</span>' : '') +
+        (m.access === 'premium' ? '<span class="badge badge--premium article-head__premium">Premium</span>' : '') +
         '<div class="article-head__top">' + (m.format !== 'article' ? '<span class="badge badge--navy">' + esc(f.name) + '</span>' : '') +
           '<a class="t-label" href="#/tematy/' + t.slug + '"><span class="visually-hidden">Temat główny: </span>' + esc(t.name) + '</a>' +
           '</div>' +
@@ -203,7 +203,7 @@ KBR.pages.article = function (route) {
       accessNote + player + streaming +
       '<div class="prose' + (access.full ? '' : ' paywall-fade') + '" id="article-body">' + bodyHtml + '</div>' +
       (access.full ? '<div class="share-end">' + shareInline + '</div>' + bios : paywall()) +
-      (issue && access.full ? '<div class="notice" style="margin-top:40px">' + I('newspaper', 18) + '<span>Materiał ukazał się w numerze <strong>' + esc(issue.label) + '</strong>. <a class="link" href="#/magazyn">Wróć do spisu treści numeru</a></span></div>' : '') +
+      (issue && access.full ? '<div class="notice" style="margin-top:32px">' + I('newspaper', 18) + '<span>Materiał ukazał się w numerze <strong>' + esc(issue.label) + '</strong>. <a class="link" href="#/magazyn">Wróć do spisu treści numeru</a></span></div>' : '') +
       episodes +
           '</div>' +
     '<aside class="article-aside" aria-label="Więcej z KBR"><div class="aside-sticky"><section class="latest" aria-labelledby="h-aside-latest"><h2 class="t-section col-head" id="h-aside-latest">Najnowsze</h2>' +

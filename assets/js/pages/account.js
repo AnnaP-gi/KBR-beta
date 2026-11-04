@@ -133,7 +133,7 @@
       inner += '<p class="sub">Na tym koncie nie ma aktywnej subskrypcji. Możesz czytać materiały otwarte i korzystać z darmowego limitu.</p>' +
         '<section class="panel panel--tint" aria-labelledby="h-nosub"><div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center"><h2 id="h-nosub">Status</h2><span class="status-pill status-pill--none">Brak subskrypcji</span></div>' +
         '<p style="margin-top:12px">Subskrypcja odblokowuje wszystkie materiały Premium.</p>' +
-        '<div class="btn-row" style="margin-top:20px"><a class="btn btn--primary" href="#/subskrypcja">Wybierz subskrypcję' + I('chevRight', 16, 'stroke-width="2"') + '</a></div></section>';
+        '<div class="btn-row" style="margin-top:16px"><a class="btn btn--primary" href="#/subskrypcja">Wybierz subskrypcję' + I('chevRight', 16, 'stroke-width="2"') + '</a></div></section>';
     }
     inner += ordersTable(orders) +
       '<p class="notice" style="margin-top:24px">' + I('info', 18) + '<span>Dostępne opcje konta mogą zależeć od źródła uprawnień. </span></p>';
@@ -163,7 +163,7 @@
     const v = addr || {};
     return '<form class="panel" id="ship-form" novalidate aria-labelledby="h-shipaddr"><h2 id="h-shipaddr">Adres wysyłki magazynu</h2>' +
       '<p style="margin-top:12px">Na ten adres wysyłamy drukowane wydanie kwartalnika w ramach planu ' + esc(p ? p.name : 'Drukowany') + '.</p>' +
-      '<div class="field" style="margin-top:20px"><label for="sa-name">Imię i nazwisko odbiorcy</label><input class="input" id="sa-name" autocomplete="shipping name" value="' + esc(v.name || '') + '"></div>' +
+      '<div class="field" style="margin-top:16px"><label for="sa-name">Imię i nazwisko odbiorcy</label><input class="input" id="sa-name" autocomplete="shipping name" value="' + esc(v.name || '') + '"></div>' +
       '<div class="field"><label for="sa-street">Ulica, numer domu i lokalu</label><input class="input" id="sa-street" autocomplete="shipping street-address" value="' + esc(v.street || '') + '"></div>' +
       '<div class="two-col"><div class="field"><label for="sa-postal">Kod pocztowy</label><input class="input" id="sa-postal" autocomplete="shipping postal-code" placeholder="00-000" value="' + esc(v.postal || '') + '"></div>' +
       '<div class="field"><label for="sa-city">Miejscowość</label><input class="input" id="sa-city" autocomplete="shipping address-level2" value="' + esc(v.city || '') + '"></div></div>' +
@@ -176,7 +176,7 @@
     const g = guard(route); if (g) return g;
     const u = KBR.auth.currentUser();
     const inner = '<h1>Moje dane</h1><p class="sub">Dane osobowe, adres wysyłki, dane do faktur i ustawienia logowania.</p>' +
-      '<form class="panel" id="profile-form" novalidate><h2>Dane osobowe</h2><div class="two-col" style="margin-top:20px">' +
+      '<form class="panel" id="profile-form" novalidate><h2>Dane osobowe</h2><div class="two-col" style="margin-top:16px">' +
       '<div class="field"><label for="pf-first">Imię</label><input class="input" id="pf-first" value="' + esc(u.firstName) + '" autocomplete="given-name"></div>' +
       '<div class="field"><label for="pf-last">Nazwisko <span style="font-weight:400;color:var(--c-muted)">(opcjonalnie)</span></label><input class="input" id="pf-last" value="' + esc(u.lastName || '') + '" autocomplete="family-name"></div></div>' +
       '<div class="field"><label for="pf-email">Adres e-mail (login)</label><input class="input" id="pf-email" value="' + esc(u.email) + '" readonly aria-describedby="pf-email-hint"><p class="hint" id="pf-email-hint">Zmiana adresu e-mail wymaga potwierdzenia – funkcja do zaprojektowania.</p></div>' +
@@ -221,7 +221,7 @@
       '<form class="panel" id="pref-form"><fieldset class="fieldset"><legend>Newslettery</legend>' +
       '<label class="check" for="pr-nl"><input type="checkbox" id="pr-nl"' + (u.consents.newsletter ? ' checked' : '') + '><span>Newsletter KBR</span></label>' +
       '<label class="check" for="pr-mk"><input type="checkbox" id="pr-mk"' + (u.consents.marketing ? ' checked' : '') + '><span>Oferta edukacyjna Akademii Leona Koźmińskiego</span></label></fieldset>' +
-      '<fieldset class="fieldset" style="margin-top:28px"><legend>Interesujące mnie tematy</legend>' +
+      '<fieldset class="fieldset" style="margin-top:24px"><legend>Interesujące mnie tematy</legend>' +
       KBR.data.topics.map(function (t) { return '<label class="check" for="pr-t-' + t.id + '"><input type="checkbox" id="pr-t-' + t.id + '" data-topic="' + t.id + '"' + (interests.indexOf(t.id) !== -1 ? ' checked' : '') + '><span>' + esc(t.name) + '</span></label>'; }).join('') + '</fieldset>' +
       '<div class="btn-row" style="margin-top:24px"><button class="btn btn--primary" type="submit">Zapisz preferencje</button><span role="status" class="t-meta" id="pr-status"></span></div></form>';
     return { title: 'Newslettery i preferencje – KBR', html: shell('preferencje', inner), mount: function (root) {

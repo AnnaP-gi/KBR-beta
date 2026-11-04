@@ -84,10 +84,10 @@
   KBR.rememberEmail = rememberEmail;
   function socialAuth(mode) {
     const verb = mode === 'register' ? 'Zarejestruj się przez ' : 'Zaloguj się przez ';
-    return '<div style="display:grid;gap:12px;margin-top:28px">' + PROVIDERS.map(function (p) {
+    return '<div style="display:grid;gap:12px;margin-top:24px">' + PROVIDERS.map(function (p) {
       return '<button type="button" class="btn btn--outline" data-social="' + p[0] + '" data-mode="' + mode + '" style="width:100%;justify-content:center;gap:12px;height:48px">' + p[2] + '<span>' + verb + p[1] + '</span></button>';
     }).join('') + '</div>' +
-      '<div style="display:flex;align-items:center;gap:16px;margin:28px 0 8px;font-size:14px;color:var(--c-muted)"><span style="flex:1;height:1px;background:var(--c-border)"></span>lub przez adres e-mail<span style="flex:1;height:1px;background:var(--c-border)"></span></div>';
+      '<div style="display:flex;align-items:center;gap:16px;margin:24px 0 8px;font-size:14px;color:var(--c-muted)"><span style="flex:1;height:1px;background:var(--c-border)"></span>lub przez adres e-mail<span style="flex:1;height:1px;background:var(--c-border)"></span></div>';
   }
   function bindSocial(root) {
     root.querySelectorAll('[data-social]').forEach(function (b) {
@@ -119,7 +119,7 @@
     if (KBR.auth.currentUser()) return KBR.pages.redirect('#/konto/subskrypcja');
     const html = '<div class="container auth-wrap"><div class="auth-card">' +
       ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Rejestracja' }]) +
-      '<h1 style="margin-top:20px">Załóż bezpłatne konto</h1><p class="intro">Zajmie to mniej niż minutę. Masz już konto? <a class="link" href="#/logowanie">Zaloguj się</a></p>' + contextBox() + socialAuth('register') +
+      '<h1 style="margin-top:16px">Załóż bezpłatne konto</h1><p class="intro">Zajmie to mniej niż minutę. Masz już konto? <a class="link" href="#/logowanie">Zaloguj się</a></p>' + contextBox() + socialAuth('register') +
       '<form id="register-form" novalidate>' +
         '<div class="field"><label for="reg-name">Imię</label><input class="input" id="reg-name" name="firstName" autocomplete="given-name" required></div>' +
         '<div class="field"><label for="reg-email">Adres e-mail</label><input class="input" id="reg-email" name="email" type="email" autocomplete="email" inputmode="email" required></div>' +
@@ -162,9 +162,9 @@
     const inactive = route.query.nieaktywne === '1';
     const html = '<div class="container auth-wrap"><div class="auth-card">' +
       ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Rejestracja', href: '#/rejestracja' }, { label: 'Aktywacja konta' }]) +
-      '<h1 style="margin-top:20px">Aktywuj konto</h1>' +
+      '<h1 style="margin-top:16px">Aktywuj konto</h1>' +
       '<div class="notice notice--success" role="status" style="margin-top:24px">' + I('mail', 20) + '<div><strong>' + (inactive ? 'Konto nie zostało jeszcze aktywowane.' : 'Sprawdź skrzynkę e-mail.') + '</strong><br>Wysłaliśmy link aktywacyjny na adres <strong>' + esc(email) + '</strong>. Kliknij go, aby aktywować konto' + (KBR.flow.peekReturn && KBR.flow.peekReturn() ? ' i wrócić do lektury' : '') + '.</div></div>' +
-      '<p style="margin-top:20px;font-size:15px;line-height:23px">Nie widzisz wiadomości? Sprawdź folder spam lub oferty. Wiadomość może dotrzeć z kilkuminutowym opóźnieniem.</p>' +
+      '<p style="margin-top:16px;font-size:15px;line-height:23px">Nie widzisz wiadomości? Sprawdź folder spam lub oferty. Wiadomość może dotrzeć z kilkuminutowym opóźnieniem.</p>' +
       contextBox() +
       '<div class="btn-row" style="margin-top:24px"><button type="button" class="btn btn--primary" data-act="open">Symulacja: otwórz link z wiadomości</button><button type="button" class="btn btn--outline" data-act="resend">Wyślij link ponownie</button></div>' +
       '<p class="alt">Błąd w adresie? <a href="#/rejestracja" data-act="change">Zmień adres e-mail</a></p>' +
@@ -188,7 +188,7 @@
     if (KBR.auth.currentUser()) return KBR.pages.redirect(KBR.flow.takeReturn() || '#/konto/subskrypcja');
     const html = '<div class="container auth-wrap"><div class="auth-card">' +
       ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Logowanie' }]) +
-      '<h1 style="margin-top:20px">Zaloguj się</h1><p class="intro">Nie masz konta? <a class="link" href="#/rejestracja">Załóż bezpłatne konto</a></p>' + contextBox() + socialAuth('login') +
+      '<h1 style="margin-top:16px">Zaloguj się</h1><p class="intro">Nie masz konta? <a class="link" href="#/rejestracja">Załóż bezpłatne konto</a></p>' + contextBox() + socialAuth('login') +
       '<form id="login-form" novalidate>' +
         '<div class="field"><label for="login-email">Adres e-mail</label><input class="input" id="login-email" name="email" type="email" autocomplete="email" inputmode="email" required></div>' +
         F.passwordField('login-password', 'Hasło', { autocomplete: 'current-password' }) +
@@ -221,7 +221,7 @@
     const sent = route.query.wyslano === '1';
     const html = '<div class="container auth-wrap"><div class="auth-card">' +
       ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Logowanie', href: '#/logowanie' }, { label: 'Odzyskanie dostępu' }]) +
-      '<h1 style="margin-top:20px">Odzyskaj dostęp</h1>' +
+      '<h1 style="margin-top:16px">Odzyskaj dostęp</h1>' +
       (sent
         ? '<div class="notice notice--success" role="status" style="margin-top:24px">' + I('checkCircle', 20) + '<div><strong>Sprawdź skrzynkę e-mail.</strong><br>Jeśli konto o podanym adresie istnieje, wysłaliśmy link do ustawienia nowego hasła. Link jest ważny przez określony czas (do ustalenia).</div></div>' +
           '<div class="btn-row" style="margin-top:24px"><a class="btn btn--primary" href="#/reset-hasla/nowe">Symulacja: otwórz link z wiadomości</a><a class="btn btn--ghost" href="#/logowanie">Wróć do logowania</a></div>'
@@ -246,7 +246,7 @@
     const done = route.query.gotowe === '1';
     const html = '<div class="container auth-wrap"><div class="auth-card">' +
       ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Logowanie', href: '#/logowanie' }, { label: 'Nowe hasło' }]) +
-      '<h1 style="margin-top:20px">' + (done ? 'Hasło zostało zmienione' : 'Ustaw nowe hasło') + '</h1>' +
+      '<h1 style="margin-top:16px">' + (done ? 'Hasło zostało zmienione' : 'Ustaw nowe hasło') + '</h1>' +
       (done ? '<div class="notice notice--success" role="status" style="margin-top:24px">' + I('checkCircle', 20) + '<div>Możesz teraz zalogować się, używając nowego hasła.</div></div><div class="btn-row" style="margin-top:24px"><a class="btn btn--primary" href="#/logowanie">Przejdź do logowania</a></div>'
         : '<form id="newpw-form" novalidate>' + F.passwordField('new-password', 'Nowe hasło', { autocomplete: 'new-password', rules: true }) +
           F.passwordField('new-password2', 'Powtórz nowe hasło', { autocomplete: 'new-password' }) +

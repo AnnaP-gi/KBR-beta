@@ -35,20 +35,16 @@ KBR.pages.home = function () {
       '<span class="mag-teaser__title">' + esc(issue.title) + '</span>' +
       '<span class="mag-teaser__more">Zobacz spis treści' + I('chevRight', 14, 'stroke-width="2.25"') + '</span></span></a>';
 
-  const topicTiles = KBR.data.topics.map(function (t) { return { t: t, n: C.list({ topic: t.id }).length }; })
-    .filter(function (x) { return x.n > 0; }).sort(function (x, y) { return y.n - x.n; }).slice(0, 5)
-    .map(function (x) { return x.t; }).map(function (t, i) {
-    const items = C.list({ topic: t.id });
-    const top = items[0];
-    return '<a class="topic-tile' + (i === 0 ? ' topic-tile--lg' : '') + '" href="#/tematy/' + t.slug + '">' +
-      (top ? '<img src="' + ui.img(top.image) + '" alt="" loading="lazy"' + (top.imagePos ? ' style="object-position:' + top.imagePos + '"' : '') + '>' : '') +
-      '<span class="topic-tile__shade" aria-hidden="true"></span>' +
-      '<span class="topic-tile__nr" aria-hidden="true">' + String(i + 1).padStart(2, '0') + '</span>' +
-      '<span class="topic-tile__body"><span class="topic-tile__name">' + esc(t.name) + '</span>' +
-        '<span class="topic-tile__count">' + ui.plMat(items.length) + '</span>' +
-        (top ? '<span class="topic-tile__latest"><span>Najnowszy</span>' + esc(top.title) + '</span>' : '') +
-      '</span><span class="topic-tile__arrow" aria-hidden="true">' + I('chevRight', 20, 'stroke-width="2"') + '</span></a>';
-  }).join('');
+  const topicRank = KBR.data.topics.map(function (t) { return { t: t, items: C.list({ topic: t.id }) }; })
+    .filter(function (x) { return x.items.length > 0; }).sort(function (x, y) { return y.items.length - x.items.length; });
+  const tFeat = topicRank[0], tRest = topicRank.slice(1);
+  const topicTiles = !tFeat ? '' : '<div class="topics-ix">' +
+    '<div class="topics-ix__feat"><a class="topics-ix__name" href="#/tematy/' + tFeat.t.slug + '">' + esc(tFeat.t.name) + '</a><span class="topics-ix__rule" aria-hidden="true"></span>' +
+      '<p class="topics-ix__latest"><span>Najnowszy materiał</span><a href="' + ui.materialUrl(tFeat.items[0]) + '">' + esc(tFeat.items[0].title) + '</a></p>' +
+      '<a class="t-link" href="#/tematy/' + tFeat.t.slug + '">' + ui.plMat(tFeat.items.length) + I('chevRight', 14, 'stroke-width="2.25"') + '</a></div>' +
+    '<ul class="topics-ix__list" style="--rows:' + Math.ceil(tRest.length / 2) + '">' + tRest.map(function (x) {
+      return '<li><a href="#/tematy/' + x.t.slug + '"><span class="topics-ix__item">' + esc(x.t.name) + '</span><span class="topics-ix__n">' + ui.plMat(x.items.length) + '</span></a></li>';
+    }).join('') + '</ul></div>';
   const shown = KBR.data.topics.map(function (t) { return { t: t, n: C.list({ topic: t.id }).length }; })
     .filter(function (x) { return x.n > 0; }).sort(function (x, y) { return y.n - x.n; }).slice(0, 5).map(function (x) { return x.t.id; });
   const topicMore = KBR.data.topics.filter(function (t) { return shown.indexOf(t.id) === -1; }).map(function (t) {
@@ -84,20 +80,37 @@ KBR.pages.home = function () {
         '<div class="op-nav"><button type="button" class="op-nav__btn" data-op-m-prev aria-label="Poprzednia opinia" disabled>' + I('chevLeft', 20, 'stroke-width="2"') + '</button><button type="button" class="op-nav__btn" data-op-m-next aria-label="Następna opinia">' + I('chevRight', 20, 'stroke-width="2"') + '</button></div></div>' : '') +
       '</div>' +
     '</section>' : '';
+  const isV2 = document.documentElement.classList.contains('kbr-v2');
+  const pwWho = function (p) { return '<span class="pw__who"><span class="op__name">' + esc(p.name) + '</span>' + (p.role ? '<span class="op__role">' + esc(p.role) + '</span>' : '') + '</span>'; };
+  const quoteBandV2 = feat ? '<section class="container home-quote pw" data-pwv="c" aria-labelledby="h-quote">' +
+      '<div class="op-head"><h2 class="t-section col-head" id="h-quote">Punkt widzenia</h2>' +
+      '</div>' +
+      '<div class="pw-v pw-c" data-v="c"><a class="op-hit pw-c__feat" href="' + ui.materialUrl(feat) + '"><span class="pw__q">„' + esc(pullOf(feat)) + '”</span><span class="pw-c__cap"><span class="pw-c__person">' + ui.personPhoto(firstAuthor(feat), 'person-photo--56') + pwWho(firstAuthor(feat)) + '</span>' + opFrom(feat) + '</span></a>' +
+        (rest.length ? '<ul class="pw-c__more" role="list">' + rest.map(function (x) {
+          return '<li><a class="op-hit pw-c__row" href="' + ui.materialUrl(x) + '"><span class="pw-c__person">' + ui.personPhoto(firstAuthor(x), 'person-photo--48') + '<span class="op__name">' + esc(firstAuthor(x).name) + '</span></span><span class="pw-c__t">„' + esc(pullOf(x)) + '”</span>' + opFrom(x) + '</a></li>';
+        }).join('') + '</ul>' : '') + '</div>' +
+    '</section>' : '';
   const recPool = C.list({ formats: ['article', 'case'] }).filter(function (x) { return x.id !== lead.id; });
   const recFeat = recPool.filter(function (x) { return x.access === 'premium'; })[0] || recPool[0];
   const popular = recPool.filter(function (x) { return x !== recFeat; }).slice(3, 7);
   const recBand = '<section class="container home-rec" aria-label="KBR poleca">' +
       '<div class="home-rec__col"><h2 class="t-section col-head">KBR poleca</h2>' + ui.card(recFeat, {}) + '</div>' +
       '<div class="home-rec__col"><h2 class="t-section col-head">Najpopularniejsze</h2><ol class="pop-list" role="list">' + popular.map(function (x) {
-        return '<li class="pop"><a class="pop__thumb" href="' + ui.materialUrl(x) + '" tabindex="-1" aria-hidden="true"><img src="' + ui.img(x.image) + '" alt="" loading="lazy"' + (x.imagePos ? ' style="object-position:' + x.imagePos + '"' : '') + '></a>' + ui.card(x, { noImage: true }) + '</li>';
+        return '<li class="pop">' + ui.card(x, { noImage: true }) + '</li>';
       }).join('') + '</ol></div>' +
       '<div class="home-rec__col home-rec__nl"><h2 class="t-section col-head">Newsletter</h2>' + ui.newsletterForm('home-rec') + '</div>' +
     '</section>';
   const onTimeUsed = [lead.id].concat(picks.map(function (x) { return x.id; }), H.latest.slice(0, 2));
   const onTime = C.list({ formats: ['article', 'case'] }).filter(function (x) { return onTimeUsed.indexOf(x.id) === -1; }).slice(0, 4);
+  const V2 = document.documentElement.classList.contains('kbr-v2');
+  const onTimeInner = V2 && onTime.length > 1 ?
+    '<article class="v2-split">' + ui.media(onTime[0]) + '<div class="v2-split__body">' + ui.topicLabel(onTime[0]) +
+      '<h3 class="v2-split__title"><a class="hover-title" href="' + ui.materialUrl(onTime[0]) + '">' + esc(onTime[0].title) + '</a></h3>' +
+      '<p class="card__lead">' + esc(onTime[0].lead) + '</p><p class="t-meta">' + ui.metaLine(onTime[0]) + '</p></div></article>' +
+    '<div class="v2-row3">' + onTime.slice(1).map(function (x) { return ui.card(x, { noImage: true, lead: true }); }).join('') + '</div>' :
+    '<div class="grid-4">' + onTime.map(function (x) { return ui.card(x, {}); }).join('') + '</div>';
   const onTimeBand = onTime.length ? '<section class="container home-ontime" aria-labelledby="h-ontime">' + ui.sectionHead('W centrum uwagi', { href: '#/artykuly', label: 'Wszystkie artykuły' }, { id: 'h-ontime' }) +
-    '<div class="grid-4">' + onTime.map(function (x) { return ui.card(x, {}); }).join('') + '</div></section>' : '';
+    onTimeInner + '</section>' : '';
   const html = '' +
     '<h1 class="visually-hidden">Kozminski Business Review – strona główna</h1>' +
     '<div class="container"><div class="home-hero">' +
@@ -114,7 +127,7 @@ KBR.pages.home = function () {
     '<aside class="container" aria-label="Reklama">' + ui.promo() + '</aside>' + onTimeBand +
 
     '<section class="mag" aria-labelledby="h-magazine"><div class="container">' +
-      '<div class="mag__head mag-reveal" style="--i:0"><h2 id="h-magazine">' + I('newspaper', 22) + 'Magazyn</h2></div>' +
+      '<div class="mag__head mag-reveal" style="--i:0"><h2 id="h-magazine">Magazyn</h2></div>' +
       '<div class="mag__grid">' +
         '<div class="mag__coverwrap mag-reveal" style="--i:1">' +
           '<a class="mag-cover" href="#/magazyn" aria-label="Aktualny numer: ' + esc(issue.label) + ' – ' + esc(issue.title) + '">' +
@@ -122,22 +135,21 @@ KBR.pages.home = function () {
         '</div>' +
         '<div class="mag__info">' +
           '<span class="mag__kicker mag-reveal" style="--i:2">Aktualny numer</span>' +
-          '<h3 class="mag__title mag-reveal" style="--i:3">' + esc(issue.title) + '</h3>' +
+          '<h3 class="mag__title mag-reveal" style="--i:3"><a class="mag__title-link" href="#/magazyn">' + esc(issue.title) + '</a></h3>' +
           '<p class="mag__desc mag-reveal" style="--i:4">' + esc(issue.description) + '</p>' +
           '<ol class="mag__toc" aria-label="Spis treści numeru ' + esc(issue.label) + '">' + toc.map(function (m, i) {
             return '<li class="mag-reveal" style="--i:' + (5 + i) + '"><a class="mag-toc" href="' + ui.materialUrl(m) + '">' +
-              '<span class="mag-toc__nr">' + String(i + 1).padStart(2, '0') + '</span>' +
               '<span class="mag-toc__thumb" aria-hidden="true"><img src="' + ui.img(issue.featureImage[m.id] || m.image) + '" alt=""></span>' +
               '<span class="mag-toc__body"><span class="mag-toc__topic">' + esc(C.topic(m.topic).name) + '</span><span class="mag-toc__title">' + esc(m.title) + (m.access === 'premium' ? '<span class="visually-hidden"> (Premium)</span>' : '') + '</span>' +
               '<span class="mag-toc__author">Autor: ' + esc(m.authors.filter(function (x) { return x.role === 'autor'; }).map(function (x) { return C.author(x.id).name; }).join(', ')) + '</span></span>' +
               '<span class="mag-toc__arrow" aria-hidden="true">' + I('chevRight', 18, 'stroke-width="2"') + '</span></a></li>';
           }).join('') + '</ol>' +
-          '<div class="mag__cta mag-reveal" style="--i:9"><a class="btn btn--primary" href="#/magazyn">Czytaj numer' + I('chevRight', 16, 'stroke-width="2"') + '</a><button type="button" class="btn mag__btn-ghost" data-action="mag-download">Pobierz PDF</button></div>' +
+          '<div class="mag__cta mag-reveal" style="--i:9"><button type="button" class="btn mag__btn-ghost" data-action="mag-download">Pobierz PDF</button><a class="btn btn--primary" href="#/magazyn">Czytaj numer' + I('chevRight', 16, 'stroke-width="2"') + '</a></div>' +
         '</div>' +
       '</div>' +
-    '</div></section>' + quoteBand + recBand +
+    '</div></section>' + quoteBandV2 + recBand +
     '<section class="container home-topics" aria-labelledby="h-topics">' + ui.sectionHead('Tematy', { href: '#/tematy', label: 'Wszystkie tematy' }, { id: 'h-topics' }) +
-      '<div class="topic-mosaic">' + topicTiles + '</div></section>' +
+      topicTiles + '</section>' +
 
 
     (KBR.subscription.has('content') ? '<div class="cta-wide" aria-hidden="true"></div>' : '<div class="container cta-wide"><a class="btn btn--primary btn--lg" href="#/subskrypcja">Wybierz subskrypcję i czytaj bez ograniczeń' + I('chevRight', 24, 'stroke-width="2.25"') + '</a></div>');

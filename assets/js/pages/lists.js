@@ -11,14 +11,26 @@
     return '<div class="group"><span id="lbl-' + label.replace(/\W/g, '') + '">' + label + '</span><nav aria-labelledby="lbl-' + label.replace(/\W/g, '') + '" class="chips">' +
       items.map(function (it) { return '<a class="chip" href="' + it.href + '"' + (it.active ? ' aria-current="true"' : '') + '>' + esc(it.label) + '</a>'; }).join('') + '</nav></div>';
   }
+  /* Filtr tematu jako lista rozwijana (zamiast kilkunastu przycisków) */
   function topicChips(route, current) {
-    return chips('Temat', [{ label: 'Wszystkie', href: q(route, { temat: '' }), active: !current }].concat(KBR.data.topics.map(function (t) {
+    const opts = [{ label: 'Wszystkie tematy', href: q(route, { temat: '' }), active: !current }].concat(KBR.data.topics.map(function (t) {
       return { label: t.name, href: q(route, { temat: t.slug }), active: current === t.id };
-    })));
+    }));
+    const curLabel = (opts.filter(function (o) { return o.active; })[0] || opts[0]).label;
+    return '<div class="group group--select"><span id="lbl-temat">Temat</span><div class="menu filter-menu"><button type="button" class="filter-btn" data-action="menu" aria-expanded="false" aria-controls="topic-filter" aria-haspopup="true" aria-describedby="lbl-temat"><span>' + esc(curLabel) + '</span>' + I('chevDown', 14) + '</button>' +
+      '<div class="menu__panel menu__panel--cols" id="topic-filter" hidden>' + opts.map(function (o) { return '<a href="' + o.href + '"' + (o.active ? ' aria-current="page"' : '') + '>' + esc(o.label) + '</a>'; }).join('') + '</div></div></div>';
   }
+  /* Dostęp jako prosty przełącznik tekstowy */
   function accessChips(route) {
     const a = route.query.dostep || '';
-    return chips('Dostęp', [{ label: 'Wszystkie', href: q(route, { dostep: '' }), active: !a }, { label: 'Premium', href: q(route, { dostep: 'premium' }), active: a === 'premium' }, { label: 'Bezpłatne', href: q(route, { dostep: 'bezplatne' }), active: a === 'bezplatne' }]);
+    const items = [{ label: 'Wszystkie', href: q(route, { dostep: '' }), active: !a }, { label: 'Premium', href: q(route, { dostep: 'premium' }), active: a === 'premium' }, { label: 'Bezpłatne', href: q(route, { dostep: 'bezplatne' }), active: a === 'bezplatne' }];
+    return '<div class="group"><span id="lbl-dostep">Dostęp</span><nav aria-labelledby="lbl-dostep" class="text-toggle">' +
+      items.map(function (it) { return '<a href="' + it.href + '"' + (it.active ? ' aria-current="true"' : '') + '>' + it.label + '</a>'; }).join('') + '</nav></div>';
+  }
+  function toggle(label, items) {
+    const id = 'lbl-' + label.replace(/\W/g, '');
+    return '<div class="group"><span id="' + id + '">' + label + '</span><nav aria-labelledby="' + id + '" class="text-toggle">' +
+      items.map(function (it) { return '<a href="' + it.href + '"' + (it.active ? ' aria-current="true"' : '') + '>' + esc(it.label) + '</a>'; }).join('') + '</nav></div>';
   }
   const FORMAT_FILTERS = [{ id: '', label: 'Wszystkie formaty', formats: null }, { id: 'artykuly', label: 'Artykuły i analizy', formats: ['article'] }, { id: 'case', label: 'Studia przypadków', formats: ['case'] }, { id: 'media', label: 'Podcasty i wideo', formats: ['podcast', 'video'] }];
   function formatChips(route) {
@@ -33,7 +45,7 @@
       : '<div class="empty" role="status">' + I('search', 40) + '<h2>' + (o.emptyTitle || 'Brak materiałów') + '</h2><p>' + (o.emptyText || 'Zmień filtry, aby zobaczyć więcej materiałów.') + '</p><a class="btn btn--primary" href="#/artykuly">Przeglądaj artykuły</a></div>';
     return '<div class="container">' +
       '<header class="page-head">' + ui.crumbs(o.crumbs) + '<h1>' + esc(o.title) + '</h1>' + (o.intro ? '<p>' + o.intro + '</p>' : '') + (o.actions || '') + '</header>' +
-      '<div class="list-layout">' + (o.filters ? '<div class="list-toolbar">' + o.filters + '<p class="result-count" role="status">' + countLabel(o.items.length) + '</p></div>' : '') + list + '</div></div>';
+      '<div class="list-layout">' + (o.filters ? '<div class="list-toolbar' + (o.divider ? ' list-toolbar--rule' : '') + '">' + o.filters + '<p class="result-count" role="status">' + countLabel(o.items.length) + '</p></div>' : '') + list + '</div></div>';
   }
   function countLabel(n) { const r = n % 10, r100 = n % 100; return n + ' ' + (n === 1 ? 'materiał' : (r >= 2 && r <= 4 && (r100 < 12 || r100 > 14)) ? 'materiały' : 'materiałów'); }
 
@@ -43,7 +55,7 @@
     const items = C.list({ formats: ['article'], topic: topic && topic.id, access: a });
     return { title: 'Artykuły i analizy – KBR', html: page({
       title: 'Artykuły i analizy', intro: 'Eksperckie teksty o zarządzaniu, strategii, technologii i przywództwie. Materiały oznaczone jako Premium są dostępne w ramach subskrypcji.',
-      crumbs: [{ label: 'Strona główna', href: '#/' }, { label: 'Artykuły' }], filters: topicChips(route, topic && topic.id) + accessChips(route), items: items }) };
+      crumbs: [{ label: 'Strona główna', href: '#/' }, { label: 'Artykuły' }], filters: topicChips(route, topic && topic.id) + accessChips(route), divider: true, items: items }) };
   };
 
   KBR.pages.formatList = function (formatIds, title, intro, crumb) {
@@ -70,8 +82,22 @@
     const items = C.list({ topic: t.id });
     const on = KBR.auth.currentUser() && KBR.follow.isFollowing(t.id);
     const followBtn = '<div class="topic-actions"><button type="button" class="save-btn" data-action="toggle-follow" data-id="' + t.id + '" aria-pressed="' + (on ? 'true' : 'false') + '">' + I(on ? 'bookmarkFill' : 'bookmark', 18) + '<span>' + (on ? 'Obserwujesz temat' : 'Obserwuj cały temat') + '</span></button></div>';
-    return { title: t.name + ' – KBR', html: page({ title: t.name, intro: 'Wszystkie formaty materiałów przypisanych do tego tematu głównego. Każdy materiał otwiera się pod tym samym adresem niezależnie od miejsca, z którego do niego trafiasz.',
-      crumbs: [{ label: 'Strona główna', href: '#/' }, { label: 'Tematy', href: '#/tematy' }, { label: t.name }], items: items }) };
+    const crumbs = [{ label: 'Strona główna', href: '#/' }, { label: 'Tematy', href: '#/tematy' }, { label: t.name }];
+    const intro = 'Wszystkie formaty materiałów przypisanych do tego tematu głównego. Każdy materiał otwiera się pod tym samym adresem niezależnie od miejsca, z którego do niego trafiasz.';
+    if (items.length < 1) return { title: t.name + ' – KBR', html: page({ title: t.name, intro: intro, crumbs: crumbs, items: items }) };
+    /* Przy większej liczbie publikacji: jeden wyróżniony artykuł + prosta lista pozostałych */
+    const feat = items[0];
+    const listItem = function (m) {
+      return '<li class="topic-li"><div class="topic-li__top">' + ui.topicLabel(m).replace('card__cat', '') + '</div>' +
+        '<h3 class="topic-li__title"><a class="hover-title" href="' + ui.materialUrl(m) + '">' + esc(m.title) + (m.access === 'premium' ? '<span class="visually-hidden"> (Premium)</span>' : '') + '</a></h3>' +
+        '<p class="t-meta">' + ui.metaLine(m) + '</p></li>';
+    };
+    return { title: t.name + ' – KBR', html: '<div class="container">' +
+      '<header class="page-head">' + ui.crumbs(crumbs) + '<h1>' + esc(t.name) + '</h1><p>' + intro + '</p></header>' +
+      '<div class="list-layout"><p class="result-count topic-count" role="status">' + countLabel(items.length) + '</p>' +
+        '<div class="topic-feat">' + ui.row(feat) + '</div>' +
+        '<ul class="topic-ul" role="list">' + items.slice(1).map(listItem).join('') + '</ul>' +
+      '</div></div>' };
   };
 
   /* Wyszukiwanie: zakres („Szukaj w”) jako pierwszy poziom, filtry zależne od zakresu jako drugi. */
@@ -141,7 +167,7 @@
     const items = all.filter(function (m) { return !role || m.authors.some(function (x) { return x.id === a.id && x.role === role; }); }).sort(function (x, y) { return y.date.localeCompare(x.date); });
     const nA = all.filter(function (m) { return m.authors.some(function (x) { return x.id === a.id && x.role === 'autor'; }); }).length;
     const nE = all.length - nA;
-    const filters = chips('Rola w publikacji', [{ label: 'Wszystkie (' + all.length + ')', href: q(route, { rola: '' }), active: !role }, { label: 'Autorstwo (' + nA + ')', href: q(route, { rola: 'autor' }), active: role === 'autor' }, { label: 'Udział ekspercki (' + nE + ')', href: q(route, { rola: 'ekspert' }), active: role === 'ekspert' }]);
+    const filters = toggle('Rola w publikacji', [{ label: 'Wszystkie (' + all.length + ')', href: q(route, { rola: '' }), active: !role }, { label: 'Autorstwo (' + nA + ')', href: q(route, { rola: 'autor' }), active: role === 'autor' }, { label: 'Udział ekspercki (' + nE + ')', href: q(route, { rola: 'ekspert' }), active: role === 'ekspert' }]);
     return { title: a.name + ' – KBR', html: '<div class="container"><header class="page-head">' + ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Autorzy i eksperci', href: '#/autorzy' }, { label: a.name }]) +
       '<div class="author-head">' + ui.personPhoto(a, 'person-photo--96') + '<div><h1>' + esc(a.name) + '</h1>' + (a.role ? '<p class="person-role">' + esc(a.role) + '</p>' : '') + ui.personContact(a) + '</div></div><p>' + esc(a.bio) + '</p></header>' +
       '<div class="list-layout"><div class="list-toolbar">' + filters + '<p class="result-count" role="status">' + countLabel(items.length) + '</p></div><div class="rows">' + items.map(ui.row).join('') + '</div></div></div>' };
@@ -152,7 +178,7 @@
       '<h1>Autorzy i eksperci</h1><p>Osoby publikujące w KBR i udzielające komentarzy eksperckich. Ta sama osoba może występować w obu rolach i ma jeden profil.</p></header>' +
       '<div class="grid-3" style="padding-bottom:96px">' + KBR.data.authors.map(function (a) {
         const n = KBR.data.materials.filter(function (m) { return m.authors.some(function (x) { return x.id === a.id; }); }).length;
-        return '<a class="community-card" href="#/autor/' + a.id + '" style="justify-content:flex-start"><div class="avatar avatar--sm" aria-hidden="true">' + esc(a.initials.slice(0, 2)) + '</div><div><h2 style="font-size:18px;line-height:24px;color:var(--c-ink);font-weight:700">' + esc(a.name) + '</h2><p style="font-size:14px;margin-top:4px;color:var(--c-muted)">' + countLabel(n) + '</p></div></a>';
+        return '<a class="community-card" href="#/autor/' + a.id + '" style="justify-content:flex-start">' + ui.personPhoto(a, 'person-photo--56') + '<div><h2 style="font-size:18px;line-height:24px;color:var(--c-ink);font-weight:700">' + esc(a.name) + '</h2><p style="font-size:14px;margin-top:4px;color:var(--c-muted)">' + countLabel(n) + '</p></div></a>';
       }).join('') + '</div></div>' };
   };
 })();
