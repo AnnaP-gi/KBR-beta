@@ -66,7 +66,7 @@
   ui.searchForm = function (id, value) {
     const names = { 'q-desktop': 'Wyszukiwarka serwisu', 'q-mobile': 'Wyszukiwarka serwisu (mobilna)', 'q-page': 'Wyszukiwarka na stronie wyników' };
     return '<form class="search" role="search" aria-label="' + (names[id] || 'Wyszukiwarka') + '" data-form="search" action="#/wyszukiwanie"><label class="visually-hidden" for="' + id + '">Szukaj artykułów, tematów, tagów i osób</label>' +
-      '<span class="search__icon">' + I('search', 18) + '</span><input id="' + id + '" name="q" type="search" placeholder="Szukaj" autocomplete="off" value="' + esc(value || '') + '"></form>';
+      '<span class="search__icon">' + I('search', 18) + '</span><input id="' + id + '" name="q" type="search" placeholder="Szukaj" autocomplete="off" value="' + esc(value || '') + '"><button type="submit" class="search__submit">Szukaj</button></form>';
   };
 
   /* ------------------------------------------------------------ Stopka */
@@ -125,13 +125,12 @@
     return '<a class="t-label card__cat" href="#/tematy/' + t.slug + '">' + esc(t.name) + '</a>';
   };
   ui.promo = function () {
-    const I = KBR.icon;
-    return '<div class="promo"><span class="promo__label">Reklama</span>' +
-      '<img class="promo__img" src="assets/img/baner-executive.jpg" alt="Budynek Akademii Leona Koźmińskiego z rzeźbą lwa i logo Koźmiński University">' +
-      '<div class="promo__body"><h2>Rozwijaj kompetencje, które zmieniają biznes</h2><p>Programy rozwojowe, studia podyplomowe i executive oparte na badaniach i doświadczeniu.</p><span class="promo__rule"></span>' +
-      '<a class="btn btn--primary" href="https://www.kozminski.edu.pl/pl" target="_blank" rel="noopener">Poznaj programy i szkolenia' + I('chevRight', 16, 'stroke-width="2"') + '</a></div>' +
-      '<span class="promo__adchoice" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M1.5 1.5v7l6-3.5z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg><svg width="4" height="10" viewBox="0 0 4 10"><circle cx="2" cy="2" r="1" fill="currentColor"/><circle cx="2" cy="5" r="1" fill="currentColor"/><circle cx="2" cy="8" r="1" fill="currentColor"/></svg></span>' +
-    '</div>';
+    /* Reklama graficzna na sztywno (KBR.config.ads.home): 970×250 komputer/tablet, 300×250 telefon. Bez pliku – ramka zastępcza. */
+    const A = (KBR.config.ads || {}).home || {};
+    const img = function (cls, src, w, h) { return '<img class="ad-slot__img ' + cls + '" src="' + src + '" width="' + w + '" height="' + h + '" alt="' + esc(A.alt || 'Reklama') + '" loading="lazy" data-size="' + w + ' × ' + h + '" onerror="KBR.adMiss(this)">'; };
+    const ph = function (cls, size) { return '<div class="ad-slot__box ' + cls + '"><span>Miejsce na reklamę</span><span class="ad-slot__size">' + size + '</span></div>'; };
+    const inner = (A.desktop ? img('ad-slot--desk', A.desktop, 970, 250) : ph('ad-slot--desk ad-slot__box--bill', '970 × 250')) + (A.mobile ? img('ad-slot--mob', A.mobile, 300, 250) : ph('ad-slot--mob ad-slot__box--mrec', '300 × 250'));
+    return '<div class="ad-slot ad-slot--inline ad-slot--home"><span class="ad-slot__label">Reklama</span>' + (A.href ? '<a class="ad-slot__link" href="' + esc(A.href) + '" target="_blank" rel="sponsored noopener">' + inner + '</a>' : inner) + '</div>';
   };
   /* Okładka wydania z napisami (logo, numer, tytuł, zapowiedź) – wspólna dla strony głównej i strony magazynu */
   ui.magCoverBook = function (issue) {

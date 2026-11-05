@@ -17,6 +17,7 @@ KBR.icon = (function () {
     bookmarkFill: '<path d="M6.75 3.75h10.5v16.5L12 16.5l-5.25 3.75z" fill="currentColor"/>',
     share: '<circle cx="17.5" cy="5.75" r="2.25"/><circle cx="6.5" cy="12" r="2.25"/><circle cx="17.5" cy="18.25" r="2.25"/><path d="m8.5 10.9 7-4M8.5 13.1l7 4"/>',
     check: '<path d="m4.75 12.5 4.5 4.5 10-10"/>',
+    download: '<path d="M12 4.75v10M7.75 10.75 12 15l4.25-4.25M5 19.25h14"/>',
     checkCircle: '<circle cx="12" cy="12" r="8.25"/><path d="m8.25 12.25 2.5 2.5 5-5"/>',
     close: '<path d="M6 6l12 12M18 6 6 18"/>',
     dash: '<path d="M6 12h12"/>',
