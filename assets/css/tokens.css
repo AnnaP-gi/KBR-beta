@@ -8,11 +8,11 @@
   --c-blue-dark: #263f8f;     /* hover linków */
   --c-navy: #162447;          /* stopka, etykiety „Case studies”, ikony */
   --c-ink: #030928;           /* najciemniejszy tekst, pola w stopce */
-  --c-text: #3e4965;          /* tekst podstawowy, menu, metadane */
-  --c-muted: #596176;         /* opisy drugorzędne */
-  --c-placeholder: #788094;   /* placeholder, linia pionowa w sekcji magazynu */
+  --c-text: #4f5369;          /* tekst podstawowy, menu, metadane – Deep Waters 70% (7.6:1) */
+  --c-muted: #4f5369;         /* opisy drugorzędne – Deep Waters 70% (7.6:1) */
+  --c-placeholder: #788094;   /* placeholder, linia pionowa w sekcji magazynu – Deep Waters 50% nie spełnia WCAG, zostaje */
   --c-date: #6b7389;          /* daty na kartach – w projekcie #788094, przyciemnione do kontrastu 4.5:1 */
-  --c-gold: #91653f;          /* kategorie, znak KBR, etykieta Premium */
+  --c-gold: #91653f;          /* kategorie, znak KBR, etykieta Premium – zatwierdzony; 5.1:1 na białym, 4.7:1 na #f2f5ff */
   --c-gold-light: #b4865e;    /* etykiety w stopce */
   --c-crimson: #a00332;       /* główne CTA */
   --c-crimson-dark: #82022a;  /* hover CTA */
@@ -21,7 +21,7 @@
   --c-border: #e8e9ed;        /* linie nagłówka i sekcji */
   --c-border-strong: #a0a5b3; /* linia sekcji magazynu, pola formularzy */
   --c-border-blue: #abb8df;   /* podziały spisu treści magazynu */
-  --c-title: #000000;         /* tytuły w Playfair Display */
+  --c-title: #030928;         /* tytuły w Noto Serif – Deep Waters */
   --c-white: #ffffff;
   --c-success: #1f6b45;
   --c-success-tint: #e8f4ee;
@@ -31,7 +31,7 @@
 
   /* Typografia */
   --f-sans-plain: "Open Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --f-serif-plain: "Playfair Display", Georgia, "Times New Roman", serif;
+  --f-serif-plain: "Noto Serif", Georgia, "Times New Roman", serif;
   /* Cyfry w całym serwisie w foncie KozminskiU (wyjątek: treść artykułu – .prose) */
   --f-sans: "KBR Digits", var(--f-sans-plain);
   --f-serif: "KBR Digits", var(--f-serif-plain);

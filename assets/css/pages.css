@@ -1669,3 +1669,119 @@ html .mag-teaser:hover .mag-teaser__title { text-decoration: underline; text-dec
 
 html .mag__title-link:hover, html .mag__title-link:focus-visible, html .mag-teaser:hover .mag-teaser__title { text-decoration-line: underline; text-decoration-thickness: 1px !important; text-underline-offset: 5px; }
 html .mag__title:has(.mag__title-link) { text-decoration: none !important; }
+
+
+/* Ikona po lewej stronie tekstu: na hover w lewo */
+html :is(.btn, .t-link) > svg[data-lead] { transition: transform .25s cubic-bezier(.3,.7,.4,1) !important; }
+html :is(.btn, .t-link):hover:not([disabled]):not([aria-disabled="true"]) > svg[data-lead] { transform: translateX(-6px) !important; }
+@media (prefers-reduced-motion: reduce) { html :is(.btn, .t-link) > svg[data-lead] { transition: none !important; } }
+
+/* Karty pakietów: treść nie wychodzi poza kartę */
+html .plan { grid-template-columns: minmax(0, 1fr); min-width: 0; }
+html .plan > * { min-width: 0; max-width: 100%; }
+html .plan__change { flex-wrap: wrap; white-space: normal; text-align: center; padding: 12px 16px; }
+
+/* Tematy (strona główna): liczba materiałów wyśrodkowana w pionie względem nazwy */
+html .topics-ix__list a { align-items: center; }
+
+/* Reklama 728 px: nie wychodzi poza kolumnę na węższych ekranach */
+html .ad-slot__box { max-width: 100%; }
+
+/* Reklamy: stałe formaty 728×90 (komputer/tablet), 300×250 (telefon i kolumna boczna) */
+html .ad-slot__box--mrec { aspect-ratio: 300 / 250; width: 300px; max-width: 100%; }
+html .ad-slot--inline .ad-slot__box.ad-slot--desk { aspect-ratio: 728 / 90; width: 728px; max-width: 100%; }
+html .ad-slot__img { display: block; height: auto; max-width: 100%; }
+html .ad-slot__link { display: block; width: fit-content; max-width: 100%; }
+html .ad-slot--inline .ad-slot__label, html .ad-slot--inline .ad-slot__link { margin-left: auto; margin-right: auto; }
+html .ad-slot--inline { display: flex; flex-direction: column; align-items: center; }
+html .ad-slot--inline .ad-slot__label { align-self: stretch; max-width: 728px; width: 100%; }
+html .ad-slot__miss { display: none; }
+html .ad-slot--mob { display: none !important; }
+@media (max-width: 767px) {
+  html .ad-slot--desk { display: none !important; }
+  html .ad-slot--mob { display: flex !important; }
+  html img.ad-slot--mob { display: block !important; }
+  html .ad-slot--inline .ad-slot__label { max-width: 300px; }
+}
+
+/* Reklama na stronie głównej i w Tematach: 970×250 / 300×250 */
+html .ad-slot--home { margin: 96px auto 0; }
+html .ad-slot--home .ad-slot__label { max-width: 970px; }
+html .ad-slot--home .ad-slot__box.ad-slot--desk { aspect-ratio: 970 / 250; width: 970px; max-width: 100%; }
+@media (max-width: 767px) { html .ad-slot--home { margin-top: 64px; } html .ad-slot--home .ad-slot__label { max-width: 300px; } }
+
+/* WCAG 2.2 – 2.5.8: cel dotyku min. 24×24 px (ikony społecznościowe w stopce) */
+html .socials a { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; min-height: 24px; }
+/* WCAG 2.2 – 2.4.11: fokus nie chowa się pod przyklejonym menu */
+html { scroll-padding-top: 140px; }
+
+/* WCAG 1.4.3: daty na jasnoniebieskim tle (#f2f5ff) przyciemnione do 5.2:1 – tylko w tych sekcjach */
+html :is(.mag-teaser, .nl-box, .magazine, .community, .panel--tint, .summary, .mag-archive, .auth-side, .meter-box, .empty, .contact-author, .ship-next, .fb-page--cta, .kbr-v2 .v2-split) { --c-date: #5f677e; }
+
+/* Mobile: większe pole dotyku linków tekstowych (min. 24 px) bez zmiany układu; etykiety min. 12 px */
+@media (max-width: 760px) {
+  html :is(.t-link, a.link, .byline-person__name, .article-meta a, .tags-row a) { padding-top: 4px; padding-bottom: 4px; margin-top: -4px; margin-bottom: -4px; }
+  html a.card__cat { padding-top: 4px; padding-bottom: 4px; margin-top: 20px; margin-bottom: -4px; }
+  html :is(.ad-slot__label, .share-rail span, .badge--sm) { font-size: 12px; }
+}
+
+/* Reklama 300×250 w treści na telefonie – wyższa specyficzność niż stary format 728×90 */
+html .ad-slot--inline .ad-slot__box.ad-slot__box--mrec { aspect-ratio: 300 / 250; width: 300px; max-width: 100%; margin-left: auto; margin-right: auto; }
+
+/* W centrum uwagi na telefonie: odstęp zdjęcie–temat, linia między artykułami */
+@media (max-width: 560px) {
+  html .home-ontime .grid-4 { row-gap: 0; }
+  html .home-ontime .grid-4 > .card { padding: 24px 0; border-bottom: 1px solid var(--c-border); }
+  html .home-ontime .grid-4 > .card:first-child { padding-top: 0; }
+  html .home-ontime .grid-4 > .card:last-child { padding-bottom: 0; border-bottom: 0; }
+  html .home-ontime .card__media + * { margin-top: 20px; }
+}
+
+/* Przyciski zamykania (pasek górny, komunikaty, okna, czytnik): jednakowa ikona 20 px, pole dotyku min. 40–44 px, ikona się nie ściska */
+html :is(.topbar__close, .toast button, .modal__close, .fb__close) { flex: none; display: grid; place-items: center; padding: 0; }
+html :is(.topbar__close, .toast button, .modal__close, .fb__close) svg { width: 20px; height: 20px; flex: none; }
+html .toast button { width: 44px; height: 44px; margin: -12px -12px -12px 0; align-self: center; }
+html .topbar__close { width: 40px; height: 40px; right: 0; }
+html .modal__close, html .fb__close { width: 44px; height: 44px; }
+
+/* Wyszukiwarka na telefonie: „Wszystko” w pierwszej linii, „Artykuły” i „Autorzy i eksperci” poniżej */
+@media (max-width: 560px) {
+  html .search-scope { display: grid; grid-template-columns: max-content max-content; grid-auto-rows: 48px; gap: 0 32px; overflow: visible; border-bottom: 0;
+    background: linear-gradient(var(--c-border), var(--c-border)) 0 47px / 100% 1px no-repeat, linear-gradient(var(--c-border), var(--c-border)) 0 95px / 100% 1px no-repeat; }
+  html .search-scope a { height: 48px; white-space: nowrap; justify-self: start; }
+  html .search-scope a:first-child { grid-column: 1 / -1; }
+}
+
+/* Wyszukiwarka: przycisk „Szukaj” w polu – działa jak Enter */
+html .search__submit { position: absolute; top: 0; right: 0; bottom: 0; display: inline-flex; align-items: center; justify-content: center; width: 88px; padding: 0 12px; border: 0; background: var(--c-navy); color: #fff; font: inherit; font-size: 13px; transition: background-color .15s ease; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; cursor: pointer; }
+html .search:focus-within .search__submit, html .search__submit:hover { background: var(--c-blue); }
+html .search:focus-within .search__submit:hover { background: var(--c-blue-dark); }
+html .search__submit:focus-visible { outline: 2px solid var(--c-focus); outline-offset: 2px; }
+html .search input { padding-right: 100px; }
+
+/* Pole wyszukiwania: odstęp tekstu od krzyżyka czyszczenia (z obu stron krzyżyka) */
+/* 12 px od przycisku: środek krzyżyka min. 12 px od przycisku (WCAG 2.5.8 – odstęp celów) */
+html .search input::-webkit-search-cancel-button { margin-left: 12px; margin-right: 0; }
+
+/* Czytnik magazynu na telefonie i tablecie: jedna strona na całą szerokość, strzałki na stronie – pokazują się po dotknięciu; podgląd tuż pod paskiem */
+@media (max-width: 1023px) {
+  html .fb__stage { position: relative; padding: 8px 0 0; gap: 0; align-items: flex-start; }
+  html .fb-book.is-single { height: min(calc(100dvh - 110px), calc(100vw / .75)); margin: 0 auto; }
+  html .fb__nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 6; width: 44px; height: 44px; background: rgba(3, 9, 40, .6); border-color: rgba(255, 255, 255, .35); opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+  html .fb__nav--prev { left: 8px; }
+  html .fb__nav--next { right: 8px; }
+  html .fb:not(.show-nav) .fb__nav, html .fb:not(.show-nav) .fb__nav:disabled { opacity: 0; pointer-events: none; }
+  html .fb.show-nav .fb__nav, html .fb .fb__nav:focus-visible { opacity: 1; pointer-events: auto; }
+  html .fb.show-nav .fb__nav:disabled { opacity: .3; pointer-events: none; }
+  html .fb__note { padding: 8px 16px 12px; }
+}
+
+/* Przyciski-strzałki w całym serwisie: kwadratowe, bez zaokrągleń */
+html :is(.fb__nav, .op-nav__btn, .toc-item__arrow, .topic-tile__arrow) { border-radius: 0 !important; }
+/* Czytnik (telefon/tablet): strzałki na środku wysokości strony */
+@media (max-width: 1023px) {
+  html .fb__nav { top: calc(8px + min(calc(100dvh - 110px), calc(100vw / .75)) / 2); }
+}
+
+/* Czytnik magazynu: krzyżyk zamykania bez obramowania */
+html .fb__close { border: 0; border-radius: 0; }
