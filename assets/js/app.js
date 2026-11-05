@@ -1,3 +1,6 @@
+
+/* WCAG 3.1.1: język strony */
+if (!document.documentElement.lang) document.documentElement.lang = 'pl';
 /* ==========================================================================
    Router (hash) i obsługa zdarzeń globalnych.
    Adresy: #/artykul/<id> – jeden adres materiału niezależnie od miejsca wejścia.
@@ -152,7 +155,7 @@ KBR.app = (function () {
     const t = e.target.closest('[data-action]');
     const drawer = document.querySelector('.mobile-drawer.is-open');
     if (drawer && !e.target.closest('.site-header')) { e.preventDefault(); const b = document.querySelector('[data-action="toggle-drawer"]'); drawer.classList.remove('is-open'); if (b) b.setAttribute('aria-expanded', 'false'); return; }
-    if (window.matchMedia('(max-width: 1023px)').matches && document.querySelector('[data-action="menu"][aria-expanded="true"]') && !e.target.closest('.menu')) { e.preventDefault(); closeMenus(); return; }
+    if (window.matchMedia('(max-width: 1023px)').matches && document.querySelector('[data-action="menu"][aria-expanded="true"]') && !e.target.closest('.menu') && !e.target.closest('[data-action="toggle-drawer"]')) { e.preventDefault(); closeMenus(); return; }
     if (!t) { if (!e.target.closest('.menu__panel')) closeMenus(); return; }
     const a = t.dataset.action;
     switch (a) {
@@ -160,6 +163,8 @@ KBR.app = (function () {
       case 'menu': {
         const open = t.getAttribute('aria-expanded') === 'true';
         closeMenus(t);
+        /* Telefon: otwarcie profilu zamyka menu (hamburger) */
+        if (drawer) { drawer.classList.remove('is-open'); const hb = document.querySelector('[data-action="toggle-drawer"]'); if (hb) hb.setAttribute('aria-expanded', 'false'); }
         t.setAttribute('aria-expanded', String(!open));
         const p = document.getElementById(t.getAttribute('aria-controls'));
         if (p) { p.hidden = open; if (!open) { const f = p.querySelector('a, button'); if (f && e.detail === 0) f.focus(); } }
@@ -197,6 +202,7 @@ KBR.app = (function () {
       case 'toggle-drawer': {
         const el = document.getElementById(t.getAttribute('aria-controls'));
         const open = !el.classList.contains('is-open');
+        if (open && el.id === 'mobile-drawer') closeMenus();
         el.classList.toggle('is-open', open); t.setAttribute('aria-expanded', String(open));
         if (open && el.id === 'mobile-drawer') { const fit = function () { if (!el.classList.contains('is-open')) return window.removeEventListener('resize', fit); el.style.setProperty('--drawer-max', Math.max(200, window.innerHeight - el.getBoundingClientRect().top) + 'px'); }; fit(); window.addEventListener('resize', fit); window.addEventListener('scroll', fit, { passive: true, once: true }); }
         if (open && a === 'toggle-search') el.querySelector('input').focus();
@@ -287,4 +293,32 @@ document.addEventListener('DOMContentLoaded', KBR.app.init);
   };
   window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
   update();
+})();
+
+/* Ikona przed tekstem w przycisku/linku: na hover przesuwa się w lewo (oznaczenie data-lead). */
+(function () {
+  function sig(n, dir) { while (n && n.nodeType === 3 && !n.textContent.trim()) n = n[dir]; return n; }
+  function mark(root) {
+    (root.querySelectorAll ? root : document).querySelectorAll('.btn > svg, .t-link > svg').forEach(function (s) {
+      if (!sig(s.previousSibling, 'previousSibling') && sig(s.nextSibling, 'nextSibling')) s.setAttribute('data-lead', '');
+    });
+  }
+  function start() { mark(document); new MutationObserver(function () { mark(document); }).observe(document.body, { childList: true, subtree: true }); }
+  if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
+
+/* Typografia PL: krótkie słowa (spójniki, przyimki) nie zostają na końcu linii – twarda spacja po nich. Działa na każdą treść, też z CMS. */
+(function () {
+  const RE = /(^|[\s(„"«\u00A0])(a|i|o|u|w|z|A|I|O|U|W|Z|do|na|od|po|za|ze|we|że|ku|to|by|iż|aż|bo|ni|Do|Na|Od|Po|Za|Ze|We|Że|Ku|To|By|Iż|Aż|Bo|Ni) (?=\S)/g;
+  const SKIP = /^(SCRIPT|STYLE|TEXTAREA|INPUT|CODE|PRE|NOSCRIPT|svg)$/i;
+  function fix(root) {
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: function (n) {
+      for (let p = n.parentNode; p && p !== root.parentNode; p = p.parentNode) { if (p.nodeType === 1 && (SKIP.test(p.nodeName) || p.isContentEditable)) return NodeFilter.FILTER_REJECT; }
+      return / /.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } });
+    let n; while ((n = w.nextNode())) { const v = n.nodeValue, r = v.replace(RE, '$1$2\u00A0').replace(RE, '$1$2\u00A0'); if (r !== v) n.nodeValue = r; }
+  }
+  let q = false;
+  function run() { q = false; fix(document.body); }
+  function start() { run(); new MutationObserver(function () { if (!q) { q = true; requestAnimationFrame(run); } }).observe(document.body, { childList: true, subtree: true }); }
+  if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
 })();

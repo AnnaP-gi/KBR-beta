@@ -52,7 +52,7 @@ KBR.config = {
       name: 'Drukowany',
       description: 'Pełny dostęp online oraz drukowane wydanie magazynu z dostawą pod wskazany adres.',
       cta: 'Wybieram drukowany',
-      prices: { year: 160 },
+      prices: { year: 180 },
       entitlements: ['content', 'magazine-pdf', 'magazine-articles', 'print'],
       print: true,
       includes: [true, true, true, false, false]
@@ -64,7 +64,7 @@ KBR.config = {
       name: 'Premium +',
       description: 'Wszystko z pakietu Drukowany, a do tego zniżki na szkolenia i zaproszenia na wydarzenia Uczelni.',
       cta: 'Wybieram Premium +',
-      prices: { year: 280 },
+      prices: { year: 480 },
       entitlements: ['content', 'magazine-pdf', 'magazine-articles', 'print', 'benefits'],
       print: true,
       benefits: true,
@@ -79,10 +79,18 @@ KBR.config = {
   /* Identyfikatory pakietów z wcześniejszych wersji prototypu (dane w localStorage). */
   planAliases: { pelny: 'premium' },
 
+  /* Reklamy ustawione na sztywno. Pliki wgraj do assets/img/reklamy/ (wersja @2x obok, np. artykul-728x90@2x.jpg).
+     Puste pole src = ramka zastępcza. href = link docelowy, alt = tekst alternatywny. */
+  ads: {
+    home: { desktop: 'assets/img/reklamy/glowna-970x250.jpg', mobile: 'assets/img/reklamy/glowna-300x250.jpg', href: '', alt: '' },
+    inline: { desktop: 'assets/img/reklamy/artykul-728x90.jpg', mobile: 'assets/img/reklamy/artykul-300x250.jpg', href: '', alt: '' },
+    side: { src: 'assets/img/reklamy/bok-300x250.jpg', href: '', alt: '' }
+  },
+
   /* Wysyłka drukowanego wydania – DANE DEMONSTRACYJNE. */
   printShipping: {
     short: 'Nowe wydanie drukowane co kwartał.',
-    details: 'Kwartalnik wysyłamy Pocztą Polską. Pierwszy egzemplarz otrzymasz z najbliższej wysyłki po opłaceniu zamówienia. Dostawa na terenie Polski trwa 3–5 dni roboczych.',
+    details: 'Kwartalnik wysyłamy Pocztą Polską. Dostawa na terenie Polski trwa 3–5 dni roboczych.',
     next: '1–7 grudnia 2026 (Nr 04 / 2026)'
   },
 
