@@ -1,5 +1,25 @@
 /* Wspólny szablon strony materiału (artykuł, studium przypadku, podcast, wideo).
    Paywall jest STANEM tej strony, a nie osobną podstroną. */
+/* Reklamy na sztywno: pliki w assets/img/reklamy/ (konfiguracja: KBR.config.ads). Bez pliku – ramka zastępcza. */
+/* Brak pliku reklamy – ramka zastępcza z wymiarem. */
+KBR.adMiss = function (im) {
+  const d = document.createElement('div'); d.className = 'ad-slot__box ' + im.className.replace('ad-slot__img', '') + (im.width === 300 ? ' ad-slot__box--mrec' : '');
+  d.innerHTML = '<span>Miejsce na reklamę</span><span class="ad-slot__size">' + im.getAttribute('data-size') + '</span>';
+  const a = im.closest('.ad-slot__link'); (a && a.children.length === 1 ? a : im).replaceWith(d);
+};
+function adSlot(kind) {
+  const ui = KBR.ui;
+  const A = (KBR.config.ads || {})[kind] || {};
+  const ph = function (cls, size) { return '<div class="ad-slot__box ' + cls + '"><span>Miejsce na reklamę</span><span class="ad-slot__size">' + size + '</span></div>'; };
+  const img = function (cls, src, w, h) { return '<img class="ad-slot__img ' + cls + '" src="' + src + '" width="' + w + '" height="' + h + '" alt="' + ui.esc(A.alt || 'Reklama') + '" loading="lazy" data-size="' + w + ' × ' + h + '" onerror="KBR.adMiss(this)">'; };
+  const wrap = function (inner) { return A.href ? '<a class="ad-slot__link" href="' + ui.esc(A.href) + '" target="_blank" rel="sponsored noopener">' + inner + '</a>' : inner; };
+  if (kind === 'inline') return '<aside class="ad-slot ad-slot--inline" aria-label="Reklama"><span class="ad-slot__label">Reklama</span>' +
+    (A.desktop || A.mobile ? wrap((A.desktop ? img('ad-slot--desk', A.desktop, 728, 90) : '') + (A.mobile ? img('ad-slot--mob', A.mobile, 300, 250) : ''))
+      : ph('ad-slot--desk', '728 × 90') + ph('ad-slot--mob ad-slot__box--mrec', '300 × 250')) + '</aside>';
+  return '<div class="ad-slot" role="complementary" aria-label="Reklama"><span class="ad-slot__label">Reklama</span>' +
+    (A.src ? wrap(img('', A.src, 300, 250)) : ph('ad-slot__box--mrec', '300 × 250')) + '</div>';
+}
+
 KBR.pages.article = function (route) {
   const ui = KBR.ui, C = KBR.content, I = KBR.icon, esc = ui.esc;
   const m = C.get(route.params.id);
@@ -50,7 +70,7 @@ KBR.pages.article = function (route) {
     if (at < src.length && src[at - 1] && src[at - 1].t === 'pull') at--;
     if (at < 0) for (let i = 2; i < src.length; i++) { if (src[i - 1].t === 'p' && src[i].t !== 'h2' && src[i].t !== 'h3') { at = i; break; } }
     if (at < 0) at = src.length;
-    shown.splice(at, 0, '<aside class="ad-slot ad-slot--inline" aria-label="Reklama"><span class="ad-slot__label">Reklama</span><div class="ad-slot__box"><span>Miejsce na reklamę</span><span class="ad-slot__size">728 × 90</span></div></aside>');
+    shown.splice(at, 0, adSlot('inline'));
   }
   const bodyHtml = shown.join('');
 
@@ -207,7 +227,7 @@ KBR.pages.article = function (route) {
       episodes +
           '</div>' +
     '<aside class="article-aside" aria-label="Więcej z KBR"><div class="aside-sticky"><section class="latest" aria-labelledby="h-aside-latest"><h2 class="t-section col-head" id="h-aside-latest">Najnowsze</h2>' +
-      latest.map(function (x) { return ui.card(x, { noImage: true, date: false }); }).join('') + '</section>' + '<div class="ad-slot" role="complementary" aria-label="Reklama"><span class="ad-slot__label">Reklama</span><div class="ad-slot__box"><span>Miejsce na reklamę</span><span class="ad-slot__size">300 × 225</span></div></div>' + '</div></aside>' +
+      latest.map(function (x) { return ui.card(x, { noImage: true, date: false }); }).join('') + '</section>' + adSlot('side') + '</div></aside>' +
     '</div>' +
     '<section class="related" aria-labelledby="h-related">' + ui.sectionHead('Powiązane materiały', { href: '#/tematy/' + t.slug, label: 'Więcej z tematu' }, { id: 'h-related' }) +
       '<div class="grid-4">' + related.map(function (x) { return ui.card(x, {}); }).join('') + '</div></section>' +

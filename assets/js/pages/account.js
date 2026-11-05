@@ -124,10 +124,7 @@
         '<dt>Aktywna od</dt><dd>' + ui.dateLong(sub.startedAt) + '</dd><dt>Dostęp ważny do</dt><dd>' + ui.dateLong(sub.validUntil) + '</dd>' +
         '<dt>Rola konta</dt><dd>' + esc((KBR.config.roles[p.role] || {}).label || '–') + '</dd><dt>Numer zamówienia</dt><dd>' + esc(sub.orderId) + '</dd><dt>Zakres</dt><dd>' + p.features.filter(function (x) { return x.included; }).map(function (x) { return esc(x.text); }).join('<br>') + '</dd></dl>' +
         '</section>' +
-        (function () { const ord = KBR.orders && KBR.orders.get ? KBR.orders.get(sub.orderId) : null; const inv = ord && ord.invoice;
-          return '<section class="panel" aria-labelledby="h-invoice"><h2 id="h-invoice">Faktura</h2><p style="margin-top:12px">' +
-            (inv ? 'Faktura na firmę <strong>' + esc(inv.company) + '</strong> (NIP ' + esc(inv.nip) + ') została wystawiona w Krajowym Systemie e-Faktur (KSeF). Znajdziesz ją w KSeF w kontekście NIP swojej firmy.'
-                 : 'Faktura nie była zamawiana przy tym zakupie. Jeśli zamówisz fakturę na firmę, zostanie ona wystawiona w Krajowym Systemie e-Faktur (KSeF).') + '</p></section>'; })() +
+        docPanel(sub.orderId) +
         (p.print ? printPanel() : '');
     } else {
       inner += '<p class="sub">Na tym koncie nie ma aktywnej subskrypcji. Możesz czytać materiały otwarte i korzystać z darmowego limitu.</p>' +
@@ -140,6 +137,43 @@
     return { title: 'Moja subskrypcja – KBR', html: shell('subskrypcja', inner) };
   };
 
+  function orderOf(id) { return KBR.orders && KBR.orders.get ? KBR.orders.get(id) : null; }
+
+  function docPanel(orderId) {
+    const ord = orderOf(orderId), inv = ord && ord.invoice;
+    if (inv) return '<section class="panel" aria-labelledby="h-doc"><h2 id="h-doc">Dokument sprzedaży: faktura</h2><p style="margin-top:12px">Faktura na firmę <strong>' + esc(inv.company) + '</strong> (NIP ' + esc(inv.nip) + ') została wystawiona w Krajowym Systemie e-Faktur (KSeF). Znajdziesz ją w KSeF w kontekście NIP swojej firmy.</p>' +
+      '<p class="hint" style="margin-top:8px">Faktury wystawionej w KSeF nie pobierasz w serwisie KBR. Paragon nie jest wystawiany do zakupu z fakturą.</p></section>';
+    return '<section class="panel" aria-labelledby="h-doc"><h2 id="h-doc">Dokument sprzedaży: paragon</h2><p style="margin-top:12px">Do tego zakupu wystawiliśmy paragon. Możesz go pobrać i zapisać jako PDF.</p>' +
+      '<div class="btn-row" style="margin-top:16px"><button type="button" class="btn btn--outline btn--dl" data-receipt="' + esc(orderId) + '">' + I('download', 18) + 'Pobierz paragon</button></div>' +
+      '</section>';
+  }
+
+  function docCell(o) {
+    if (o.status !== 'paid') return '–';
+    return o.invoice ? 'Faktura w KSeF' : '<button type="button" class="link" style="background:none;border:0;padding:0;font:inherit;cursor:pointer" data-receipt="' + esc(o.orderId) + '">Pobierz paragon</button>';
+  }
+
+  function openReceipt(orderId) {
+    const o = orderOf(orderId); if (!o) return;
+    const p = KBR.subscription.plan(o.planId), u = KBR.auth.currentUser() || {};
+    const d = ui.dateTime(o.paidAt || o.submittedAt || o.createdAt);
+    const w = window.open('', '_blank'); if (!w) return;
+    w.document.write('<!DOCTYPE html><html lang="pl"><head><meta charset="utf-8"><title>Paragon ' + esc(o.orderId) + '</title>' +
+      '<style>body{font:15px/1.5 "Noto Sans",system-ui,sans-serif;color:#030928;max-width:520px;margin:40px auto;padding:0 24px}h1{font:500 28px/1.2 "Noto Serif",serif;margin:0 0 4px}table{width:100%;border-collapse:collapse;margin:24px 0}td,th{text-align:left;padding:8px 0;border-bottom:1px solid #D9DBE3}th:last-child,td:last-child{text-align:right}.m{color:#4F5369}.t{font-weight:700;font-size:18px}@media print{.np{display:none}}</style></head><body>' +
+      '<h1>Paragon</h1><p class="m">Nr ' + esc(o.orderId) + ' · ' + esc(d) + '</p>' +
+      '<p><strong>Sprzedawca:</strong> Akademia Leona Koźmińskiego, ul. Jagiellońska 57/59, 03-301 Warszawa, NIP [do uzupełnienia]</p>' +
+      '<p><strong>Nabywca:</strong> ' + esc((o.customer && o.customer.name) || u.firstName || '') + ', ' + esc((o.customer && o.customer.email) || u.email || '') + '</p>' +
+      '<table><thead><tr><th>Pozycja</th><th>Kwota brutto</th></tr></thead><tbody><tr><td>Kozminski Business Review, pakiet ' + esc(p ? p.name : o.planId) + ', 12 miesięcy</td><td>' + ui.money(o.amount) + '</td></tr></tbody>' +
+      '<tfoot><tr><td class="t">Razem</td><td class="t">' + ui.money(o.amount) + '</td></tr></tfoot></table>' +
+      '<p class="m">Stawka VAT: [do uzupełnienia]. Płatność online przez operatora płatności.</p>' +
+      '<p class="np"><button onclick="print()" style="height:44px;padding:0 20px;background:#A00332;color:#fff;border:0;font:inherit;font-weight:600;cursor:pointer">Zapisz jako PDF</button></p>' +
+      '</body></html>');
+    w.document.close();
+  }
+
+  if (!KBR._receiptBound) { KBR._receiptBound = true;
+    document.addEventListener('click', function (e) { const b = e.target.closest && e.target.closest('[data-receipt]'); if (b) { e.preventDefault(); openReceipt(b.getAttribute('data-receipt')); } }); }
+
   function ordersTable(orders) {
     if (!orders.length) return '';
     const ST = {
@@ -149,10 +183,10 @@
       failed: '<span class="status-pill status-pill--warn">Nieudana</span>',
       canceled: '<span class="status-pill status-pill--none">Anulowano</span>'
     };
-    return '<section class="panel" aria-labelledby="h-orders"><h2 id="h-orders">Historia zamówień</h2><div class="table-wrap"><table class="table"><thead><tr><th scope="col">Data</th><th scope="col">Zamówienie</th><th scope="col">Pakiet</th><th scope="col">Kwota</th><th scope="col">Status</th></tr></thead><tbody>' +
+    return '<section class="panel" aria-labelledby="h-orders"><h2 id="h-orders">Historia zamówień</h2><div class="table-wrap"><table class="table"><thead><tr><th scope="col">Data</th><th scope="col">Zamówienie</th><th scope="col">Pakiet</th><th scope="col">Kwota</th><th scope="col">Status</th><th scope="col">Dokument</th></tr></thead><tbody>' +
       orders.map(function (o) {
         const p = KBR.subscription.plan(o.planId);
-        return '<tr><td>' + ui.dateTime(o.createdAt) + '</td><td><a class="link" href="#/zamowienie/status?nr=' + encodeURIComponent(o.orderId) + '">' + esc(o.orderId) + '</a></td><td>' + esc(p ? p.name : o.planId) + ', 12 mies.</td><td>' + ui.money(o.amount) + '</td><td>' + (ST[o.status] || esc(o.status)) + '</td></tr>';
+        return '<tr><td>' + ui.dateTime(o.createdAt) + '</td><td><a class="link" href="#/zamowienie/status?nr=' + encodeURIComponent(o.orderId) + '">' + esc(o.orderId) + '</a></td><td>' + esc(p ? p.name : o.planId) + ', 12 mies.</td><td>' + ui.money(o.amount) + '</td><td>' + (ST[o.status] || esc(o.status)) + '</td><td>' + docCell(o) + '</td></tr>';
       }).join('') + '</tbody></table></div></section>';
   }
 
@@ -209,7 +243,7 @@
     const inner = '<h1>Płatności i faktury</h1><p class="sub">Metoda płatności, rozliczenia i dokumenty.</p>' +
       '<section class="panel" aria-labelledby="h-method"><h2 id="h-method">Metoda płatności</h2><p style="margin-top:12px">Płatności obsługuje Jotform wraz z operatorem płatności. Serwis KBR nie przechowuje danych kart. Każde zamówienie to jednorazowa płatność za 12 miesięcy, bez zapisanej metody płatności.</p></section>' +
       (orders.length ? ordersTable(orders) : '<section class="panel"><h2>Historia zamówień</h2><p style="margin-top:12px">Brak płatności na tym koncie.</p></section>') +
-      '<section class="panel" aria-labelledby="h-docs"><h2 id="h-docs">Dokumenty</h2><p style="margin-top:12px">Faktury będą dostępne do pobrania po integracji z systemem rozliczeń.</p></section>';
+      '<section class="panel" aria-labelledby="h-docs"><h2 id="h-docs">Dokumenty</h2><p style="margin-top:12px">Do zakupu bez faktury wystawiamy paragon – pobierzesz go z historii zamówień. Faktura na firmę jest wystawiana w Krajowym Systemie e-Faktur (KSeF).</p></section>';
     return { title: 'Płatności i faktury – KBR', html: shell('platnosci', inner) };
   };
 

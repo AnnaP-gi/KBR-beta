@@ -168,12 +168,12 @@
       '<div class="contact">' + demoNote() +
       '<div class="contact-grid">' +
         box('redakcja', 'Redakcja', 'Kontakt z redakcją', 'Pytania o publikacje, sprostowania, prośby o komentarz eksperta i sprawy prasowe.', 'redakcja@kbr.example') +
-        box('reklama', 'Reklama i partnerstwa', 'Współpraca reklamowa i partnerstwa', 'Kampanie w serwisie, newsletterze i magazynie, projekty specjalne oraz partnerstwa merytoryczne i wydarzenia. Na prośbę prześlemy media kit z zasięgami i cennikiem.', 'reklama@kbr.example',
+        box('reklama', 'Reklama i partnerstwa', 'Współpraca reklamowa i partnerstwa', 'Kampanie w serwisie, newsletterze i magazynie, projekty specjalne oraz partnerstwa merytoryczne i wydarzenia.', 'reklama@kbr.example',
           '<ul class="contact-box__list"><li>Reklama w serwisie i newsletterze</li><li>Reklama w magazynie drukowanym</li><li>Artykuły i raporty partnerskie</li><li>Patronaty i wydarzenia</li></ul>') +
       '</div>' +
       '<section class="contact-author" id="zostan-autorem" aria-labelledby="h-author"><div class="contact-author__intro"><span class="t-label">Dla autorów</span><h2 id="h-author">Zostań autorem KBR</h2>' +
         '<p>Publikujemy teksty badaczy, ekspertów i praktyków biznesu. Szukamy autorów, którzy mają do powiedzenia coś nowego i potrafią poprzeć to badaniami lub doświadczeniem.</p>' +
-        '<ul class="contact-box__list"><li>Prześlij krótki opis tematu (do 300 słów) i informację o sobie.</li><li>Redakcja odpowiada w ciągu 14 dni.</li><li>Teksty do serwisu: 8–15 tys. znaków, do magazynu: 15–25 tys. znaków.</li></ul>' +
+        '<ul class="contact-box__list"><li>Prześlij krótki opis tematu (do 300 słów) i informację o sobie.</li><li>Teksty do serwisu: 8–15 tys. znaków, do magazynu: 15–25 tys. znaków.</li></ul>' +
         '<a class="contact-box__mail" href="mailto:autorzy@kbr.example">' + KBR.icon('mail', 18) + 'autorzy@kbr.example</a></div>' +
         '</section></div></div>';
     return { title: 'Kontakt – KBR', html: html, mount: function (root) {
