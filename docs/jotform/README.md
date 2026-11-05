@@ -48,7 +48,7 @@ Unikalną nazwę ustawisz tak: pole → Właściwości → Zaawansowane → Unik
 
 1. Dodaj pole płatności wybranej bramki (np. Stripe, PayPal, PayU – sprawdź, które bramki i metody, np. BLIK lub Przelewy24, są dostępne w Twoim planie i kraju).
 2. Typ płatności: **Sprzedaż produktów** (Sell Products). **Nie** wybieraj subskrypcji ani płatności cyklicznych.
-3. Produkty: dodaj trzy produkty z cenami z `config.js` (Cyfrowy 120 zł, Drukowany 160 zł, Premium + 280 zł).
+3. Produkty: dodaj trzy produkty z cenami z `config.js` (Cyfrowy 120 zł, Drukowany 180 zł, Premium + 480 zł).
    - Cyfrowy — 12 miesięcy: dostęp do wszystkich artykułów w serwisie, magazyn online i w PDF.
    - Drukowany — 12 miesięcy: to, co w pakiecie Cyfrowym, oraz wydanie drukowane wysyłane na podany adres.
    - Premium + — 12 miesięcy: to, co w pakiecie Drukowanym, oraz zniżki na szkolenia i zaproszenia na wydarzenia Uczelni (e-mailem).

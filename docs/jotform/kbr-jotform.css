@@ -5,13 +5,11 @@
    Działa w formularzach typu Classic. Formularze Card mają ograniczone style.
    Wartości odpowiadają tokenom serwisu (assets/css/tokens.css).
    ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@500&family=Cormorant+Garamond:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Noto+Serif:ital,wght@0,500;1,500&display=swap');
 
 :root {
   --kbr-sans: "Open Sans", "Segoe UI", system-ui, sans-serif;
-  /* Serwis używa dziś Playfair Display w tytułach. Aby przejść na Cormorant Garamond,
-     zamień kolejność w tej jednej zmiennej. */
-  --kbr-serif: "Playfair Display", "Cormorant Garamond", Georgia, serif;
+    --kbr-serif: "Noto Serif", Georgia, serif;
   --kbr-ink: #030928;
   --kbr-text: #3e4965;
   --kbr-muted: #596176;
