@@ -6,9 +6,9 @@ Statyczna strona bez kroku budowania. Plik startowy: `index.html`.
 index.html        strona startowa
 vercel.json       ustawienia Vercel (cache)
 assets/css        style
-assets/js         logika (config.js – ceny, Jotform)
+assets/js         logika (config.js – ceny, bramka płatności)
 assets/img, fonts obrazy i fonty
-docs/jotform      instrukcja i CSS dla Jotform
+docs/platnosci      instrukcja podłączenia bramki płatności
 ```
 
 Podgląd lokalny: w folderze uruchom `npx serve .` i otwórz http://localhost:3000
@@ -32,7 +32,7 @@ Podgląd lokalny: w folderze uruchom `npx serve .` i otwórz http://localhost:30
    Usuń stare pliki strony (bez folderu `.git`) i skopiuj zawartość folderu `kbr-vercel`.
    ```
    git add -A
-   git commit -m "Nowa wersja KBR: zakup Jotform, autorzy, magazyn"
+   git commit -m "Nowa wersja KBR: zakup z bramką płatności, autorzy, magazyn"
    git push -u origin nowa-wersja
    ```
 3. Vercel automatycznie zbuduje **podgląd** gałęzi `nowa-wersja` (osobny adres, produkcja bez zmian).
@@ -63,4 +63,4 @@ git push -u origin main
 ## Uwaga
 
 To prototyp: konta, zamówienia i płatności są symulowane w przeglądarce (localStorage).
-Przed uruchomieniem sprzedaży potrzebny jest backend (patrz `docs/jotform/README.md`, pkt 5).
+Przed uruchomieniem sprzedaży potrzebny jest backend (patrz `docs/platnosci/README.md`, pkt 3–4).
