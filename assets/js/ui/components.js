@@ -20,7 +20,7 @@
     const navTopics = KBR.data.topics.filter(function (t) { return NAV_IDS.indexOf(t.id) !== -1; });
     const moreTopics = KBR.data.topics.filter(function (t) { return NAV_IDS.indexOf(t.id) === -1; }).map(function (t) { return '<li><a href="#/tematy/' + t.slug + '"' + cur('/tematy/' + t.slug) + '>' + esc(t.name) + '</a></li>'; }).join('');
     const account = user
-      ? '<div class="menu"><button type="button" class="hdr-link" data-action="menu" aria-expanded="false" aria-controls="account-menu" aria-haspopup="true">' + I('userPlain', 20) +
+      ? '<div class="menu"><button type="button" class="hdr-link hdr-link--user" data-action="menu" aria-expanded="false" aria-controls="account-menu" aria-haspopup="true"><span class="hdr-avatar" aria-hidden="true">' + esc(ui.userInitials(user)) + '</span>' +
         '<span>' + esc(user.firstName || 'Moje konto') + '</span>' + subTag + '<span class="chev">' + I('chevDown', 14) + '</span></button>' +
         '<div class="menu__panel" id="account-menu" hidden>' +
         '<div class="menu__head"><strong>' + esc(user.firstName || 'Czytelnik') + '</strong>' + esc(user.email) + '<br>' + (subPlan ? 'Pakiet ' + esc(subPlan.name) + ' – aktywny' : 'Konto bez subskrypcji') + '</div>' +
@@ -72,16 +72,16 @@
   /* ------------------------------------------------------------ Stopka */
   ui.footer = function () {
     /* Adresy profili – do uzupełnienia, gdy zostaną przekazane */
-    const socials = [['linkedin', 'LinkedIn', ''], ['x', 'X (Twitter)', ''], ['youtube', 'YouTube', '']];
+    const socials = [['linkedin', 'LinkedIn', ''], ['x', 'X', ''], ['youtube', 'YouTube', '']];
     return '<footer class="site-footer" aria-labelledby="footer-title"><h2 id="footer-title" class="visually-hidden">Stopka serwisu</h2><div class="container"><div class="footer-grid">' +
       '<div class="footer-brand">' +
         '<a class="logo" href="#/" aria-label="Kozminski Business Review – strona główna"><img class="logo__img" src="assets/img/kbr-logo-light.svg" alt="" width="208" height="56"></a>' +
         '<p>Polska platforma wiedzy biznesowej dla menedżerów, liderek i liderów, wydawana przez Akademię Leona Koźmińskiego.</p>' +
-        '<ul class="socials" aria-label="Kanały społecznościowe">' + socials.map(function (s) { return '<li><a href="' + (s[2] || '#') + '"' + (s[2] ? ' target="_blank" rel="noopener" aria-label="' + s[1] + ' (otwiera się w nowej karcie)"' : ' onclick="return false" aria-label="' + s[1] + ' (adres do uzupełnienia)"') + '><img src="assets/img/social-' + s[0] + '.png" alt=""></a></li>'; }).join('') + '</ul>' +
+        '<ul class="socials" aria-label="Kanały społecznościowe">' + socials.map(function (s) { return '<li><a href="' + (s[2] || '#') + '"' + (s[2] ? ' target="_blank" rel="noopener" aria-label="' + s[1] + ' (otwiera się w nowej karcie)"' : ' onclick="return false" aria-label="' + s[1] + ' (adres do uzupełnienia)"') + '><img src="assets/img/social-' + s[0] + '.png?v=2" alt=""></a></li>'; }).join('') + '</ul>' +
         '<div class="footer-cols">' +
           '<div><h2>O KBR</h2><ul><li><a href="#/strona/o-kbr">Misja i wizja</a></li><li><a href="#/autorzy">Autorzy i eksperci</a></li><li><a href="#/strona/kontakt">Kontakt</a></li></ul></div>' +
-          '<div><h2>Koźmiński</h2><ul>' +
-            [['O uczelni', 'https://www.kozminski.edu.pl/pl/o-uczelni'], ['Studia i szkolenia', 'https://www.kozminski.edu.pl/pl/oferta-edukacyjna'], ['Nauka i badania', 'https://www.kozminski.edu.pl/pl/nauka-i-badania'], ['Dla biznesu', 'https://www.kozminski.edu.pl/pl/wspolpraca-strategiczna-i-fundusze-stypendialne']].map(function (l) { const t = l[0]; return '<li><a class="ext-link" href="' + l[1] + '" target="_blank" rel="noopener">' + t + '<span aria-hidden="true">' + I('external', 14, 'stroke-width="2"') + '</span><span class="visually-hidden"> (serwis uczelni, otwiera się w nowej karcie)</span></a></li>'; }).join('') +
+          '<div><h2>Uczelnia</h2><ul>' +
+            [['Akademia Leona Koźmińskiego', 'https://www.kozminski.edu.pl/pl'], ['O uczelni', 'https://www.kozminski.edu.pl/pl/o-uczelni'], ['Studia i szkolenia', 'https://www.kozminski.edu.pl/pl/oferta-edukacyjna'], ['Nauka i badania', 'https://www.kozminski.edu.pl/pl/nauka-i-badania'], ['Dla biznesu', 'https://www.kozminski.edu.pl/pl/wspolpraca-strategiczna-i-fundusze-stypendialne']].map(function (l) { const t = l[0]; return '<li><a class="ext-link" href="' + l[1] + '" target="_blank" rel="noopener">' + t + '<span aria-hidden="true">' + I('external', 14, 'stroke-width="2"') + '</span><span class="visually-hidden"> (serwis uczelni, otwiera się w nowej karcie)</span></a></li>'; }).join('') +
           '</ul></div>' +
           '<div><h2>Dostęp</h2><ul><li><a href="#/subskrypcja">Subskrypcja</a></li></ul></div>' +
         '</div>' +
@@ -199,6 +199,10 @@
     4: 'left:2.6%;top:20.6%;width:16.4%;height:auto'
   };
 
+  /* Opis jako link do materiału (poza kolejnością Tab i czytnikami – link główny to tytuł) */
+  /* Pierwsza litera imienia zalogowanego użytkownika (nagłówek, profil) */
+  ui.userInitials = function (u) { u = u || {}; return (u.firstName || u.email || '?').trim().charAt(0).toUpperCase(); };
+  ui.leadLink = function (m, text) { return '<a class="lead-link" href="' + ui.materialUrl(m) + '" tabindex="-1" aria-hidden="true">' + esc(text == null ? m.lead : text) + '</a>'; };
   ui.titleLink = function (m, cls, tag) {
     tag = tag || 'h3';
     return '<' + tag + ' class="card__title"><a class="t-title-card ' + (cls || '') + ' hover-title" href="' + ui.materialUrl(m) + '">' + esc(m.title) + (m.access === 'premium' ? '<span class="visually-hidden"> (Premium)</span>' : '') + '</a></' + tag + '>';
@@ -211,7 +215,7 @@
       (opts.noImage ? '' : ui.media(m, opts)) +
       (opts.noImage && m.access === 'premium' ? ui.topicLabel(m).replace(/^<a class="t-label card__cat"/, '<span class="card__cat card__cat--prem"><a class="t-label"').replace(/<\/a>$/, '</a>' + ui.premiumTag(m) + '</span>') : ui.topicLabel(m)) +
       ui.titleLink(m, '', opts.tag) +
-      (opts.lead ? '<p class="t-body card__lead">' + esc(m.lead) + '</p>' : '') +
+      (opts.lead ? '<p class="t-body card__lead">' + ui.leadLink(m) + '</p>' : '') +
       '<p class="t-meta card__author">' + ui.metaLine(m) + '</p>' +
       (opts.save ? '<div class="card__actions">' + ui.saveButton(m, { compact: true }) + '</div>' : '') +
       '</article>';
@@ -225,7 +229,7 @@
       '<div class="row-item__body">' + (showFmt ? '<p class="card__format row-item__format">' + (isAV ? '<span class="fmt-ico">' + I('play', 12) + '</span>' : '') + '<strong>' + esc(f.name) + '</strong>' + (isAV && m.duration ? '<span>• ' + m.duration + ' min</span>' : '') + '</p>' : '') +
       '<div class="row-item__top">' + ui.topicLabel(m).replace('card__cat', '') + '</div>' +
       '<h2 style="margin:0"><a class="t-title-card hover-title" href="' + ui.materialUrl(m) + '">' + esc(m.title) + (m.access === 'premium' ? '<span class="visually-hidden"> (Premium)</span>' : '') + '</a></h2>' +
-      '<p class="t-body">' + esc(m.lead) + '</p>' +
+      '<p class="t-body">' + ui.leadLink(m) + '</p>' +
       '<div class="row-item__foot"><p class="t-meta">' + ui.metaLine(m) + '</p></div>' +
       '</div></article>';
   };
