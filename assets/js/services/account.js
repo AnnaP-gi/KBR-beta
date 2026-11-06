@@ -145,6 +145,11 @@
     plan: function (id) { id = (KBR.config.planAliases || {})[id] || id; return KBR.config.plans.find(function (p) { return p.id === id; }) || null; },
     role: function () { const s = KBR.subscription.get(); if (!s || s.status !== 'active') return null; const p = KBR.subscription.plan(s.planId); return p ? p.role : null; },
     price: function (planId, period) { const p = KBR.subscription.plan(planId); return p ? p.prices[period] : 0; },
+    /* Rozbicie ceny netto na netto / VAT / brutto (stawka z config.purchase.vatRate) */
+    vat: function (net) { const r = KBR.config.purchase.vatRate || 0; const v = Math.round(net * r * 100) / 100; return { net: net, rate: r, vat: v, gross: Math.round((net + v) * 100) / 100 }; },
+    gross: function (planId) { return KBR.subscription.vat(KBR.subscription.price(planId, 'year')).gross; },
+    /* Rozbicie dla zapisanego zamówienia (amount = brutto) */
+    orderVat: function (o) { if (o.net != null) return { net: o.net, rate: o.vatRate, vat: o.vat, gross: o.amount }; const r = KBR.config.purchase.vatRate || 0; const n = Math.round(o.amount / (1 + r) * 100) / 100; return { net: n, rate: r, vat: Math.round((o.amount - n) * 100) / 100, gross: o.amount }; },
     get: function (user) {
       user = user || KBR.auth.currentUser(); if (!user) return null;
       const sub = S.get(subKey(user), null);
@@ -184,13 +189,16 @@
     },
     shippingAddress: function () { const u = KBR.auth.currentUser(); return u ? S.get('shipping.' + u.id, null) : null; },
     setShippingAddress: function (a) { const u = KBR.auth.currentUser(); if (u) S.set('shipping.' + u.id, a); },
-    /* Wysyłki kwartalnika: pierwszy tydzień marca, czerwca, września i grudnia (dane demonstracyjne) */
+    /* Zapisane dane do faktury (firma, NIP, adres) – wypełniają formularz zamówienia */
+    invoiceData: function () { const u = KBR.auth.currentUser(); return u ? S.get('invoice.' + u.id, null) : null; },
+    setInvoiceData: function (a) { const u = KBR.auth.currentUser(); if (!u) return; if (a) S.set('invoice.' + u.id, a); else S.remove('invoice.' + u.id); },
+    /* Wysyłki kwartalnika: 4 wydania w roku – pierwszy tydzień marca, czerwca, września i grudnia (dane demonstracyjne) */
     shipments: function () {
       const s = KBR.subscription.get(); if (!s || s.status !== 'active') return { past: [], next: null };
       const p = KBR.subscription.plan(s.planId); if (!p || !p.print) return { past: [], next: null };
       const start = new Date(s.startedAt), now = new Date(), past = [];
       let d = new Date(start.getFullYear(), 0, 1), next = null;
-      for (let i = 0; i < 40; i++) {
+      for (let i = 0; i < 60; i++) {
         const m = [2, 5, 8, 11][i % 4], y = start.getFullYear() + Math.floor(i / 4);
         d = new Date(y, m, 3);
         if (d < start) continue;
@@ -200,9 +208,21 @@
       return { past: past, next: next };
     },
     /* Narzędzie demo */
+    /* Demo: subskrypcja rozpoczęta kilka miesięcy temu – z historią wysyłek */
+    demoActivateShipped: function (planId, monthsAgo) {
+      const u = KBR.auth.currentUser(); if (!u) return;
+      KBR.subscription.demoActivate(planId);
+      const s = KBR.subscription.get(u); if (!s) return;
+      const start = new Date(); start.setMonth(start.getMonth() - (monthsAgo || 7));
+      const until = new Date(start); until.setMonth(until.getMonth() + 12);
+      s.startedAt = start.toISOString(); s.validUntil = until.toISOString();
+      S.set(subKey(u), s);
+      if (!KBR.subscription.shippingAddress()) S.set('shipping.' + u.id, { name: [u.firstName, u.lastName].filter(Boolean).join(' ') || 'Anna Kowalska', street: 'ul. Jagiellońska 57/59', postal: '03-301', city: 'Warszawa', phone: '' });
+      KBR.bus.emit('subscription:change', s);
+    },
     demoActivate: function (planId) {
       const u = KBR.auth.currentUser(); if (!u) return;
-      grantAccess({ userId: u.id, planId: planId || 'cyfrowy', months: KBR.config.purchase.months, orderId: 'DEMO-' + Date.now().toString(36).toUpperCase(), amount: KBR.subscription.price(planId || 'cyfrowy', 'year'), shipping: null });
+      grantAccess({ userId: u.id, planId: planId || 'cyfrowy', months: KBR.config.purchase.months, orderId: 'DEMO-' + Date.now().toString(36).toUpperCase(), amount: KBR.subscription.gross(planId || 'cyfrowy', 'year'), shipping: null });
     },
     demoClear: function () { const u = KBR.auth.currentUser(); if (u) { S.remove(subKey(u)); KBR.bus.emit('subscription:change', null); } }
   };
@@ -258,13 +278,13 @@
     },
     update: function (patch) { const d = Object.assign({}, KBR.checkout.get() || {}, patch); S.set('checkout', d, 'session'); return d; },
     clear: function () { S.remove('checkout', 'session'); },
-    amount: function (d) { d = d || KBR.checkout.get(); return d ? KBR.subscription.price(d.planId, d.period) : 0; }
+    amount: function (d) { d = d || KBR.checkout.get(); return d ? KBR.subscription.gross(d.planId) : 0; }
   };
 
   /* ------------------------------------------------ Zamówienia (SYMULACJA SERWERA)
      W produkcji ten moduł to backend KBR. Front-end może utworzyć zamówienie i odczytać jego status,
      ale NIE może nadać dostępu. Dostęp nadaje wyłącznie KBR.server.paymentWebhook – odpowiednik
-     endpointu, który weryfikuje płatność u operatora / w API Jotform. */
+     endpointu, który weryfikuje płatność u operatora płatności (webhook bramki). */
   const ORD = 'server.orders';
   function allOrders() { return S.get(ORD, {}); }
   function saveOrder(o) { const a = allOrders(); a[o.orderId] = o; S.set(ORD, a); KBR.bus.emit('order:change', o); return o; }
@@ -287,7 +307,8 @@
       const u = KBR.auth.currentUser(); if (!u) return null;
       const o = { orderId: 'KBR-' + new Date().getFullYear() + '-' + Math.random().toString(36).slice(2, 7).toUpperCase(),
         userId: u.id, email: u.email, planId: draft.planId, months: KBR.config.purchase.months,
-        amount: KBR.subscription.price(draft.planId, 'year'), currency: 'PLN', status: 'created',
+        net: KBR.subscription.price(draft.planId, 'year'), vatRate: KBR.config.purchase.vatRate, vat: KBR.subscription.vat(KBR.subscription.price(draft.planId, 'year')).vat,
+        amount: KBR.subscription.gross(draft.planId), currency: 'PLN', status: 'created',
         createdAt: new Date().toISOString(), sourceId: draft.sourceId || null };
       return saveOrder(o);
     },
