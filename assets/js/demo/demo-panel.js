@@ -24,7 +24,8 @@ KBR.demo = (function () {
           '<button type="button" class="btn btn--outline" data-demo="free">' + I('bookmark', 18) + 'Konto bez subskrypcji</button>' +
           '<button type="button" class="btn btn--outline" data-demo="sub" data-plan="cyfrowy">' + I('unlock', 18) + 'Subskrybent: Cyfrowy (rola Cyfrowa)</button>' +
           '<button type="button" class="btn btn--outline" data-demo="sub" data-plan="drukowany">' + I('unlock', 18) + 'Subskrybent: Drukowany (rola Prenumerata)</button>' +
-          '<button type="button" class="btn btn--outline" data-demo="sub" data-plan="premium">' + I('unlock', 18) + 'Subskrybent: Premium + (rola Premium +)</button></div>' +
+          '<button type="button" class="btn btn--outline" data-demo="sub" data-plan="premium">' + I('unlock', 18) + 'Subskrybent: Premium + (rola Premium +)</button>' +
+          '<button type="button" class="btn btn--outline" data-demo="sub-shipped" data-plan="premium">' + I('mail', 18) + 'Premium + po wysłanych przesyłkach (historia wysyłek)</button></div>' +
           '<p style="margin-top:8px;font-size:12px;color:var(--c-muted)">Konto testowe: ' + ui.esc(KBR.config.demoAccount.email) + '.</p></div>' +
         '<div><h3>Limit bezpłatnych materiałów (założenie)</h3><form class="demo__row" id="demo-meter"><label for="demo-limit">Limit na przeglądarkę</label><input class="input" id="demo-limit" type="number" min="0" max="20" value="' + meter.limit + '"><button class="btn btn--outline" type="submit">Zastosuj</button></form>' +
           '<p style="margin-top:6px;font-size:12px;color:var(--c-muted)">Wykorzystano: ' + meter.used + '. 0 = licznik wyłączony.</p>' +
@@ -53,6 +54,7 @@ KBR.demo = (function () {
       if (a === 'guest') { KBR.auth.logout(); ui.toast('Stan demo: gość.'); }
       if (a === 'free') { KBR.auth.demoSignIn(KBR.config.demoAccount); KBR.subscription.demoClear(); ui.toast('Stan demo: konto bez subskrypcji.'); }
       if (a === 'sub') { KBR.auth.demoSignIn(KBR.config.demoAccount); KBR.subscription.demoClear(); KBR.subscription.demoActivate(b.dataset.plan); ui.toast('Stan demo: subskrybent, pakiet ' + KBR.subscription.plan(b.dataset.plan).name + '.'); }
+      if (a === 'sub-shipped') { KBR.auth.demoSignIn(KBR.config.demoAccount); KBR.subscription.demoClear(); KBR.subscription.demoActivateShipped(b.dataset.plan, 7); ui.toast('Stan demo: Premium +, subskrypcja od 7 miesięcy – historia wysyłek w „Moja subskrypcja”.'); d.close(); KBR.app.navigate('#/konto/subskrypcja'); return; }
       if (a === 'meter-reset') { KBR.access.resetMeter(); ui.toast('Licznik bezpłatnych materiałów wyzerowany.'); }
       if (a === 'reset') { KBR.resetDemo(); ui.toast('Dane demo zostały zresetowane.'); d.close(); KBR.app.navigate('#/'); return; }
       d.querySelector('#demo-state').textContent = stateLabel().replace(/&amp;/g, '&');
