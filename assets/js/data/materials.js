@@ -346,7 +346,7 @@ KBR.data.materials = [
 
 /* Wydania magazynu */
 KBR.data.issues = [
-  { id: '2026-03', label: 'Zima 2026', title: 'How AI Is Shaping Strategy', cover: 'magazyn-okladka-kbr.jpg', current: true,
+  { id: '2026-03', label: 'Nr 03 / 2026', title: 'How AI Is Shaping Strategy', cover: 'magazyn-okladka-kbr.jpg', current: true,
     coverHeadline: 'How AI<br>Is Shaping<br>Strategy', coverSide: ['Prof. Grzegorz W. Kołodko', 'Geopolitical changes and their impact'],
     description: 'Numer poświęcony technologiom, sztucznej inteligencji i nowemu spojrzeniu na przywództwo.',
     toc: ['ai-zdolnosc-organizacyjna', 'nowy-kontrakt-lidera', 'ryzyko-modeli-rada-nadzorcza'],
