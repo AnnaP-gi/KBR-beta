@@ -95,7 +95,7 @@
 .crumbs ol { display: flex; flex-wrap: wrap; gap: 6px; font-size: 13px; line-height: 18px; color: var(--c-muted); }
 .crumbs li + li::before { content: "/"; margin-right: 6px; color: var(--c-border-strong); }
 .crumbs a { color: var(--c-text); text-decoration: underline; text-underline-offset: 2px; }
-.crumbs a:hover { color: var(--c-blue); }
+.crumbs a:hover { color: var(--c-hover); }
 
 /* Pusty stan */
 .empty { text-align: center; padding: 64px 24px; background: var(--c-tint); }
@@ -106,7 +106,7 @@
 /* Zakładki */
 .tabs { display: flex; gap: 32px; border-bottom: 1px solid var(--c-border); margin-bottom: 32px; }
 .tabs [role="tab"] { background: none; border: 0; border-bottom: 3px solid transparent; padding: 12px 0; margin-bottom: -1px; font-size: 14px; line-height: 19px; font-weight: 400; text-transform: uppercase; letter-spacing: 0; color: var(--c-text); display: inline-flex; gap: 8px; align-items: center; cursor: pointer; }
-.tabs [role="tab"]:hover { color: #3252B5; }
+.tabs [role="tab"]:hover { color: var(--c-hover); }
 .tabs [role="tab"][aria-selected="true"] { color: var(--c-ink); border-bottom-color: var(--c-gold); }
 .tabs .count { font-size: 12px; min-width: 22px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--c-tint); color: var(--c-navy); display: inline-grid; place-items: center; }
 

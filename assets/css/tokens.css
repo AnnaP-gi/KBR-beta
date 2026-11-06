@@ -13,6 +13,7 @@
   --c-placeholder: #788094;   /* placeholder, linia pionowa w sekcji magazynu – Deep Waters 50% nie spełnia WCAG, zostaje */
   --c-date: #6b7389;          /* daty na kartach – w projekcie #788094, przyciemnione do kontrastu 4.5:1 */
   --c-gold: #91653f;          /* kategorie, znak KBR, etykieta Premium – zatwierdzony; 5.1:1 na białym, 4.7:1 na #f2f5ff */
+  --c-hover: #1f3580;         /* hover niebieskich linków i napisów – wyraźnie ciemniejszy od #3252b5 (10.6:1 na białym) */
   --c-gold-light: #b4865e;    /* etykiety w stopce */
   --c-crimson: #a00332;       /* główne CTA */
   --c-crimson-dark: #82022a;  /* hover CTA */
@@ -35,7 +36,7 @@
   /* Cyfry w całym serwisie w foncie KozminskiU (wyjątek: treść artykułu – .prose) */
   --f-sans: "KBR Digits", var(--f-sans-plain);
   --f-serif: "KBR Digits", var(--f-serif-plain);
-  --f-tag: "Kozminski", var(--f-sans-plain);
+  --f-tag: var(--f-sans-plain); /* autorzy i tagi: Open Sans; Kozminski tylko w cyfrach (KBR Digits) */
 
   --fs-12: 12px;
   --fs-14: 14px;

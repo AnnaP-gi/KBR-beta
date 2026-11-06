@@ -81,9 +81,9 @@ a.t-label:hover { text-decoration: underline; }
   color: var(--c-blue); font-weight: 700; font-size: var(--fs-14); line-height: 19px;
   text-transform: uppercase; letter-spacing: 0; display: inline-flex; align-items: center; gap: 6px;
 }
-.t-link:hover { color: var(--c-blue-dark); text-decoration: underline; }
+.t-link:hover { color: var(--c-hover); text-decoration: underline; }
 .link { color: var(--c-blue); text-decoration: underline; text-underline-offset: 2px; }
-.link:hover { color: var(--c-blue-dark); }
+.link:hover { color: var(--c-hover); }
 a.hover-title:hover .t-title-card, a.hover-title:hover .t-title-xl, a.hover-title:hover.t-title-card { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 
 /* Przyciski -------------------------------------------------------------- */
@@ -110,7 +110,7 @@ a.hover-title:hover .t-title-card, a.hover-title:hover .t-title-xl, a.hover-titl
 .btn--outline:hover { background: var(--c-tint); }
 .btn--outline[aria-pressed="true"] { background: var(--c-navy); color: #fff; }
 .btn--ghost { color: var(--c-blue); padding: 0 8px; }
-.btn--ghost:hover { background: var(--c-tint); }
+.btn--ghost:hover { background: transparent; color: var(--c-hover); }
 .btn--blue { background: var(--c-blue); color: #fff; border-color: transparent; }
 .btn--blue:hover { background: #3252B5; }
 .btn--block { width: 100%; }
