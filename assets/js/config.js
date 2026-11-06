@@ -24,11 +24,14 @@ KBR.config = {
      Zmiana pakietu w trakcie okresu dostępu NIE jest przewidziana w MVP.
      role: rola konta nadawana po opłaceniu (cyfrowa | prenumerata | premium). */
   featureList: [
-    'Dostęp do wszystkich artykułów w serwisie',
-    'Magazyn online: czytnik wydania i PDF do pobrania',
-    'Drukowane wydanie magazynu wysyłane na podany adres',
-    'Zniżki na szkolenia Akademii Leona Koźmińskiego',
-    'Zaproszenia na wydarzenia organizowane przez Uczelnię'
+    'Nieograniczony dostęp do wszystkich treści KBR online',
+    'Pełne archiwum artykułów',
+    'Cotygodniowy newsletter redakcji',
+    '4 wydania drukowane rocznie (kwartalnik) z dostawą do domu lub biura',
+    'Wydania cyfrowe każdego numeru',
+    'Wydania specjalne w wersji cyfrowej',
+    'Zniżki na wydarzenia, konferencje i webinary KBR',
+    'Zaproszenia na eventy i wydarzenia networkingowe'
   ],
   roles: {
     cyfrowa: { label: 'Cyfrowa', cls: 'hdr-premium--digital' },
@@ -40,35 +43,35 @@ KBR.config = {
       id: 'cyfrowy',
       role: 'cyfrowa',
       name: 'Cyfrowy',
-      description: 'Dostęp do wszystkich treści serwisu i magazynu online.',
-      cta: 'Wybieram cyfrowy',
+      description: 'Pełen dostęp cyfrowy w dowolnym miejscu i na każdym urządzeniu.',
+      cta: 'Zamów prenumeratę',
       prices: { year: 120 },
       entitlements: ['content', 'magazine-pdf', 'magazine-articles'],
-      includes: [true, true, false, false, false]
+      includes: [true, true, true, false, false, false, false, false]
     },
     {
       id: 'drukowany',
       role: 'prenumerata',
       name: 'Drukowany',
-      description: 'Pełny dostęp online oraz drukowane wydanie magazynu z dostawą pod wskazany adres.',
-      cta: 'Wybieram drukowany',
+      description: 'Drukowany magazyn do uważnej lektury plus wygoda dostępu cyfrowego.',
+      cta: 'Zamów prenumeratę',
       prices: { year: 180 },
       entitlements: ['content', 'magazine-pdf', 'magazine-articles', 'print'],
       print: true,
-      includes: [true, true, true, false, false]
+      includes: [true, true, true, true, true, true, false, false]
     },
     {
       id: 'premium',
       role: 'premium',
       featured: true,
       name: 'Premium +',
-      description: 'Wszystko z pakietu Drukowany, a do tego zniżki na szkolenia i zaproszenia na wydarzenia Uczelni.',
-      cta: 'Wybieram Premium +',
+      description: 'Kompletny zestaw narzędzi dla liderów, którzy chcą wiedzieć więcej.',
+      cta: 'Zamów prenumeratę',
       prices: { year: 480 },
       entitlements: ['content', 'magazine-pdf', 'magazine-articles', 'print', 'benefits'],
       print: true,
       benefits: true,
-      includes: [true, true, true, true, true]
+      includes: [true, true, true, true, true, true, true, true]
     }
   ],
   /* Korzyści Premium – wysyłane e-mailem na adres konta. */
@@ -84,7 +87,9 @@ KBR.config = {
   ads: {
     home: { desktop: 'assets/img/reklamy/glowna-970x250.jpg', mobile: 'assets/img/reklamy/glowna-300x250.jpg', href: '', alt: '' },
     inline: { desktop: 'assets/img/reklamy/artykul-728x90.jpg', mobile: 'assets/img/reklamy/artykul-300x250.jpg', href: '', alt: '' },
-    side: { src: 'assets/img/reklamy/bok-300x250.jpg', href: '', alt: '' }
+    side: { src: 'assets/img/reklamy/bok-300x250.jpg', href: '', alt: '' },
+    /* Strona logowania – large rectangle 336 × 280 (zalecany plik 2×: 672 × 560) */
+    login: { src: 'assets/img/reklamy/logowanie-336x280.jpg', href: '', alt: '' }
   },
 
   /* Wysyłka drukowanego wydania – DANE DEMONSTRACYJNE. */
@@ -97,7 +102,8 @@ KBR.config = {
   /* Zakup: jednorazowa płatność za 12 miesięcy. */
   purchase: {
     months: 12,
-    priceNote: 'Jednorazowa opłata za 12 miesięcy.',
+    vatRate: 0.08, // stawka VAT doliczana w podsumowaniu zamówienia (strona subskrypcji pokazuje ceny netto)
+    priceNote: 'Cena netto powiększona o 8% VAT, za 12 miesięcy prenumeraty. Wydanie drukowane z bezpłatną dostawą na terenie Polski.',
     /* Zgody w formularzu – TREŚCI DO DOSTARCZENIA (teksty zastępcze). */
     consents: [
       { id: 'terms', required: true, text: 'Akceptuję Regulamin subskrypcji KBR.', link: '#/strona/regulamin-subskrypcji' },
@@ -106,25 +112,15 @@ KBR.config = {
     ]
   },
 
-  /* Jotform – formularz zamówienia (szablon Product Order Form).
-     formUrl: Jotform → Publikuj → Szybkie udostępnianie → Kopiuj link,
-              np. https://form.jotform.com/251234567890123 (lub https://eu.jotform.com/… dla serwerów UE).
-     Pusty formUrl = TRYB DEMONSTRACYJNY (formularz nie jest osadzany, płatność nie działa).
-     formUrlByPlan: opcjonalnie osobny formularz na pakiet (nadpisuje formUrl).
-     fields: UNIKALNE NAZWY pól (pole → Właściwości → Zaawansowane → Unikalna nazwa).
-             Wartości poniżej to nazwy do ustawienia w Jotform – muszą być identyczne. */
-  jotform: {
-    formUrl: '',
-    formUrlByPlan: { cyfrowy: '', drukowany: '', premium: '' },
-    fields: {
-      plan: 'pakiet',              // ukryte, np. „Cyfrowy — 12 miesięcy”
-      planCode: 'kodPakietu',      // ukryte: cyfrowy | drukowany | premium
-      orderId: 'numerZamowienia',  // ukryte: numer zamówienia KBR (powiązanie z kontem)
-      userId: 'idKonta',           // ukryte: identyfikator konta KBR
-      amount: 'kwota',             // ukryte: kwota w zł (kontrola po stronie serwera)
-      name: 'imieNazwisko',        // pole „Imię i nazwisko” (Full Name) → name[first], name[last]
-      email: 'email'               // pole „E-mail”
-    }
+  /* Bramka płatności – zamówienie składane we własnym formularzu KBR (#/zamowienie),
+     płatność u operatora (np. PayU, Przelewy24, Stripe – do wyboru).
+     initUrl: endpoint backendu KBR, który tworzy transakcję u operatora i zwraca { redirectUrl }.
+     Pusty initUrl = TRYB DEMONSTRACYJNY (bez przekierowania, wynik płatności symulowany).
+     returnUrl: powrót z bramki; {orderId} zastępuje numer zamówienia. Opis: docs/platnosci/README.md */
+  payment: {
+    operator: '',
+    initUrl: '',
+    returnUrl: '#/zamowienie/status?nr={orderId}'
   },
 
   periods: {
