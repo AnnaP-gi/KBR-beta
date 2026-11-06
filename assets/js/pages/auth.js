@@ -117,7 +117,7 @@
 
   KBR.pages.register = function () {
     if (KBR.auth.currentUser()) return KBR.pages.redirect('#/konto/subskrypcja');
-    const html = '<div class="container auth-wrap"><div class="auth-card">' +
+    const html = '<div class="container auth-wrap auth-wrap--ad"><div class="auth-card">' +
       ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Rejestracja' }]) +
       '<h1 style="margin-top:16px">Załóż bezpłatne konto</h1><p class="intro">Zajmie to mniej niż minutę. Masz już konto? <a class="link" href="#/logowanie">Zaloguj się</a></p>' + contextBox() + socialAuth('register') +
       '<form id="register-form" novalidate>' +
@@ -130,8 +130,8 @@
           '<label class="check" for="reg-newsletter"><input type="checkbox" id="reg-newsletter" name="newsletter"><span>Chcę otrzymywać newsletter KBR.</span></label>' +
           '<label class="check" for="reg-marketing"><input type="checkbox" id="reg-marketing" name="marketing"><span>Chcę otrzymywać informacje o ofercie edukacyjnej Akademii Leona Koźmińskiego.</span></label></div></div>' +
         '<button class="btn btn--primary" type="submit">Załóż bezpłatne konto' + I('chevRight', 16, 'stroke-width="2"') + '</button>' +
-        '<p class="hint" style="margin-top:12px;display:flex;gap:8px;align-items:flex-start">' + I('mail', 16) + '<span>Na podany adres wyślemy link aktywacyjny. Konto zacznie działać po kliknięciu linku.</span></p>' +
-      '</form><p class="alt">Masz już konto? <a href="#/logowanie">Zaloguj się</a></p></div>' + side() + '</div>';
+        '<p class="hint" style="margin-top:12px;display:flex;gap:10px;align-items:center">' + I('mail', 20) + '<span>Na podany adres wyślemy link aktywacyjny.<br>Konto zacznie działać po kliknięciu linku.</span></p>' +
+      '</form><p class="alt">Masz już konto? <a href="#/logowanie">Zaloguj się</a></p></div>' + '<div class="auth-ad">' + (typeof adSlot === 'function' ? adSlot('login') : '') + '</div>' + '</div>';
     return { title: 'Rejestracja – KBR', html: html, mount: function (root) {
       bindPwToggles(root); bindSocial(root); rememberEmail(root, 'reg-email');
       const form = root.querySelector('#register-form');
@@ -160,7 +160,7 @@
     if (KBR.auth.currentUser()) return KBR.pages.redirect('#/konto/subskrypcja');
     if (!email) return KBR.pages.redirect('#/rejestracja');
     const inactive = route.query.nieaktywne === '1';
-    const html = '<div class="container auth-wrap"><div class="auth-card">' +
+    const html = '<div class="container auth-wrap auth-wrap--ad"><div class="auth-card">' +
       ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Rejestracja', href: '#/rejestracja' }, { label: 'Aktywacja konta' }]) +
       '<h1 style="margin-top:16px">Aktywuj konto</h1>' +
       '<div class="notice notice--success" role="status" style="margin-top:24px">' + I('mail', 20) + '<div><strong>' + (inactive ? 'Konto nie zostało jeszcze aktywowane.' : 'Sprawdź skrzynkę e-mail.') + '</strong><br>Wysłaliśmy link aktywacyjny na adres <strong>' + esc(email) + '</strong>. Kliknij go, aby aktywować konto' + (KBR.flow.peekReturn && KBR.flow.peekReturn() ? ' i wrócić do lektury' : '') + '.</div></div>' +
@@ -168,7 +168,7 @@
       contextBox() +
       '<div class="btn-row" style="margin-top:24px"><button type="button" class="btn btn--primary" data-act="open">Symulacja: otwórz link z wiadomości</button><button type="button" class="btn btn--outline" data-act="resend">Wyślij link ponownie</button></div>' +
       '<p class="alt">Błąd w adresie? <a href="#/rejestracja" data-act="change">Zmień adres e-mail</a></p>' +
-      '</div>' + side() + '</div>';
+      '</div>' + '<div class="auth-ad">' + (typeof adSlot === 'function' ? adSlot('login') : '') + '</div>' + '</div>';
     return { title: 'Aktywacja konta – KBR', html: html, mount: function (root) {
       root.querySelector('[data-act="open"]').addEventListener('click', async function (e) {
         const b = e.currentTarget; F.busy(b, true, 'Aktywowanie…');
@@ -186,7 +186,7 @@
 
   KBR.pages.login = function (route) {
     if (KBR.auth.currentUser()) return KBR.pages.redirect(KBR.flow.takeReturn() || '#/konto/subskrypcja');
-    const html = '<div class="container auth-wrap"><div class="auth-card">' +
+    const html = '<div class="container auth-wrap auth-wrap--ad"><div class="auth-card">' +
       ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Logowanie' }]) +
       '<h1 style="margin-top:16px">Zaloguj się</h1><p class="intro">Nie masz konta? <a class="link" href="#/rejestracja">Załóż bezpłatne konto</a></p>' + contextBox() + socialAuth('login') +
       '<form id="login-form" novalidate>' +
@@ -194,7 +194,7 @@
         F.passwordField('login-password', 'Hasło', { autocomplete: 'current-password' }) +
         '<p style="margin-top:12px;font-size:14px"><a class="link" href="#/reset-hasla">Nie pamiętasz hasła?</a></p>' +
         '<button class="btn btn--primary" type="submit">Zaloguj się' + I('chevRight', 16, 'stroke-width="2"') + '</button>' +
-      '</form><p class="alt">Nie masz konta? <a href="#/rejestracja">Załóż bezpłatne konto</a></p></div>' + side() + '</div>';
+      '</form><p class="alt">Nie masz konta? <a href="#/rejestracja">Załóż bezpłatne konto</a></p></div>' + '<div class="auth-ad">' + (typeof adSlot === 'function' ? adSlot('login') : '') + '</div>' + '</div>';
     return { title: 'Logowanie – KBR', html: html, mount: function (root) {
       bindSocial(root);
       const form = root.querySelector('#login-form');
@@ -219,16 +219,16 @@
 
   KBR.pages.resetRequest = function (route) {
     const sent = route.query.wyslano === '1';
-    const html = '<div class="container auth-wrap"><div class="auth-card">' +
+    const html = '<div class="container auth-wrap auth-wrap--ad"><div class="auth-card">' +
       ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Logowanie', href: '#/logowanie' }, { label: 'Odzyskanie dostępu' }]) +
       '<h1 style="margin-top:16px">Odzyskaj dostęp</h1>' +
       (sent
-        ? '<div class="notice notice--success" role="status" style="margin-top:24px">' + I('checkCircle', 20) + '<div><strong>Sprawdź skrzynkę e-mail.</strong><br>Jeśli konto o podanym adresie istnieje, wysłaliśmy link do ustawienia nowego hasła. Link jest ważny przez określony czas (do ustalenia).</div></div>' +
+        ? '<div class="notice notice--success" role="status" style="margin-top:24px">' + I('checkCircle', 20) + '<div><strong>Sprawdź skrzynkę e-mail.</strong><br>Jeśli konto o podanym adresie istnieje, wysłaliśmy link do ustawienia nowego hasła. Link jest ważny przez 24 godziny.</div></div>' +
           '<div class="btn-row" style="margin-top:24px"><a class="btn btn--primary" href="#/reset-hasla/nowe">Symulacja: otwórz link z wiadomości</a><a class="btn btn--ghost" href="#/logowanie">Wróć do logowania</a></div>'
         : '<p class="intro">Podaj adres e-mail przypisany do konta. Wyślemy link do ustawienia nowego hasła.</p>' +
           '<form id="reset-form" novalidate><div class="field"><label for="reset-email">Adres e-mail</label><input class="input" id="reset-email" type="email" autocomplete="email" required></div>' +
           '<button class="btn btn--primary" type="submit">Wyślij link</button></form><p class="alt"><a href="#/logowanie">Wróć do logowania</a></p>') +
-      '</div>' + side() + '</div>';
+      '</div>' + '<div class="auth-ad">' + (typeof adSlot === 'function' ? adSlot('login') : '') + '</div>' + '</div>';
     return { title: 'Odzyskanie dostępu – KBR', html: html, mount: function (root) {
       rememberEmail(root, 'reset-email');
       const form = root.querySelector('#reset-form'); if (!form) return;
@@ -244,14 +244,17 @@
 
   KBR.pages.resetNew = function (route) {
     const done = route.query.gotowe === '1';
-    const html = '<div class="container auth-wrap"><div class="auth-card">' +
-      ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Logowanie', href: '#/logowanie' }, { label: 'Nowe hasło' }]) +
+    /* Zmiana hasła z profilu (użytkownik zalogowany): po zapisie wyłącznie potwierdzenie, bez przejścia do logowania */
+    const fromProfile = !!KBR.auth.currentUser();
+    const html = '<div class="container auth-wrap auth-wrap--ad"><div class="auth-card">' +
+      ui.crumbs(fromProfile ? [{ label: 'Strona główna', href: '#/' }, { label: 'Moje konto', href: '#/konto/subskrypcja' }, { label: 'Zmiana hasła' }] : [{ label: 'Strona główna', href: '#/' }, { label: 'Logowanie', href: '#/logowanie' }, { label: 'Nowe hasło' }]) +
       '<h1 style="margin-top:16px">' + (done ? 'Hasło zostało zmienione' : 'Ustaw nowe hasło') + '</h1>' +
-      (done ? '<div class="notice notice--success" role="status" style="margin-top:24px">' + I('checkCircle', 20) + '<div>Możesz teraz zalogować się, używając nowego hasła.</div></div><div class="btn-row" style="margin-top:24px"><a class="btn btn--primary" href="#/logowanie">Przejdź do logowania</a></div>'
+      (done && fromProfile ? '<div class="notice notice--success" role="status" style="margin-top:24px">' + I('checkCircle', 20) + '<div>Twoje hasło zostało prawidłowo zaktualizowane.</div></div>'
+      : done ? '<div class="notice notice--success" role="status" style="margin-top:24px">' + I('checkCircle', 20) + '<div>Możesz teraz zalogować się, używając nowego hasła.</div></div><div class="btn-row" style="margin-top:24px"><a class="btn btn--primary" href="#/logowanie">Przejdź do logowania</a></div>'
         : '<form id="newpw-form" novalidate>' + F.passwordField('new-password', 'Nowe hasło', { autocomplete: 'new-password', rules: true }) +
           F.passwordField('new-password2', 'Powtórz nowe hasło', { autocomplete: 'new-password' }) +
           '<button class="btn btn--primary" type="submit">Zapisz nowe hasło</button></form>') +
-      '</div>' + side() + '</div>';
+      '</div>' + '<div class="auth-ad">' + (typeof adSlot === 'function' ? adSlot('login') : '') + '</div>' + '</div>';
     return { title: 'Nowe hasło – KBR', html: html, mount: function (root) {
       bindPwToggles(root);
       const form = root.querySelector('#newpw-form'); if (!form) return;

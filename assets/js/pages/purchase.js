@@ -22,12 +22,13 @@
   function summaryAside(d, opts) {
     opts = opts || {};
     const p = KBR.subscription.plan(d.planId);
-    const amount = KBR.subscription.price(d.planId, 'year');
+    const t = KBR.subscription.vat(KBR.subscription.price(d.planId, 'year'));
     return '<aside class="summary" aria-labelledby="h-summary"><h2 id="h-summary">Twoje zamówienie</h2><p class="plan-name">' + esc(p.name) + ' <span class="summary__months">· 12 miesięcy</span></p>' +
       '<p style="font-size:14px;line-height:21px;margin-top:6px">' + esc(p.description) + '</p>' +
       '<dl><dt>Okres dostępu</dt><dd>12 miesięcy</dd><dt>Płatność</dt><dd>Jednorazowa</dd><dt>Start dostępu</dt><dd>Po potwierdzeniu płatności</dd>' +
       (p.print ? '<dt>Najbliższa wysyłka</dt><dd>' + esc(CFG.printShipping.next) + '</dd>' : '') +
-      '<dt class="total">Do zapłaty</dt><dd class="total">' + ui.money(amount) + '</dd></dl>' +
+      '<dt>Cena netto</dt><dd>' + ui.money(t.net) + '</dd><dt>VAT ' + Math.round(t.rate * 100) + '%</dt><dd>' + ui.money(t.vat) + '</dd>' +
+      '<dt class="total">Do zapłaty (brutto)</dt><dd class="total">' + ui.money(t.gross) + '</dd></dl>' +
       '<p class="summary__note">' + I('info', 16) + '<span>' + esc(CFG.purchase.priceNote) + '</span></p>' +
       (opts.change !== false ? '<a class="t-link" href="#/subskrypcja">Zmień pakiet</a>' : '') +
       sourceBox(d.sourceId, 'Po zakupie wrócisz do') + '</aside>';
@@ -52,11 +53,11 @@
     const plans = CFG.plans.map(function (p) {
       const current = active && sub.planId === p.id;
       return '<article class="plan' + (p.featured ? ' plan--featured' : '') + '" aria-labelledby="plan-' + p.id + '">' +
-        (current ? '<span class="plan__flag badge badge--navy">Twój plan</span>' : p.featured ? '<span class="plan__flag badge badge--premium">Najczęściej wybierany</span>' : '') +
+        (current ? '<span class="plan__flag badge badge--navy">Twój plan</span>' : p.featured ? '<span class="plan__flag badge badge--premium">Najlepszy wybór</span>' : '') +
         '<h2 id="plan-' + p.id + '">' + esc(p.name) + '</h2><p class="desc">' + esc(p.description) + '</p>' +
         '<div class="price-opts">' +
-          '<p class="price-opt price-opt--year"><strong>' + num(p.prices.year) + ' ' + CFG.currency + '</strong><span>/ rok</span></p>' +
-          '<p class="price-opt price-opt--month">' + esc(CFG.purchase.priceNote) + '</p>' +
+          '<p class="price-opt price-opt--year"><strong>' + num(p.prices.year) + ' ' + CFG.currency + '</strong><span>+ VAT rocznie</span></p>' +
+          '<p class="price-opt price-opt--month">to tylko ' + num(Math.round(p.prices.year / 12)) + ' ' + CFG.currency + ' + VAT miesięcznie</p>' +
         '</div>' +
         (p.print || p.benefits ? '<div class="plan__ship">' + (p.print ? '<p>' + I('mail', 16) + '<span>' + esc(CFG.printShipping.short) + '</span></p>' : '') + (p.benefits ? '<p>' + I('mail', 16) + '<span>' + esc(CFG.benefits.short) + '</span></p>' : '') + '</div>' : '') +
         (active
@@ -68,11 +69,15 @@
 
     const html = '<div class="container">' +
       '<header class="plans-head">' + ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Subskrypcja' }]).replace('<nav class="crumbs"', '<nav class="crumbs" style="display:flex;justify-content:center"') +
-        '<h1 style="margin-top:16px">Wybierz subskrypcję magazynu KBR</h1><p>Każdy pakiet daje pełny dostęp do serwisu i magazynu online. Drukowany dodaje wysyłkę wydania papierowego, a Premium + – także zniżki na szkolenia i zaproszenia na wydarzenia Uczelni.</p>' +
+        '<h1 style="margin-top:16px">Wybierz subskrypcję magazynu KBR</h1><p>Roczna prenumerata Kozminski Business Review. Wybierz pakiet dopasowany do tego, jak czytasz.</p>' +
         (active ? '<div class="notice notice--success" style="max-width:760px;margin:24px auto 0;text-align:left">' + I('checkCircle', 18) + '<span>Masz aktywną subskrypcję. <a class="link" href="#/konto/subskrypcja">Zobacz szczegóły w koncie</a></span></div>' : '') +
         sourceBox(src, 'Wybierasz subskrypcję, aby przeczytać') +
       '</header>' +
       '<div class="plans">' + plans + '</div>' +
+      '<article class="plan plan--team" aria-labelledby="h-team"><div class="plan--team__body"><h2 id="h-team">Prenumerata dla zespołu lub na prezent</h2>' +
+        '<p class="desc">Rozwijaj kompetencje całego zespołu albo podaruj komuś roczną dawkę inspiracji.<br>Przygotujemy indywidualną ofertę dla firm, uczelni i organizacji.</p></div>' +
+        '<div class="plan--team__cta">' +
+        '<p class="plan--team__mail">Kontakt: <a href="mailto:prenumerata@kozminski.edu.pl">prenumerata@kozminski.edu.pl</a></p></div></article>' +
       '<section aria-labelledby="h-compare" style="margin-top:64px"><h2 class="t-section col-head" id="h-compare">Porównanie pakietów</h2>' +
         '<div class="table-wrap"><table class="table compare-table" style="min-width:560px"><thead><tr><th scope="col">Zakres</th>' + CFG.plans.map(function (p) { return '<th scope="col" style="text-align:center">' + esc(p.name) + '</th>'; }).join('') + '</tr></thead><tbody>' +
         CFG.featureList.map(function (t, i) {
@@ -81,7 +86,7 @@
             return '<td data-label="' + esc(p.name) + '" style="text-align:center;color:' + (on ? 'var(--c-gold)' : 'var(--c-border-strong)') + '">' + I(on ? 'check' : 'dash', 20) + '<span class="visually-hidden">' + (on ? 'Tak' : 'Nie') + '</span></td>';
           }).join('') + '</tr>';
         }).join('') + '</tbody></table></div>' +
-        '<p class="notice" style="margin-top:16px">' + I('info', 18) + '<span>Pakiet wybierasz na 12 miesięcy. Zniżki i zaproszenia w pakiecie Premium + przychodzą e-mailem na adres konta.</span></p></section>' +
+        '<p class="notice" style="margin-top:16px">' + I('info', 18) + '<span>Ceny netto (+ VAT) za 12 miesięcy prenumeraty. Wydanie drukowane z bezpłatną dostawą na terenie Polski. Zniżki i zaproszenia w pakiecie Premium + przychodzą e-mailem na adres konta.</span></p></section>' +
       '<div style="height:96px"></div></div>';
 
     return { title: 'Subskrypcja – KBR', html: html, mount: function (root) {
@@ -91,7 +96,7 @@
           if (KBR.auth.currentUser()) { KBR.app.navigate('#/zamowienie'); return; }
           KBR.flow.setReturn('#/zamowienie');
           KBR.app.navigate('#/rejestracja');
-          setTimeout(function () { ui.toast('Aby kontynuować zakup, załóż bezpłatne konto lub zaloguj się. Wybrany plan został zachowany.'); }, 60);
+          setTimeout(function () { ui.toast('Aby kontynuować zakup, załóż bezpłatne konto lub zaloguj się.<br>Wybrany plan został zachowany.'); }, 60);
         });
       });
     } };
@@ -104,30 +109,25 @@
     return null;
   }
 
-  /* Adres formularza Jotform z wypełnieniem pól (prefill przez parametry URL = unikalne nazwy pól). */
-  function jotformUrl(o, u) {
-    const J = CFG.jotform, f = J.fields, p = KBR.subscription.plan(o.planId);
-    const base = (J.formUrlByPlan && J.formUrlByPlan[o.planId]) || J.formUrl;
-    if (!base) return '';
-    const q = {};
-    q[f.plan] = p.name + ' — 12 miesięcy';
-    q[f.planCode] = p.id;
-    q[f.orderId] = o.orderId;
-    q[f.userId] = u.id;
-    q[f.amount] = String(o.amount);
-    q[f.email] = u.email;
-    if (u.firstName) q[f.name + '[first]'] = u.firstName;
-    if (u.lastName) q[f.name + '[last]'] = u.lastName;
-    return base + (base.indexOf('?') === -1 ? '?' : '&') + Object.keys(q).map(function (k) { return encodeURIComponent(k).replace(/%5B/g, '[').replace(/%5D/g, ']') + '=' + encodeURIComponent(q[k]); }).join('&');
+  /* Rozpoczęcie płatności: backend KBR tworzy transakcję u operatora i zwraca adres bramki. */
+  async function startPayment(o) {
+    const P = CFG.payment;
+    const res = await fetch(P.initUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+      body: JSON.stringify({ orderId: o.orderId, returnUrl: location.origin + location.pathname + P.returnUrl.replace('{orderId}', encodeURIComponent(o.orderId)) }) });
+    if (!res.ok) throw new Error('payment-init');
+    const data = await res.json();
+    if (!data.redirectUrl) throw new Error('payment-init');
+    location.href = data.redirectUrl;
   }
 
-  /* Podgląd formularza w trybie demonstracyjnym – układ pól 1:1 z konfiguracją Jotform (bez pól karty). */
-  function demoForm(o, u) {
-    const p = KBR.subscription.plan(o.planId);
+  /* Formularz zamówienia KBR (dane, dostawa, faktura, zgody). Dane karty podaje się wyłącznie w bramce operatora. */
+  function orderForm(o, u) {
+    const p = KBR.subscription.plan(o.planId), ov = KBR.subscription.orderVat(o);
+    const iv = KBR.subscription.invoiceData(), ivv = iv || {};
     const consents = CFG.purchase.consents;
     const name = [u.firstName, u.lastName].filter(Boolean).join(' ');
     return '' + 
-      '<form id="jf-demo" class="jf-shell" novalidate>' +
+      '<form id="order-form" class="of-shell" novalidate>' +
         '<section class="form-section" aria-labelledby="h-buyer"><h2 id="h-buyer">Dane zamawiającego</h2>' +
           '<div class="field"><label for="o-name">Imię i nazwisko</label><input class="input" id="o-name" autocomplete="name" value="' + esc(name) + '"></div>' +
           '<div class="field"><label for="o-email">Adres e-mail</label><input class="input" id="o-email" type="email" value="' + esc(u.email) + '" readonly aria-describedby="o-email-hint"><p class="hint" id="o-email-hint">Adres konta KBR, do którego przypiszemy dostęp.</p></div></section>' +
@@ -140,27 +140,30 @@
               '<div class="field"><label for="s-phone">Telefon dla kuriera <span class="opt">(opcjonalnie)</span></label><input class="input" id="s-phone" type="tel" autocomplete="tel"></div></section>'
           : '') +
         '<section class="form-section" aria-labelledby="h-invoice"><h2 id="h-invoice">Faktura</h2>' +
-          '<label class="check" for="o-inv"><input type="checkbox" id="o-inv" aria-controls="inv-fields" aria-expanded="false"><span>Chcę otrzymać fakturę na firmę</span></label>' +
-          '<div id="inv-fields" hidden style="margin-top:16px">' +
-            '<div class="field"><label for="o-company">Nazwa firmy</label><input class="input" id="o-company" autocomplete="organization"></div>' +
-            '<div class="field"><label for="o-nip">NIP</label><input class="input" id="o-nip" inputmode="numeric" aria-describedby="o-nip-hint"><p class="hint" id="o-nip-hint">10 cyfr, np. 5260250274 (numer testowy).</p></div>' +
-            '<div class="field"><label for="o-street">Adres firmy</label><input class="input" id="o-street" autocomplete="street-address"></div>' +
-            '<div class="two-col"><div class="field"><label for="o-postal">Kod pocztowy</label><input class="input" id="o-postal" placeholder="00-000"></div>' +
-            '<div class="field"><label for="o-city">Miejscowość</label><input class="input" id="o-city"></div></div></div></section>' +
+          '<label class="check" for="o-inv"><input type="checkbox" id="o-inv" aria-controls="inv-fields" aria-expanded="' + (iv ? 'true' : 'false') + '"' + (iv ? ' checked' : '') + '><span>Chcę otrzymać fakturę na firmę</span></label>' +
+          '<div id="inv-fields"' + (iv ? '' : ' hidden') + ' style="margin-top:16px">' +
+            (iv ? '<p class="hint" style="margin:0 0 16px">Wypełniliśmy dane zapisane w Twoim koncie. Możesz je zmienić.</p>' : '') +
+            '<div class="field"><label for="o-company">Nazwa firmy</label><input class="input" id="o-company" autocomplete="organization" value="' + esc(ivv.company || '') + '"></div>' +
+            '<div class="field"><label for="o-nip">NIP</label><input class="input" id="o-nip" inputmode="numeric" aria-describedby="o-nip-hint" value="' + esc(ivv.nip || '') + '"><p class="hint" id="o-nip-hint">10 cyfr, np. 5260250274 (numer testowy).</p></div>' +
+            '<div class="field"><label for="o-street">Adres firmy</label><input class="input" id="o-street" autocomplete="street-address" value="' + esc(ivv.street || '') + '"></div>' +
+            '<div class="two-col"><div class="field"><label for="o-postal">Kod pocztowy</label><input class="input" id="o-postal" placeholder="00-000" value="' + esc(ivv.postal || '') + '"></div>' +
+            '<div class="field"><label for="o-city">Miejscowość</label><input class="input" id="o-city" value="' + esc(ivv.city || '') + '"></div></div>' +
+            '<label class="check" for="o-inv-save" style="margin-top:20px"><input type="checkbox" id="o-inv-save" checked><span>Zapisz dane do faktury w moim koncie</span></label></div></section>' +
         '<section class="form-section" aria-labelledby="h-pkg"><h2 id="h-pkg">Podsumowanie</h2>' +
-          '<div class="jf-product"><div><strong>' + esc(p.name) + ' — 12 miesięcy</strong><span>' + esc(p.description) + '</span></div><b>' + ui.money(o.amount) + '</b></div>' +
-          '<div class="jf-total"><span>Razem</span><strong>' + ui.money(o.amount) + '</strong></div>' +
-          '<p class="jf-note">' + esc(CFG.purchase.priceNote) + '</p></section>' +
+          '<div class="of-product"><div><strong>' + esc(p.name) + ' — 12 miesięcy</strong><span>' + esc(p.description) + '</span></div><b>' + ui.money(ov.net) + ' netto</b></div>' +
+          '<div style="display:flex;justify-content:space-between;gap:16px;padding:10px 0;font-size:15px;line-height:22px;color:#4F5369"><span>VAT ' + Math.round(ov.rate * 100) + '%</span><span>' + ui.money(ov.vat) + '</span></div>' +
+          '<div class="of-total"><span>Razem brutto</span><strong>' + ui.money(ov.gross) + '</strong></div>' +
+          '<p class="of-note">' + esc(CFG.purchase.priceNote) + '</p></section>' +
         '<section class="form-section" aria-labelledby="h-terms"><h2 id="h-terms">Zgody</h2>' +
           consents.map(function (c) { return '<label class="check" for="c-' + c.id + '"><input type="checkbox" id="c-' + c.id + '"><span>' + (c.link ? esc(c.text).replace(/(Regulamin subskrypcji KBR|Polityką prywatności)/, '<a href="' + c.link + '" target="_blank">$1</a>') : esc(c.text)) + (c.required ? ' (wymagane)' : '') + '</span></label>'; }).join('') + '</section>' +
         '<section class="form-section" aria-labelledby="h-pay"><h2 id="h-pay">Płatność</h2>' +
-          '<div class="jf-gateway">' + I('lock', 18) + '<span>Tu wyświetli się bramka płatności skonfigurowana w Jotform (płatność jednorazowa).</span></div></section>' +
+          '<div class="of-gateway">' + I('lock', 18) + '<span>Po kliknięciu „Zamawiam i płacę” przejdziesz do bezpiecznej bramki płatności' + (CFG.payment.operator ? ' ' + esc(CFG.payment.operator) : '') + '. Płatność jednorazowa. Serwis KBR nie przechowuje danych kart.</span></div></section>' +
         '<div class="step-actions"><a class="btn btn--ghost" href="#/subskrypcja">Wróć do pakietów</a><button class="btn btn--primary" type="submit" style="height:48px">Zamawiam i płacę ' + ui.money(o.amount) + I('chevRight', 16, 'stroke-width="2"') + '</button></div>' +
         '<p class="hint" style="margin-top:12px">Wysłanie formularza nie aktywuje dostępu. Aktywujemy go po potwierdzeniu płatności przez operatora.</p>' +
       '</form>';
   }
 
-  /* ------------------------------------------- Dane i płatność (Jotform) */
+  /* ------------------------------------------- Dane i płatność (formularz KBR + bramka) */
   KBR.pages.order = function (route) {
     const r = requireDraft(route); if (r) return r;
     const u = KBR.auth.currentUser();
@@ -176,35 +179,17 @@
       o = KBR.orders.create(d);
       d = KBR.checkout.update({ orderId: o.orderId, period: 'year' });
     }
-    const src = jotformUrl(o, u);
     const html = '<div class="container">' + steps(3) + '<div class="checkout"><div>' +
       '<h1>Dane i płatność</h1><p style="margin-top:8px">Zalogowano jako <strong>' + esc(u.email) + '</strong>. Zakup zostanie przypisany do tego konta. Numer zamówienia: <strong>' + esc(o.orderId) + '</strong>.</p>' +
-      (src
-        ? '<div class="jf-frame"><iframe id="jf-iframe" title="Formularz zamówienia subskrypcji KBR" src="' + esc(src) + '" allow="payment; fullscreen" scrolling="no" style="width:100%;min-height:900px;border:0;display:block"></iframe></div>' +
-          '<p class="hint" style="margin-top:12px">' + I('lock', 14) + ' Formularz i płatność obsługuje Jotform wraz z operatorem płatności. Dostęp aktywujemy po potwierdzeniu płatności. <a class="link" href="#/zamowienie/status?nr=' + encodeURIComponent(o.orderId) + '">Sprawdź status zamówienia</a></p>'
-        : demoForm(o, u)) +
+      orderForm(o, u) +
       '</div><div id="summary-slot">' + summaryAside(d) + '</div></div></div>';
 
     return { title: 'Dane i płatność – KBR', html: html, mount: function (root) {
-      const frame = root.querySelector('#jf-iframe');
-      if (frame) {
-        /* Jotform wysyła do strony nadrzędnej komunikaty „setHeight:<px>:<formId>” */
-        const onMsg = function (e) {
-          if (!/jotform/.test(e.origin) || typeof e.data !== 'string') return;
-          const a = e.data.split(':');
-          if (a[0] === 'setHeight' && !isNaN(a[1])) frame.style.height = (parseInt(a[1], 10) + 24) + 'px';
-          if (a[0] === 'scrollIntoView') window.scrollTo({ top: frame.getBoundingClientRect().top + window.scrollY - 24 });
-        };
-        window.addEventListener('message', onMsg);
-        const off = function () { window.removeEventListener('message', onMsg); window.removeEventListener('hashchange', off); };
-        window.addEventListener('hashchange', off);
-        return;
-      }
-      const form = root.querySelector('#jf-demo'); if (!form) return;
+      const form = root.querySelector('#order-form'); if (!form) return;
       const p = KBR.subscription.plan(o.planId);
       const invBox = root.querySelector('#o-inv'), invFields = root.querySelector('#inv-fields');
       invBox.addEventListener('change', function () { invFields.hidden = !invBox.checked; invBox.setAttribute('aria-expanded', String(invBox.checked)); });
-      form.addEventListener('submit', function (e) {
+      form.addEventListener('submit', async function (e) {
         e.preventDefault();
         const rules = [{ id: 'o-name', check: F.v.required('imię i nazwisko') }];
         if (p.print) rules.push({ id: 's-street', check: F.v.required('ulicę i numer') }, { id: 's-postal', check: F.v.postal }, { id: 's-city', check: F.v.required('miejscowość') });
@@ -217,13 +202,18 @@
           shipping: p.print ? { name: val('o-name'), street: val('s-street'), postal: val('s-postal'), city: val('s-city'), phone: val('s-phone') } : null,
           invoice: invBox.checked ? { company: val('o-company'), nip: val('o-nip').replace(/[\s-]/g, ''), street: val('o-street'), postal: val('o-postal'), city: val('o-city') } : null
         });
-        KBR.app.navigate('#/zamowienie/status?nr=' + encodeURIComponent(o.orderId));
+        const invSave = root.querySelector('#o-inv-save');
+        if (invBox.checked && invSave && invSave.checked) KBR.subscription.setInvoiceData({ company: val('o-company'), nip: val('o-nip').replace(/[\s-]/g, ''), street: val('o-street'), postal: val('o-postal'), city: val('o-city') });
+        if (!CFG.payment.initUrl) { KBR.app.navigate('#/zamowienie/status?nr=' + encodeURIComponent(o.orderId)); return; }
+        const btn = form.querySelector('[type="submit"]'); F.busy(btn, true, 'Przekierowanie do płatności…');
+        try { await startPayment(o); }
+        catch (err) { F.busy(btn, false); ui.toast('Nie udało się połączyć z bramką płatności. Spróbuj ponownie za chwilę.', { timeout: 7000 }); }
       });
     } };
   };
 
   /* ---------------------------------------- Status zamówienia i płatności
-     Adres strony podziękowania w Jotform: https://<domena>/#/zamowienie/status?nr={numerZamowienia} */
+     Adres powrotu z bramki płatności: CFG.payment.returnUrl (#/zamowienie/status?nr={orderId}) */
   KBR.pages.orderStatus = function (route) {
     if (window.top !== window.self) { try { window.top.location.href = location.href; } catch (e) {} }
     const u = KBR.auth.currentUser();
@@ -234,7 +224,7 @@
     }
     const p = KBR.subscription.plan(o.planId);
     const src = o.sourceId && C.get(o.sourceId);
-    const demo = !((CFG.jotform.formUrlByPlan && CFG.jotform.formUrlByPlan[o.planId]) || CFG.jotform.formUrl);
+    const demo = !CFG.payment.initUrl;
     const head = '<div class="container">' + steps(o.status === 'paid' ? 5 : 4) + '<div class="result">';
     let body;
     if (o.status === 'paid') {
@@ -260,9 +250,9 @@
       body = '<div class="result__icon result__icon--wait" aria-hidden="true"><span class="spinner"></span></div>' +
         '<h1>Czekamy na potwierdzenie płatności</h1>' +
         '<p role="status">Zamówienie <strong>' + esc(o.orderId) + '</strong> · pakiet <strong>' + esc(p.name) + ' — 12 miesięcy</strong> · ' + ui.money(o.amount) + '.<br>Dostęp aktywujemy, gdy operator płatności potwierdzi wpłatę. Zwykle trwa to kilka sekund, ta strona odświeży się sama.</p>' +
-        '<p class="hint" style="margin-top:12px">Samo wysłanie formularza nie aktywuje dostępu.</p>' +
+        '<p class="hint" style="margin-top:12px">Samo złożenie zamówienia nie aktywuje dostępu.</p>' +
         (demo
-          ? '<div class="pay-sim" role="group" aria-labelledby="h-sim" style="text-align:left;margin-top:32px"><h2 id="h-sim">Symulacja serwera (webhook płatności)</h2><p>W produkcji ten krok wykonuje serwer KBR po otrzymaniu potwierdzenia od Jotform i operatora płatności. Wybierz wynik, aby sprawdzić kolejne stany.</p>' +
+          ? '<div class="pay-sim" role="group" aria-labelledby="h-sim" style="text-align:left;margin-top:32px"><h2 id="h-sim">Symulacja serwera (webhook płatności)</h2><p>W produkcji ten krok wykonuje serwer KBR po otrzymaniu potwierdzenia (webhooka) od operatora płatności. Wybierz wynik, aby sprawdzić kolejne stany.</p>' +
             '<div class="btn-row" style="margin-top:16px;justify-content:flex-start"><button type="button" class="btn btn--primary" data-hook="paid">Płatność potwierdzona</button><button type="button" class="btn btn--outline" data-hook="failed">Płatność odrzucona</button><button type="button" class="btn btn--ghost" data-hook="canceled">Anulowano</button></div></div>'
           : '');
     }

@@ -12,7 +12,7 @@
     const u = KBR.auth.currentUser();
     const links = [['subskrypcja', 'Moja subskrypcja'], ['dane', 'Moje dane']];
     return '<div class="container account"><aside class="account-nav" aria-label="Konto">' +
-      '<div class="who"><div class="avatar avatar--sm" aria-hidden="true">' + esc((u.firstName || u.email).slice(0, 1).toUpperCase()) + '</div><div><strong>' + esc(u.firstName || 'Czytelnik') + '</strong><span>' + esc(u.email) + '</span></div></div>' +
+      '<div class="who"><div class="avatar avatar--sm" aria-hidden="true">' + esc(ui.userInitials(u)) + '</div><div><strong>' + esc(u.firstName || 'Czytelnik') + '</strong><span>' + esc(u.email) + '</span></div></div>' +
       '<nav aria-label="Sekcje konta">' + links.map(function (l) { return '<a href="#/konto/' + l[0] + '"' + (l[0] === active ? ' aria-current="page"' : '') + '>' + l[1] + (l[2] ? '<span class="count" style="font-size:12px;color:var(--c-muted)">' + l[2] + '</span>' : '') + '</a>'; }).join('') + '</nav>' +
       '<button type="button" class="btn btn--ghost logout" data-action="logout">' + I('logout', 18) + 'Wyloguj się</button></aside>' +
       '<div class="account-main">' + inner + '</div></div>';
@@ -106,8 +106,8 @@
       (sh.past.length
         ? '<div class="table-wrap"><table class="table"><thead><tr><th scope="col">Data wysyłki</th><th scope="col">Wydanie</th><th scope="col">Status</th></tr></thead><tbody>' +
           sh.past.map(function (x) { return '<tr><td>' + ui.dateLong(x.date) + '</td><td>' + esc(x.issue) + '</td><td><span class="status-pill status-pill--ok">Wysłano</span></td></tr>'; }).join('') + '</tbody></table></div>'
-        : '<p style="margin-top:8px">Nie wysłaliśmy jeszcze żadnego egzemplarza. Pierwszy numer otrzymasz z najbliższej wysyłki.</p>') +
-      '<p class="hint" style="margin-top:16px">' + esc(KBR.config.printShipping.details) + '</p></section>';
+        : '<p class="ship-hist__empty">Nie wysłaliśmy jeszcze żadnego egzemplarza. Pierwszy numer otrzymasz z najbliższej wysyłki.</p>') +
+      '<p class="hint ship-hist__note">' + esc(KBR.config.printShipping.details) + '</p></section>';
   }
 
   KBR.pages.mySubscription = function (route) {
@@ -120,20 +120,19 @@
       inner += '<p class="sub">' + ({ cyfrowa: 'Masz pełny dostęp do wszystkich artykułów i magazynu online.', prenumerata: 'Masz pełny dostęp do serwisu i otrzymujesz drukowane wydanie magazynu.', premium: 'Masz pełny dostęp do serwisu, drukowane wydanie magazynu oraz zniżki i zaproszenia Akademii Leona Koźmińskiego.' }[p.role] || '') + '</p>' +
         '<section class="panel" aria-labelledby="h-sub"><div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center"><h2 id="h-sub">Aktualny plan</h2><span class="status-pill status-pill--ok">' + I('checkCircle', 16) + 'Aktywna</span></div>' +
         '<p class="t-serif" style="font-size:36px;line-height:40px;margin-top:16px">' + esc(p.name) + '</p>' +
-        '<dl class="dl"><dt>Źródło dostępu</dt><dd>Zakup indywidualny</dd><dt>Okres i płatność</dt><dd>12 miesięcy, płatność jednorazowa (' + ui.money(sub.amount) + ')</dd>' +
+        '<dl class="dl"><dt>Źródło dostępu</dt><dd>Zakup indywidualny</dd><dt>Okres i płatność</dt><dd>12 miesięcy, płatność jednorazowa (' + ui.money(sub.amount) + ' brutto)</dd>' +
         '<dt>Aktywna od</dt><dd>' + ui.dateLong(sub.startedAt) + '</dd><dt>Dostęp ważny do</dt><dd>' + ui.dateLong(sub.validUntil) + '</dd>' +
         '<dt>Rola konta</dt><dd>' + esc((KBR.config.roles[p.role] || {}).label || '–') + '</dd><dt>Numer zamówienia</dt><dd>' + esc(sub.orderId) + '</dd><dt>Zakres</dt><dd>' + p.features.filter(function (x) { return x.included; }).map(function (x) { return esc(x.text); }).join('<br>') + '</dd></dl>' +
         '</section>' +
         docPanel(sub.orderId) +
         (p.print ? printPanel() : '');
     } else {
-      inner += '<p class="sub">Na tym koncie nie ma aktywnej subskrypcji. Możesz czytać materiały otwarte i korzystać z darmowego limitu.</p>' +
+      inner += '<p class="sub">Na tym koncie nie ma aktywnej subskrypcji. Możesz czytać wyłącznie materiały otwarte.</p>' +
         '<section class="panel panel--tint" aria-labelledby="h-nosub"><div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center"><h2 id="h-nosub">Status</h2><span class="status-pill status-pill--none">Brak subskrypcji</span></div>' +
         '<p style="margin-top:12px">Subskrypcja odblokowuje wszystkie materiały Premium.</p>' +
         '<div class="btn-row" style="margin-top:16px"><a class="btn btn--primary" href="#/subskrypcja">Wybierz subskrypcję' + I('chevRight', 16, 'stroke-width="2"') + '</a></div></section>';
     }
-    inner += ordersTable(orders) +
-      '<p class="notice" style="margin-top:24px">' + I('info', 18) + '<span>Dostępne opcje konta mogą zależeć od źródła uprawnień. </span></p>';
+    inner += ordersTable(orders);
     return { title: 'Moja subskrypcja – KBR', html: shell('subskrypcja', inner) };
   };
 
@@ -142,7 +141,7 @@
   function docPanel(orderId) {
     const ord = orderOf(orderId), inv = ord && ord.invoice;
     if (inv) return '<section class="panel" aria-labelledby="h-doc"><h2 id="h-doc">Dokument sprzedaży: faktura</h2><p style="margin-top:12px">Faktura na firmę <strong>' + esc(inv.company) + '</strong> (NIP ' + esc(inv.nip) + ') została wystawiona w Krajowym Systemie e-Faktur (KSeF). Znajdziesz ją w KSeF w kontekście NIP swojej firmy.</p>' +
-      '<p class="hint" style="margin-top:8px">Faktury wystawionej w KSeF nie pobierasz w serwisie KBR. Paragon nie jest wystawiany do zakupu z fakturą.</p></section>';
+      '</section>';
     return '<section class="panel" aria-labelledby="h-doc"><h2 id="h-doc">Dokument sprzedaży: paragon</h2><p style="margin-top:12px">Do tego zakupu wystawiliśmy paragon. Możesz go pobrać i zapisać jako PDF.</p>' +
       '<div class="btn-row" style="margin-top:16px"><button type="button" class="btn btn--outline btn--dl" data-receipt="' + esc(orderId) + '">' + I('download', 18) + 'Pobierz paragon</button></div>' +
       '</section>';
@@ -155,7 +154,7 @@
 
   function openReceipt(orderId) {
     const o = orderOf(orderId); if (!o) return;
-    const p = KBR.subscription.plan(o.planId), u = KBR.auth.currentUser() || {};
+    const p = KBR.subscription.plan(o.planId), u = KBR.auth.currentUser() || {}, t = KBR.subscription.orderVat(o);
     const d = ui.dateTime(o.paidAt || o.submittedAt || o.createdAt);
     const w = window.open('', '_blank'); if (!w) return;
     w.document.write('<!DOCTYPE html><html lang="pl"><head><meta charset="utf-8"><title>Paragon ' + esc(o.orderId) + '</title>' +
@@ -163,9 +162,9 @@
       '<h1>Paragon</h1><p class="m">Nr ' + esc(o.orderId) + ' · ' + esc(d) + '</p>' +
       '<p><strong>Sprzedawca:</strong> Akademia Leona Koźmińskiego, ul. Jagiellońska 57/59, 03-301 Warszawa, NIP [do uzupełnienia]</p>' +
       '<p><strong>Nabywca:</strong> ' + esc((o.customer && o.customer.name) || u.firstName || '') + ', ' + esc((o.customer && o.customer.email) || u.email || '') + '</p>' +
-      '<table><thead><tr><th>Pozycja</th><th>Kwota brutto</th></tr></thead><tbody><tr><td>Kozminski Business Review, pakiet ' + esc(p ? p.name : o.planId) + ', 12 miesięcy</td><td>' + ui.money(o.amount) + '</td></tr></tbody>' +
-      '<tfoot><tr><td class="t">Razem</td><td class="t">' + ui.money(o.amount) + '</td></tr></tfoot></table>' +
-      '<p class="m">Stawka VAT: [do uzupełnienia]. Płatność online przez operatora płatności.</p>' +
+      '<table><thead><tr><th>Pozycja</th><th>Netto</th><th>VAT ' + Math.round(t.rate * 100) + '%</th><th>Brutto</th></tr></thead><tbody><tr><td>Kozminski Business Review, pakiet ' + esc(p ? p.name : o.planId) + ', 12 miesięcy</td><td>' + ui.money(t.net) + '</td><td>' + ui.money(t.vat) + '</td><td>' + ui.money(t.gross) + '</td></tr></tbody>' +
+      '<tfoot><tr><td class="t" colspan="3">Razem do zapłaty</td><td class="t">' + ui.money(t.gross) + '</td></tr></tfoot></table>' +
+      '<p class="m">Stawka VAT: ' + Math.round(t.rate * 100) + '%. Płatność online przez operatora płatności.</p>' +
       '<p class="np"><button onclick="print()" style="height:44px;padding:0 20px;background:#A00332;color:#fff;border:0;font:inherit;font-weight:600;cursor:pointer">Zapisz jako PDF</button></p>' +
       '</body></html>');
     w.document.close();
@@ -183,7 +182,7 @@
       failed: '<span class="status-pill status-pill--warn">Nieudana</span>',
       canceled: '<span class="status-pill status-pill--none">Anulowano</span>'
     };
-    return '<section class="panel" aria-labelledby="h-orders"><h2 id="h-orders">Historia zamówień</h2><div class="table-wrap"><table class="table"><thead><tr><th scope="col">Data</th><th scope="col">Zamówienie</th><th scope="col">Pakiet</th><th scope="col">Kwota</th><th scope="col">Status</th><th scope="col">Dokument</th></tr></thead><tbody>' +
+    return '<section class="panel" aria-labelledby="h-orders"><h2 id="h-orders">Historia zamówień</h2><div class="table-wrap"><table class="table"><thead><tr><th scope="col">Data</th><th scope="col">Zamówienie</th><th scope="col">Pakiet</th><th scope="col">Kwota brutto</th><th scope="col">Status</th><th scope="col">Dokument</th></tr></thead><tbody>' +
       orders.map(function (o) {
         const p = KBR.subscription.plan(o.planId);
         return '<tr><td>' + ui.dateTime(o.createdAt) + '</td><td><a class="link" href="#/zamowienie/status?nr=' + encodeURIComponent(o.orderId) + '">' + esc(o.orderId) + '</a></td><td>' + esc(p ? p.name : o.planId) + ', 12 mies.</td><td>' + ui.money(o.amount) + '</td><td>' + (ST[o.status] || esc(o.status)) + '</td><td>' + docCell(o) + '</td></tr>';
@@ -206,6 +205,22 @@
       '<div class="btn-row" style="margin-top:24px"><button class="btn btn--primary" type="submit">Zapisz adres</button><span role="status" class="t-meta" id="sa-status"></span></div></form>';
   }
 
+  function invPanel() {
+    /* Panel widoczny dopiero po pierwszym opłaconym zakupie z fakturą */
+    const invOrders = KBR.subscription.orders().filter(function (o) { return o.status === 'paid' && o.invoice; });
+    if (!invOrders.length) return '';
+    const v = KBR.subscription.invoiceData() || {}, saved = !!KBR.subscription.invoiceData();
+    return '<form class="panel" id="inv-form" novalidate aria-labelledby="h-inv"><h2 id="h-inv">Dane do faktur</h2>' +
+      '<p style="margin-top:12px">' + (saved ? 'Te dane wypełnią się automatycznie w formularzu zamówienia, gdy wybierzesz fakturę na firmę.' : 'Zapisz dane firmy, aby przy kolejnym zamówieniu nie wpisywać ich ponownie.') + '</p>' +
+      '<div class="field" style="margin-top:16px"><label for="iv-company">Nazwa firmy</label><input class="input" id="iv-company" autocomplete="organization" value="' + esc(v.company || '') + '"></div>' +
+      '<div class="field"><label for="iv-nip">NIP</label><input class="input" id="iv-nip" inputmode="numeric" aria-describedby="iv-nip-hint" value="' + esc(v.nip || '') + '"><p class="hint" id="iv-nip-hint">10 cyfr, bez kresek.</p></div>' +
+      '<div class="field"><label for="iv-street">Adres firmy</label><input class="input" id="iv-street" autocomplete="street-address" value="' + esc(v.street || '') + '"></div>' +
+      '<div class="two-col"><div class="field"><label for="iv-postal">Kod pocztowy</label><input class="input" id="iv-postal" placeholder="00-000" autocomplete="postal-code" value="' + esc(v.postal || '') + '"></div>' +
+      '<div class="field"><label for="iv-city">Miejscowość</label><input class="input" id="iv-city" autocomplete="address-level2" value="' + esc(v.city || '') + '"></div></div>' +
+      '<p class="hint">Zmiana dotyczy kolejnych zamówień. Faktur już wystawionych nie zmienia.</p>' +
+      '<div class="btn-row" style="margin-top:24px"><button class="btn btn--primary" type="submit">Zapisz dane do faktur</button>' + (saved ? '<button class="btn btn--ghost" type="button" data-inv-clear>Usuń zapisane dane</button>' : '') + '<span role="status" class="t-meta" id="iv-status"></span></div></form>';
+  }
+
   KBR.pages.myData = function (route) {
     const g = guard(route); if (g) return g;
     const u = KBR.auth.currentUser();
@@ -213,11 +228,10 @@
       '<form class="panel" id="profile-form" novalidate><h2>Dane osobowe</h2><div class="two-col" style="margin-top:16px">' +
       '<div class="field"><label for="pf-first">Imię</label><input class="input" id="pf-first" value="' + esc(u.firstName) + '" autocomplete="given-name"></div>' +
       '<div class="field"><label for="pf-last">Nazwisko <span style="font-weight:400;color:var(--c-muted)">(opcjonalnie)</span></label><input class="input" id="pf-last" value="' + esc(u.lastName || '') + '" autocomplete="family-name"></div></div>' +
-      '<div class="field"><label for="pf-email">Adres e-mail (login)</label><input class="input" id="pf-email" value="' + esc(u.email) + '" readonly aria-describedby="pf-email-hint"><p class="hint" id="pf-email-hint">Zmiana adresu e-mail wymaga potwierdzenia – funkcja do zaprojektowania.</p></div>' +
+      '<div class="field"><label for="pf-email">Adres e-mail (login)</label><input class="input" id="pf-email" value="' + esc(u.email) + '" readonly aria-describedby="pf-email-hint"><p class="hint" id="pf-email-hint">Aby zmienić adres e-mail, wyślij prośbę na adres <a class="link" href="mailto:prenumerata@kozminski.edu.pl?subject=Zmiana%20adresu%20e-mail%20w%20koncie%20KBR">prenumerata@kozminski.edu.pl</a>.<br>Skontaktujemy się z Tobą i zmienimy adres.</p></div>' +
       '<div class="btn-row" style="margin-top:24px"><button class="btn btn--primary" type="submit">Zapisz zmiany</button><span role="status" class="t-meta" id="pf-status"></span></div></form>' +
-      shipPanel() +
-      '<section class="panel" aria-labelledby="h-login"><h2 id="h-login">Ustawienia logowania</h2><p style="margin-top:12px">Hasło możesz zmienić przez procedurę odzyskania dostępu.</p><div class="btn-row" style="margin-top:16px"><a class="btn btn--outline" href="#/reset-hasla">Zmień hasło</a></div></section>' +
-      '<section class="panel" aria-labelledby="h-inv"><h2 id="h-inv">Dane do faktur</h2><p style="margin-top:12px">Dane do faktury podajesz w formularzu zamówienia. Zapisane dane rozliczeniowe – do zaprojektowania.</p></section>';
+      shipPanel() + invPanel() +
+      '<section class="panel" aria-labelledby="h-login"><h2 id="h-login">Ustawienia logowania</h2><p style="margin-top:12px">Hasło możesz zmienić przez procedurę odzyskania dostępu.</p><div class="btn-row" style="margin-top:16px"><a class="btn btn--outline" href="#/reset-hasla">Zmień hasło</a></div></section>';
     return { title: 'Moje dane – KBR', html: shell('dane', inner), mount: function (root) {
       const sf = root.querySelector('#ship-form');
       if (sf) sf.addEventListener('submit', function (e) {
@@ -227,6 +241,19 @@
         KBR.subscription.setShippingAddress({ name: val('sa-name'), street: val('sa-street'), postal: val('sa-postal'), city: val('sa-city'), phone: val('sa-phone') });
         root.querySelector('#sa-status').textContent = 'Zapisano adres wysyłki.';
       });
+      const ivf = root.querySelector('#inv-form');
+      if (ivf) {
+        ivf.addEventListener('submit', function (e) {
+          e.preventDefault();
+          if (!F.validate(ivf, [{ id: 'iv-company', check: F.v.required('nazwę firmy') }, { id: 'iv-nip', check: F.v.nip }, { id: 'iv-street', check: F.v.required('adres firmy') }, { id: 'iv-postal', check: F.v.postal }, { id: 'iv-city', check: F.v.required('miejscowość') }])) return;
+          const val = function (id) { return root.querySelector('#' + id).value.trim(); };
+          KBR.subscription.setInvoiceData({ company: val('iv-company'), nip: val('iv-nip').replace(/[\s-]/g, ''), street: val('iv-street'), postal: val('iv-postal'), city: val('iv-city') });
+          KBR.app.render();
+          setTimeout(function () { const st = document.querySelector('#iv-status'); if (st) st.textContent = 'Zapisano dane do faktur.'; }, 0);
+        });
+        const clr = ivf.querySelector('[data-inv-clear]');
+        if (clr) clr.addEventListener('click', function () { KBR.subscription.setInvoiceData(null); KBR.app.render(); ui.toast('Usunięto zapisane dane do faktur.'); });
+      }
       const form = root.querySelector('#profile-form');
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
@@ -241,7 +268,7 @@
     const g = guard(route); if (g) return g;
     const orders = KBR.subscription.orders();
     const inner = '<h1>Płatności i faktury</h1><p class="sub">Metoda płatności, rozliczenia i dokumenty.</p>' +
-      '<section class="panel" aria-labelledby="h-method"><h2 id="h-method">Metoda płatności</h2><p style="margin-top:12px">Płatności obsługuje Jotform wraz z operatorem płatności. Serwis KBR nie przechowuje danych kart. Każde zamówienie to jednorazowa płatność za 12 miesięcy, bez zapisanej metody płatności.</p></section>' +
+      '<section class="panel" aria-labelledby="h-method"><h2 id="h-method">Metoda płatności</h2><p style="margin-top:12px">Płatności obsługuje bramka operatora płatności podłączona do serwisu. Serwis KBR nie przechowuje danych kart. Każde zamówienie to jednorazowa płatność za 12 miesięcy, bez zapisanej metody płatności.</p></section>' +
       (orders.length ? ordersTable(orders) : '<section class="panel"><h2>Historia zamówień</h2><p style="margin-top:12px">Brak płatności na tym koncie.</p></section>') +
       '<section class="panel" aria-labelledby="h-docs"><h2 id="h-docs">Dokumenty</h2><p style="margin-top:12px">Do zakupu bez faktury wystawiamy paragon – pobierzesz go z historii zamówień. Faktura na firmę jest wystawiana w Krajowym Systemie e-Faktur (KSeF).</p></section>';
     return { title: 'Płatności i faktury – KBR', html: shell('platnosci', inner) };

@@ -16,6 +16,8 @@ function adSlot(kind) {
   if (kind === 'inline') return '<aside class="ad-slot ad-slot--inline" aria-label="Reklama"><span class="ad-slot__label">Reklama</span>' +
     (A.desktop || A.mobile ? wrap((A.desktop ? img('ad-slot--desk', A.desktop, 728, 90) : '') + (A.mobile ? img('ad-slot--mob', A.mobile, 300, 250) : ''))
       : ph('ad-slot--desk', '728 × 90') + ph('ad-slot--mob ad-slot__box--mrec', '300 × 250')) + '</aside>';
+  if (kind === 'login') return '<div class="ad-slot ad-slot--net" role="complementary" aria-label="Reklama"><span class="ad-slot__label">Reklama</span>' +
+    (A.src ? wrap(img('', A.src, 336, 280)) : ph('', '336 × 280')) + '</div>';
   return '<div class="ad-slot" role="complementary" aria-label="Reklama"><span class="ad-slot__label">Reklama</span>' +
     (A.src ? wrap(img('', A.src, 300, 250)) : ph('ad-slot__box--mrec', '300 × 250')) + '</div>';
 }
@@ -85,17 +87,21 @@ KBR.pages.article = function (route) {
     const subLink = '<p class="gate__foot">Nieograniczony dostęp do wszystkich treści KBR.<a href="#/subskrypcja?z=' + back + '">Zobacz opcje subskrypcji</a></p>';
     const terms = '<p class="gate__terms">Kontynuując, akceptujesz <a href="#/regulamin">Regulamin</a> i <a href="#/prywatnosc">Politykę prywatności</a>.</p>';
     if (access.kind === 'login-required') {
-      return '<section class="gate" role="dialog" aria-modal="false" aria-labelledby="gate-title" id="paywall"><div class="gate__inner">' +
+      return '<section class="gate" role="dialog" aria-modal="false" aria-labelledby="gate-title" id="paywall">' +
+        '<button type="button" class="btn btn--tint gate__back" data-gate-back aria-label="Wróć do poprzedniej strony">' + I('chevLeft', 18) + '<span>Wróć</span></button>' +
+        '<div class="gate__inner">' +
         '<h2 class="gate__title" id="gate-title">Ten materiał jest <strong>bezpłatny</strong>.</h2>' +
         '<p class="gate__sub">Zaloguj się, aby czytać dalej.</p>' +
         '<form class="gate__form" data-gate-form novalidate><label for="gate-email">Adres e-mail</label><input class="input" id="gate-email" type="email" autocomplete="email" inputmode="email" required>' +
-        '<button class="btn btn--primary gate__btn" type="submit">Dalej</button></form>' +
-        '<div class="gate__or"><span>lub</span></div>' + terms +
+        '<button class="btn btn--primary gate__btn" type="submit">Dalej</button></form>' + terms +
+        '<div class="gate__or"><span>lub</span></div>' +
         '<div class="gate__social">' + (KBR.authProviders || []).map(function (p) { return '<button type="button" class="gate__soc" data-gate-social="' + p[0] + '">' + p[2] + '<span>Kontynuuj z ' + p[1] + '</span></button>'; }).join('') + '</div>' +
         '<p class="gate__reg">Nie masz konta? <a href="#/rejestracja" data-action="auth-link">Załóż bezpłatne konto</a></p>' +
         subLink + '</div></section>';
     }
-    return '<section class="gate" role="dialog" aria-modal="false" aria-labelledby="gate-title" id="paywall"><div class="gate__inner">' +
+    return '<section class="gate" role="dialog" aria-modal="false" aria-labelledby="gate-title" id="paywall">' +
+        '<button type="button" class="btn btn--tint gate__back" data-gate-back aria-label="Wróć do poprzedniej strony">' + I('chevLeft', 18) + '<span>Wróć</span></button>' +
+        '<div class="gate__inner">' +
       '<h2 class="gate__title" id="gate-title">To jest materiał <strong>Premium</strong>.</h2>' +
       '<p class="gate__sub">Wybierz subskrypcję, aby czytać dalej.</p>' +
       '<div class="gate__form"><a class="btn btn--primary gate__btn" href="#/subskrypcja?z=' + back + '">Zobacz opcje subskrypcji</a></div>' +
@@ -292,6 +298,10 @@ KBR.pages.article = function (route) {
         if (!hero) requestAnimationFrame(open);
         else if (window.scrollY > 0) window.scrollTo({ top: 0, behavior: 'instant' });
       }
+      const gb = gate && gate.querySelector('[data-gate-back]');
+      if (gb) gb.addEventListener('click', function () {
+        if (history.length > 1) history.back(); else KBR.app.navigate('#/');
+      });
       const gf = gate && gate.querySelector('[data-gate-form]');
       if (gf && KBR.rememberEmail) KBR.rememberEmail(gf, 'gate-email');
       if (gf) gf.addEventListener('submit', function (e) {

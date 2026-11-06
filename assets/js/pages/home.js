@@ -12,7 +12,7 @@ KBR.pages.home = function () {
   const pickCards = picks.map(function (m, i) {
     if (i !== mid) return ui.card(m, { noImage: true, date: false });
     return '<article class="card card--img">' + ui.media(m) + ui.topicLabel(m) +
-      ui.titleLink(m) + '<p class="t-body card__lead">' + esc(m.lead) + '</p><p class="t-meta card__author">' + ui.metaLine(m) + '</p></article>';
+      ui.titleLink(m) + '<p class="t-body card__lead">' + ui.leadLink(m) + '</p><p class="t-meta card__author">' + ui.metaLine(m) + '</p></article>';
   }).join('');
   const latest = H.latest.map(get).map(function (m) { return ui.card(m, { noImage: true, date: false }); }).join('');
 
@@ -106,7 +106,7 @@ KBR.pages.home = function () {
   const onTimeInner = V2 && onTime.length > 1 ?
     '<article class="v2-split">' + ui.media(onTime[0]) + '<div class="v2-split__body">' + ui.topicLabel(onTime[0]) +
       '<h3 class="v2-split__title"><a class="hover-title" href="' + ui.materialUrl(onTime[0]) + '">' + esc(onTime[0].title) + '</a></h3>' +
-      '<p class="card__lead">' + esc(onTime[0].lead) + '</p><p class="t-meta">' + ui.metaLine(onTime[0]) + '</p></div></article>' +
+      '<p class="card__lead">' + ui.leadLink(onTime[0]) + '</p><p class="t-meta">' + ui.metaLine(onTime[0]) + '</p></div></article>' +
     '<div class="v2-row3">' + onTime.slice(1).map(function (x) { return ui.card(x, { noImage: true, lead: true }); }).join('') + '</div>' :
     '<div class="grid-4">' + onTime.map(function (x) { return ui.card(x, {}); }).join('') + '</div>';
   const onTimeBand = onTime.length ? '<section class="container home-ontime" aria-labelledby="h-ontime">' + ui.sectionHead('W centrum uwagi', { href: '#/artykuly', label: 'Wszystkie artykuły' }, { id: 'h-ontime' }) +
@@ -117,7 +117,7 @@ KBR.pages.home = function () {
       '<article class="lead-story">' + ui.media(lead) +
         '<div class="lead-story__meta">' + ui.topicLabel(lead).replace('card__cat', '') + '</div>' +
         '<h2><a class="t-title-xl hover-title" href="' + ui.materialUrl(lead) + '">' + esc(lead.title) + '</a></h2>' +
-        '<p class="t-lead">' + esc(lead.lead) + '</p><p class="t-meta">' + ui.metaLine(lead) + '</p>' +
+        '<p class="t-lead">' + ui.leadLink(lead) + '</p><p class="t-meta">' + ui.metaLine(lead) + '</p>' +
       '</article>' +
       '<section class="picks" aria-labelledby="h-picks"><h2 class="t-section col-head" id="h-picks">Wybrane dla Ciebie</h2>' + pickCards + '</section>' +
       '<section class="latest" aria-labelledby="h-latest"><h2 class="t-section col-head" id="h-latest">Najnowsze</h2>' + magTeaser + latest2 + '</section>' +
