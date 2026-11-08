@@ -1910,3 +1910,125 @@ html .hdr-link--user:hover .hdr-avatar, html .hdr-link--user[aria-expanded="true
 @media (max-width: 1023px) {
   html .masthead__actions .icon-btn { width: 24px; min-width: 24px; justify-content: center; }
 }
+
+/* Interlinia tytułów: 1.2 w całym serwisie */
+html :is(h1, h2, h3, .t-title-xl, .t-title-card, .t-title-card--loose, .card__title, .mag-toc__title, .topics-ix__name, .topic-tile__name, .fb-cta__title, .mag-cover__headline, .byline-person__name) { line-height: 1.2 !important; letter-spacing: 0 !important; }
+
+/* ==========================================================================
+   Pola formularzy – wzór Tailwind CSS (Forms), w kolorach i fontach KBR
+   Ramka jako outline (nie zmienia wymiarów), focus 2 px do wewnątrz, bez cieni
+   ========================================================================== */
+html :is(.input, .search input, .filter-select, textarea, select) {
+  border: 0 !important; border-radius: 0; box-shadow: none !important;
+  background-color: #fff; color: var(--c-ink);
+  outline: 1px solid var(--c-border-strong); outline-offset: -1px;
+  transition: outline-color .15s ease;
+}
+html .input { height: 44px; padding: 0 12px; font-size: 16px; line-height: 24px; }
+html textarea.input { height: auto; min-height: 120px; padding: 10px 12px; resize: vertical; }
+html select.input { padding-right: 40px; cursor: pointer; }
+html :is(.input, .search input, textarea)::placeholder { color: var(--c-placeholder); opacity: 1; }
+html :is(.input, .search input, .filter-select, textarea, select):focus,
+html :is(.input, .search input, .filter-select, textarea, select):focus-visible { outline: 2px solid var(--c-blue); outline-offset: -2px; }
+html .input[aria-invalid="true"] { outline-color: var(--c-error); color: var(--c-error); }
+html .input[aria-invalid="true"]:focus { outline: 2px solid var(--c-error); outline-offset: -2px; }
+html .input[aria-invalid="true"]::placeholder { color: var(--c-error); opacity: .55; }
+html :is(.input, textarea, select):is([readonly], :disabled) { background-color: #f7f8fb; color: var(--c-text); outline-color: var(--c-border); }
+html :is(.input, textarea, select):disabled { cursor: not-allowed; color: var(--c-muted); }
+/* Etykieta, podpowiedź, błąd */
+html .field { gap: 8px; }
+html .field label, html .field .label { font-size: 14px; line-height: 20px; font-weight: 500; color: var(--c-ink); }
+html .field .hint { font-size: 14px; line-height: 20px; color: var(--c-muted); }
+html .field-error { font-size: 14px; line-height: 20px; font-weight: 400; }
+/* Pole na ciemnym tle (stopka) */
+html .input--dark { background-color: var(--c-ink); color: #fff; outline-color: rgba(255,255,255,.28); }
+html .input--dark::placeholder { color: #a0a5b3; }
+html .input--dark:focus, html .input--dark:focus-visible { outline: 2px solid #8ea2e6; outline-offset: -2px; }
+/* Pole wyboru (checkbox) – 20 px, cel dotyku zapewnia etykieta */
+html .check { grid-template-columns: 20px 1fr; align-items: start; }
+html .check input { width: 20px; height: 20px; margin: 0; border: 1px solid var(--c-border-strong); border-radius: 0; background: #fff; transition: background-color .15s ease, border-color .15s ease; }
+html .check input::after { width: 10px; height: 6px; transform: rotate(-45deg) translate(1px, -1px); }
+html .check input:checked { background: var(--c-blue); border-color: var(--c-blue); }
+html .check input:focus-visible { outline: 2px solid var(--c-blue); outline-offset: 2px; }
+html .check input[aria-invalid="true"] { border-color: var(--c-error); box-shadow: none; outline: 1px solid var(--c-error); outline-offset: -1px; }
+html .footer-news .check input { background: transparent; border-color: rgba(255,255,255,.5); }
+html .footer-news .check input:checked { background: var(--c-blue); border-color: var(--c-blue); }
+html .footer-news .check input:focus-visible { outline-color: #fff; }
+/* Pole jednokrotnego wyboru (radio) */
+html .radio-card input[type="radio"] { appearance: none; flex: none; width: 18px; height: 18px; margin: 2px 0 0; border: 1px solid var(--c-border-strong); border-radius: 50%; background: #fff; display: grid; place-content: center; cursor: pointer; }
+html .radio-card input[type="radio"]:checked { border-color: var(--c-blue); background: var(--c-blue); box-shadow: inset 0 0 0 4px #fff; }
+html .radio-card input[type="radio"]:focus-visible { outline: 2px solid var(--c-blue); outline-offset: 2px; }
+
+/* Profil bez inicjałów: w nagłówku ikona, w koncie tylko imię i e-mail */
+html .account-nav .who { grid-template-columns: 1fr; }
+html .hdr-link--user { gap: 8px; }
+
+/* Konto: menu boczne bez złotej linii po lewej */
+html .account-nav a, html .account-nav a[aria-current="page"], html .account-nav a:hover { border-left-color: transparent; }
+
+/* Menu tematów: 7 pozycji (Marketing i Finanse w „Więcej”), większe odstępy */
+html .mainnav__list { justify-content: flex-start; gap: 0 28px; flex-wrap: nowrap; }
+html .mainnav__list > li:last-child { margin-left: auto; }
+@media (max-width: 1279px) { html .mainnav__list { gap: 0 20px; } }
+html .mainnav__link svg { flex: none; }
+html .mainnav__list > li { flex: none; }
+
+/* Menu po przewinięciu: więcej miejsca wokół „Subskrybuj” (min. 14 px nad i pod przyciskiem) */
+html .site-header.is-compact .masthead { height: 72px; }
+html .site-header.is-compact .masthead .logo__img { height: 40px; }
+@media (max-width: 1023px) { html .site-header.is-compact .masthead { height: 64px; } html .site-header.is-compact .masthead .logo__img { height: 34px; } }
+
+/* Subskrypcja: znaczniki w tabeli porównania wyśrodkowane w kolumnach */
+html .compare-table thead th:not(:first-child), html .compare-table td { text-align: center; vertical-align: middle; }
+html .compare-table td > svg { display: block; margin: 0 auto; }
+
+/* Subskrypcja: kotwica do tabeli porównania – w tekście pod tytułem */
+html .plans-compare-link { display: inline-flex; align-items: center; gap: 4px; margin-left: 4px; font-weight: 600; color: var(--c-blue); white-space: nowrap; }
+html .plans-compare-link svg { transition: transform .2s ease; }
+html .plans-compare-link:hover { color: var(--c-hover); }
+html .plans-compare-link:hover svg { transform: translateY(2px); }
+html #h-compare:focus { outline: none; }
+@media (prefers-reduced-motion: reduce) { html .plans-compare-link svg { transition: none; } }
+
+/* Zamówienie: notka pod ceną brutto bez złotej linii, większy odstęp od sumy */
+html .summary__note { border-left: 0; margin-top: 24px; font-weight: 400; }
+html .summary__note span { font-weight: 400; }
+
+/* Zamówienie: „Wróć do pakietów” wyrównane do lewej krawędzi formularza */
+html .step-actions > .btn--ghost:first-child { padding-left: 0; padding-right: 0; }
+
+/* Strona autora: pełna notka biograficzna (pierwszy akapit + rozwinięcie) */
+html .author-bio { max-width: 760px; }
+html .author-bio p { margin-top: 12px; font-size: 16px; line-height: 26px; }
+html .author-bio.is-collapsed > p:nth-child(n+2) { display: none; }
+html .author-bio__toggle { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin-top: 4px; padding: 0; border: 0; background: none; font-weight: 600; font-size: 15px; color: var(--c-blue); cursor: pointer; }
+html .author-bio__toggle:hover { color: var(--c-hover); }
+html .author-bio__toggle svg { transition: transform .2s ease; }
+html .author-bio__toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) { html .author-bio__toggle svg { transition: none; } }
+
+/* Daty w publikacjach: Open Sans (cyfry bez KozminskiU). KozminskiU tylko w datach dekoracyjnych (np. .masthead__day w menu) */
+html .t-date, html .card__date, html .t-meta, html .t-meta time, html .article-meta, html .article-meta time,
+html .lib-item .when, html .mag-toc__author, html .op__from, html .mag-teaser__issue, html .lead-story__meta,
+html .toc-item .t-meta, html .hit time, html .card time, html article time {
+  font-family: var(--f-sans-plain);
+}
+
+/* Kontakt: dwa kontakty (ogólny, dla autorów), bez złotych pasków */
+html .contact-box { border-top: 0; padding-top: 0; }
+
+/* Punktory w całym serwisie: zwykłe czarne kropki */
+html .contact-box__list li::before { width: 6px; height: 6px; top: 9px; left: 6px; border-radius: 50%; background: var(--c-ink); }
+html .prose ul li::marker { color: var(--c-ink); }
+
+/* Misja i wizja: bez złotego paska; redakcja – na razie tylko redaktor naczelny */
+html .about-mv { border-top: 0; padding-top: 0; }
+.team-card__link { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--c-blue); }
+.team-card__link:hover { color: var(--c-hover); text-decoration: underline; text-underline-offset: 3px; }
+html .team-card--solo { border-top: 0; padding-top: 0; }
+html img.team-card__photo { object-fit: cover; display: block; }
+
+/* Wyszukiwarka: przycisk „Szukaj” oddzielony od pola, czerwony jak inne przyciski */
+html .search input { width: calc(100% - 96px); padding-right: 12px; }
+html .search__submit, html .search:focus-within .search__submit { width: 88px; background: var(--c-crimson); color: #fff; }
+html .search__submit:hover, html .search:focus-within .search__submit:hover { background: var(--c-crimson-dark); }
