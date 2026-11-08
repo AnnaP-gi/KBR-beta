@@ -150,10 +150,8 @@
         '<div class="about-mv__item"><span class="t-label">Wizja</span><p class="about-mv__text">Chcemy być pierwszym źródłem wiedzy, po które sięgają polscy menedżerowie, gdy stają przed ważną decyzją.</p><p>Budujemy miejsce, w którym nauka i biznes rozmawiają ze sobą na równych prawach – w serwisie, w kwartalniku drukowanym i podczas spotkań społeczności KBR.</p></div>' +
       '</section>' +
       '<section class="about-team" aria-labelledby="h-team"><h2 class="t-section col-head" id="h-team">Redakcja</h2><ul class="team-grid" role="list">' +
-        team.map(function (t) { return '<li class="team-card"><span class="team-card__photo" aria-hidden="true"></span><span class="team-card__name">Imię i nazwisko</span><span class="team-card__role">' + esc(t[0]) + '</span><span class="team-card__desc">' + esc(t[1]) + '</span></li>'; }).join('') +
-      '</ul></section>' +
-      '<section class="about-team" aria-labelledby="h-board"><h2 class="t-section col-head" id="h-board">Rada programowa</h2><ul class="team-grid team-grid--compact" role="list">' +
-        board.map(function (t) { return '<li class="team-card"><span class="team-card__name">Imię i nazwisko</span><span class="team-card__role">' + esc(t) + '</span></li>'; }).join('') +
+        '<li class="team-card team-card--solo"><img class="team-card__photo" src="assets/img/pawel-kubisiak.jpg" alt="" width="120" height="120" loading="lazy"><span class="team-card__name">Paweł Kubisiak</span><span class="team-card__role">Redaktor naczelny</span>' +
+        '<a class="team-card__link" href="https://pl.linkedin.com/in/pawel-kubisiak" target="_blank" rel="noopener">' + KBR.icon('linkedin', 18) + 'Profil w LinkedIn<span class="visually-hidden"> (otwiera się w nowej karcie)</span></a></li>' +
       '</ul></section>' +
       '<div class="about-links"><a class="btn btn--primary" href="#/autorzy">Autorzy i eksperci' + KBR.icon('chevRight', 16, 'stroke-width="2"') + '</a><a class="btn btn--ghost" href="#/strona/kontakt">Kontakt z redakcją</a></div>' +
       '</div></div>';
@@ -167,15 +165,15 @@
     const html = '<div class="container">' + head('Kontakt', 'Napisz do nas w sprawie publikacji, współpracy reklamowej lub partnerstwa.') +
       '<div class="contact">' + demoNote() +
       '<div class="contact-grid">' +
-        box('redakcja', 'Redakcja', 'Kontakt z redakcją', 'Pytania o publikacje, sprostowania, prośby o komentarz eksperta i sprawy prasowe.', 'prenumerata@kozminski.edu.pl') +
-        box('reklama', 'Reklama i partnerstwa', 'Współpraca reklamowa i partnerstwa', 'Kampanie w serwisie, newsletterze i magazynie, projekty specjalne oraz partnerstwa merytoryczne i wydarzenia.', 'prenumerata@kozminski.edu.pl',
-          '<ul class="contact-box__list"><li>Reklama w serwisie i newsletterze</li><li>Reklama w kwartalniku drukowanym</li><li>Artykuły i raporty partnerskie</li><li>Patronaty i wydarzenia</li></ul>') +
+        box('redakcja', 'Kontakt ogólny', 'Kontakt z redakcją', 'Pytania o publikacje, sprostowania, prośby o komentarz eksperta, sprawy prasowe oraz współpraca reklamowa i partnerstwa.', 'prenumerata@kozminski.edu.pl') +
+        box('zostan-autorem', 'Dla autorów', 'Zostań autorem KBR', 'Publikujemy teksty badaczy, ekspertów i praktyków biznesu. Szukamy autorów, którzy mają do powiedzenia coś nowego i potrafią poprzeć to badaniami lub doświadczeniem.', 'prenumerata@kozminski.edu.pl',
+          '<ul class="contact-box__list"><li>Prześlij krótki opis tematu (do 300 słów) i informację o sobie.</li><li>Teksty do serwisu: 8–15 tys. znaków, do magazynu: 15–25 tys. znaków.</li></ul>') +
       '</div>' +
-      '<section class="contact-author" id="zostan-autorem" aria-labelledby="h-author"><div class="contact-author__intro"><span class="t-label">Dla autorów</span><h2 id="h-author">Zostań autorem KBR</h2>' +
-        '<p>Publikujemy teksty badaczy, ekspertów i praktyków biznesu. Szukamy autorów, którzy mają do powiedzenia coś nowego i potrafią poprzeć to badaniami lub doświadczeniem.</p>' +
-        '<ul class="contact-box__list"><li>Prześlij krótki opis tematu (do 300 słów) i informację o sobie.</li><li>Teksty do serwisu: 8–15 tys. znaków, do magazynu: 15–25 tys. znaków.</li></ul>' +
-        '<a class="contact-box__mail" href="mailto:prenumerata@kozminski.edu.pl">' + KBR.icon('mail', 18) + 'prenumerata@kozminski.edu.pl</a></div>' +
-        '</section></div></div>';
+      '<section class="about-team" aria-labelledby="h-chief"><h2 class="t-section col-head" id="h-chief">Redaktor naczelny</h2><ul class="team-grid" role="list">' +
+        '<li class="team-card team-card--solo"><img class="team-card__photo" src="assets/img/pawel-kubisiak.jpg" alt="" width="120" height="120" loading="lazy"><span class="team-card__name">Paweł Kubisiak</span><span class="team-card__role">Redaktor naczelny</span>' +
+        '<a class="team-card__link" href="https://pl.linkedin.com/in/pawel-kubisiak" target="_blank" rel="noopener">' + KBR.icon('linkedin', 18) + 'Profil w LinkedIn<span class="visually-hidden"> (otwiera się w nowej karcie)</span></a></li>' +
+      '</ul></section>' +
+      '</div></div>';
     return { title: 'Kontakt – KBR', html: html, mount: function (root) {
       const f = root.querySelector('[data-author-form]');
       if (f) f.addEventListener('submit', function (e) {

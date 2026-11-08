@@ -111,7 +111,7 @@
   function personHit(a) {
     const r = personRoles(a);
     const roles = [r.autor ? 'Autor' : '', r.ekspert ? 'Ekspert' : ''].filter(Boolean).join(' · ');
-    return '<a class="hit" href="#/autor/' + a.id + '">' + ui.personPhoto(a, 'person-photo--48') + '<div class="hit__body"><span class="t-label">' + (roles || 'Osoba') + '</span><span class="hit__title">' + esc(a.name) + '</span><span class="hit__text">' + esc(a.bio) + '</span><span class="t-meta">' + countLabel(r.autor + r.ekspert) + '</span></div>' + I('chevRight', 18, 'stroke-width="2"') + '</a>';
+    return '<a class="hit" href="#/autor/' + a.id + '">' + ui.personPhoto(a, 'person-photo--48') + '<div class="hit__body"><span class="t-label">' + (roles || 'Osoba') + '</span><span class="hit__title">' + esc(a.name) + '</span><span class="hit__text">' + esc(a.bio) + '</span><span class="t-meta">' + countLabel(r.autor + r.ekspert) + '</span></div></a>';
   }
   function eventHit(e) {
     return '<a class="hit" href="#/wydarzenie/' + e.id + '"><img class="hit__img" src="' + ui.img(e.image) + '" alt="" loading="lazy"><div class="hit__body"><span class="t-label">' + esc(e.category) + '</span><span class="hit__title">' + esc(e.title) + '</span><span class="t-meta">' + esc(e.date) + ' · ' + esc(e.place) + '</span></div>' + I('chevRight', 18, 'stroke-width="2"') + '</a>';
@@ -169,13 +169,13 @@
     const nE = all.length - nA;
     const filters = toggle('Rola w publikacji', [{ label: 'Wszystkie (' + all.length + ')', href: q(route, { rola: '' }), active: !role }, { label: 'Autorstwo (' + nA + ')', href: q(route, { rola: 'autor' }), active: role === 'autor' }, { label: 'Udział ekspercki (' + nE + ')', href: q(route, { rola: 'ekspert' }), active: role === 'ekspert' }]);
     return { title: a.name + ' – KBR', html: '<div class="container"><header class="page-head">' + ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Autorzy i eksperci', href: '#/autorzy' }, { label: a.name }]) +
-      '<div class="author-head">' + ui.personPhoto(a, 'person-photo--96') + '<div><h1>' + esc(a.name) + '</h1>' + (a.role ? '<p class="person-role">' + esc(a.role) + '</p>' : '') + ui.personContact(a) + '</div></div><p>' + esc(a.bio) + '</p></header>' +
+      '<div class="author-head">' + ui.personPhoto(a, 'person-photo--96') + '<div><h1>' + esc(a.name) + '</h1>' + (a.role ? '<p class="person-role">' + esc(a.role) + '</p>' : '') + ui.personContact(a) + '</div></div>' + (a.bioLong && a.bioLong.length ? '<div class="author-bio' + (a.bioLong.length > 1 ? ' is-collapsed' : '') + '" id="author-bio">' + a.bioLong.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '</div>' + (a.bioLong.length > 1 ? '<button type="button" class="author-bio__toggle" aria-expanded="false" aria-controls="author-bio" onclick="var b=document.getElementById(\'author-bio\'),o=b.classList.toggle(\'is-collapsed\');this.setAttribute(\'aria-expanded\',String(!o));this.firstChild.textContent=o?\'Czytaj całą notkę\':\'Zwiń notkę\'">Czytaj całą notkę' + KBR.icon('chevDown', 16) + '</button>' : '') : '<p>' + esc(a.bio) + '</p>') + '</header>' +
       '<div class="list-layout"><div class="list-toolbar">' + filters + '<p class="result-count" role="status">' + countLabel(items.length) + '</p></div><div class="rows">' + items.map(ui.row).join('') + '</div></div></div>' };
   };
 
   KBR.pages.authors = function () {
     return { title: 'Autorzy i eksperci – KBR', html: '<div class="container"><header class="page-head">' + ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Autorzy i eksperci' }]) +
-      '<h1>Autorzy i eksperci</h1><p>Osoby publikujące w KBR i udzielające komentarzy eksperckich. Ta sama osoba może występować w obu rolach i ma jeden profil.</p></header>' +
+      '<h1>Autorzy i eksperci</h1><p>Badacze, praktycy i eksperci, którzy piszą dla KBR i komentują najważniejsze zjawiska w biznesie.</p></header>' +
       '<div class="grid-3" style="padding-bottom:96px">' + KBR.data.authors.map(function (a) {
         const n = KBR.data.materials.filter(function (m) { return m.authors.some(function (x) { return x.id === a.id; }); }).length;
         return '<a class="community-card" href="#/autor/' + a.id + '" style="justify-content:flex-start">' + ui.personPhoto(a, 'person-photo--56') + '<div><h2 style="font-size:18px;line-height:24px;color:var(--c-ink);font-weight:700">' + esc(a.name) + '</h2><p style="font-size:14px;margin-top:4px;color:var(--c-muted)">' + countLabel(n) + '</p></div></a>';

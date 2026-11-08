@@ -12,7 +12,7 @@
     const u = KBR.auth.currentUser();
     const links = [['subskrypcja', 'Moja subskrypcja'], ['dane', 'Moje dane']];
     return '<div class="container account"><aside class="account-nav" aria-label="Konto">' +
-      '<div class="who"><div class="avatar avatar--sm" aria-hidden="true">' + esc(ui.userInitials(u)) + '</div><div><strong>' + esc(u.firstName || 'Czytelnik') + '</strong><span>' + esc(u.email) + '</span></div></div>' +
+      '<div class="who"><div><strong>' + esc(u.firstName || 'Czytelnik') + '</strong><span>' + esc(u.email) + '</span></div></div>' +
       '<nav aria-label="Sekcje konta">' + links.map(function (l) { return '<a href="#/konto/' + l[0] + '"' + (l[0] === active ? ' aria-current="page"' : '') + '>' + l[1] + (l[2] ? '<span class="count" style="font-size:12px;color:var(--c-muted)">' + l[2] + '</span>' : '') + '</a>'; }).join('') + '</nav>' +
       '<button type="button" class="btn btn--ghost logout" data-action="logout">' + I('logout', 18) + 'Wyloguj się</button></aside>' +
       '<div class="account-main">' + inner + '</div></div>';

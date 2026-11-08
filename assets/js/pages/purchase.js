@@ -23,7 +23,7 @@
     opts = opts || {};
     const p = KBR.subscription.plan(d.planId);
     const t = KBR.subscription.vat(KBR.subscription.price(d.planId, 'year'));
-    return '<aside class="summary" aria-labelledby="h-summary"><h2 id="h-summary">Twoje zamówienie</h2><p class="plan-name">' + esc(p.name) + ' <span class="summary__months">· 12 miesięcy</span></p>' +
+    return '<aside class="summary" aria-labelledby="h-summary"><h2 id="h-summary">Twoje zamówienie</h2><p class="plan-name">' + esc(p.name) + ' <span class="summary__months">12 miesięcy</span></p>' +
       '<p style="font-size:14px;line-height:21px;margin-top:6px">' + esc(p.description) + '</p>' +
       '<dl><dt>Okres dostępu</dt><dd>12 miesięcy</dd><dt>Płatność</dt><dd>Jednorazowa</dd><dt>Start dostępu</dt><dd>Po potwierdzeniu płatności</dd>' +
       (p.print ? '<dt>Najbliższa wysyłka</dt><dd>' + esc(CFG.printShipping.next) + '</dd>' : '') +
@@ -69,7 +69,7 @@
 
     const html = '<div class="container">' +
       '<header class="plans-head">' + ui.crumbs([{ label: 'Strona główna', href: '#/' }, { label: 'Subskrypcja' }]).replace('<nav class="crumbs"', '<nav class="crumbs" style="display:flex;justify-content:center"') +
-        '<h1 style="margin-top:16px">Wybierz subskrypcję magazynu KBR</h1><p>Roczna prenumerata Kozminski Business Review. Wybierz pakiet dopasowany do tego, jak czytasz.</p>' +
+        '<h1 style="margin-top:16px">Wybierz subskrypcję magazynu KBR</h1><p>Roczna prenumerata Kozminski Business Review.<br>Wybierz pakiet dopasowany do tego, jak czytasz. <a class="plans-compare-link" href="#h-compare" onclick="event.preventDefault();var s=document.getElementById(\'compare\'),h=document.getElementById(\'site-header\');window.scrollTo({top:s.getBoundingClientRect().top+window.scrollY-(h?h.offsetHeight:0)-24,behavior:matchMedia(\'(prefers-reduced-motion: reduce)\').matches?\'auto\':\'smooth\'});document.getElementById(\'h-compare\').focus({preventScroll:true})">Porównaj pakiety' + I('chevDown', 16) + '</a></p>' +
         (active ? '<div class="notice notice--success" style="max-width:760px;margin:24px auto 0;text-align:left">' + I('checkCircle', 18) + '<span>Masz aktywną subskrypcję. <a class="link" href="#/konto/subskrypcja">Zobacz szczegóły w koncie</a></span></div>' : '') +
         sourceBox(src, 'Wybierasz subskrypcję, aby przeczytać') +
       '</header>' +
@@ -78,7 +78,7 @@
         '<p class="desc">Rozwijaj kompetencje całego zespołu albo podaruj komuś roczną dawkę inspiracji.<br>Przygotujemy indywidualną ofertę dla firm, uczelni i organizacji.</p></div>' +
         '<div class="plan--team__cta">' +
         '<p class="plan--team__mail">Kontakt: <a href="mailto:prenumerata@kozminski.edu.pl">prenumerata@kozminski.edu.pl</a></p></div></article>' +
-      '<section aria-labelledby="h-compare" style="margin-top:64px"><h2 class="t-section col-head" id="h-compare">Porównanie pakietów</h2>' +
+      '<section id="compare" aria-labelledby="h-compare" style="margin-top:64px"><h2 class="t-section col-head" id="h-compare" tabindex="-1">Porównanie pakietów</h2>' +
         '<div class="table-wrap"><table class="table compare-table" style="min-width:560px"><thead><tr><th scope="col">Zakres</th>' + CFG.plans.map(function (p) { return '<th scope="col" style="text-align:center">' + esc(p.name) + '</th>'; }).join('') + '</tr></thead><tbody>' +
         CFG.featureList.map(function (t, i) {
           return '<tr><th scope="row" style="font-size:15px;text-transform:none;letter-spacing:0;color:var(--c-ink);font-weight:400">' + esc(t) + '</th>' + CFG.plans.map(function (p) {
@@ -150,7 +150,7 @@
             '<div class="field"><label for="o-city">Miejscowość</label><input class="input" id="o-city" value="' + esc(ivv.city || '') + '"></div></div>' +
             '<label class="check" for="o-inv-save" style="margin-top:20px"><input type="checkbox" id="o-inv-save" checked><span>Zapisz dane do faktury w moim koncie</span></label></div></section>' +
         '<section class="form-section" aria-labelledby="h-pkg"><h2 id="h-pkg">Podsumowanie</h2>' +
-          '<div class="of-product"><div><strong>' + esc(p.name) + ' — 12 miesięcy</strong><span>' + esc(p.description) + '</span></div><b>' + ui.money(ov.net) + ' netto</b></div>' +
+          '<div class="of-product"><div><strong>' + esc(p.name) + ' – 12 miesięcy</strong><span>' + esc(p.description) + '</span></div><b>' + ui.money(ov.net) + ' netto</b></div>' +
           '<div style="display:flex;justify-content:space-between;gap:16px;padding:10px 0;font-size:15px;line-height:22px;color:#4F5369"><span>VAT ' + Math.round(ov.rate * 100) + '%</span><span>' + ui.money(ov.vat) + '</span></div>' +
           '<div class="of-total"><span>Razem brutto</span><strong>' + ui.money(ov.gross) + '</strong></div>' +
           '<p class="of-note">' + esc(CFG.purchase.priceNote) + '</p></section>' +
@@ -159,7 +159,6 @@
         '<section class="form-section" aria-labelledby="h-pay"><h2 id="h-pay">Płatność</h2>' +
           '<div class="of-gateway">' + I('lock', 18) + '<span>Po kliknięciu „Zamawiam i płacę” przejdziesz do bezpiecznej bramki płatności' + (CFG.payment.operator ? ' ' + esc(CFG.payment.operator) : '') + '. Płatność jednorazowa. Serwis KBR nie przechowuje danych kart.</span></div></section>' +
         '<div class="step-actions"><a class="btn btn--ghost" href="#/subskrypcja">Wróć do pakietów</a><button class="btn btn--primary" type="submit" style="height:48px">Zamawiam i płacę ' + ui.money(o.amount) + I('chevRight', 16, 'stroke-width="2"') + '</button></div>' +
-        '<p class="hint" style="margin-top:12px">Wysłanie formularza nie aktywuje dostępu. Aktywujemy go po potwierdzeniu płatności przez operatora.</p>' +
       '</form>';
   }
 
@@ -233,8 +232,7 @@
         '<h1>Subskrypcja jest aktywna</h1>' +
         '<p>Płatność za zamówienie <strong>' + esc(o.orderId) + '</strong> została potwierdzona. Pakiet <strong>' + esc(p.name) + '</strong> jest aktywny do <strong>' + ui.dateLong(o.validUntil) + '</strong>.</p>' +
         (src ? '<div class="context-box" style="max-width:560px;margin:24px auto 0;text-align:left"><img src="' + ui.img(src.image) + '" alt=""><div><span class="t-label">Możesz dokończyć lekturę</span><strong>' + esc(src.title) + '</strong></div></div>' : '') +
-        '<div class="btn-row">' + (src ? '<a class="btn btn--primary" href="' + ui.materialUrl(src) + '">Wróć do artykułu' + I('chevRight', 16, 'stroke-width="2"') + '</a>' : '<a class="btn btn--primary" href="#/magazyn">Przejdź do magazynu' + I('chevRight', 16, 'stroke-width="2"') + '</a>') +
-        '<a class="btn btn--outline" href="#/konto/subskrypcja">Moja subskrypcja</a></div>';
+        '<div class="btn-row"><a class="btn btn--outline" href="#/konto/subskrypcja">Moja subskrypcja</a>' + (src ? '<a class="btn btn--primary" href="' + ui.materialUrl(src) + '">Wróć do artykułu' + I('chevRight', 16, 'stroke-width="2"') + '</a>' : '<a class="btn btn--primary" href="#/magazyn">Przejdź do magazynu' + I('chevRight', 16, 'stroke-width="2"') + '</a>') + '</div>';
     } else if (o.status === 'failed' || o.status === 'canceled') {
       const failed = o.status === 'failed';
       body = '<div class="result__icon ' + (failed ? 'result__icon--err' : 'result__icon--cancel') + '">' + I(failed ? 'alert' : 'close', 40) + '</div>' +
@@ -249,7 +247,7 @@
     } else {
       body = '<div class="result__icon result__icon--wait" aria-hidden="true"><span class="spinner"></span></div>' +
         '<h1>Czekamy na potwierdzenie płatności</h1>' +
-        '<p role="status">Zamówienie <strong>' + esc(o.orderId) + '</strong> · pakiet <strong>' + esc(p.name) + ' — 12 miesięcy</strong> · ' + ui.money(o.amount) + '.<br>Dostęp aktywujemy, gdy operator płatności potwierdzi wpłatę. Zwykle trwa to kilka sekund, ta strona odświeży się sama.</p>' +
+        '<p role="status">Zamówienie <strong>' + esc(o.orderId) + '</strong> · pakiet <strong>' + esc(p.name) + ' – 12 miesięcy</strong> · ' + ui.money(o.amount) + '.<br>Dostęp aktywujemy, gdy operator płatności potwierdzi wpłatę. Zwykle trwa to kilka sekund, ta strona odświeży się sama.</p>' +
         '<p class="hint" style="margin-top:12px">Samo złożenie zamówienia nie aktywuje dostępu.</p>' +
         (demo
           ? '<div class="pay-sim" role="group" aria-labelledby="h-sim" style="text-align:left;margin-top:32px"><h2 id="h-sim">Symulacja serwera (webhook płatności)</h2><p>W produkcji ten krok wykonuje serwer KBR po otrzymaniu potwierdzenia (webhooka) od operatora płatności. Wybierz wynik, aby sprawdzić kolejne stany.</p>' +
