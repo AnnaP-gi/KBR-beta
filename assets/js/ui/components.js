@@ -16,11 +16,11 @@
     const subTag = !subRole ? '' : '<span class="hdr-premium' + (subRole.cls ? ' ' + subRole.cls : '') + '">' + subRole.label + '</span>';
     const today = new Date();
     const MON = ['sty', 'lut', 'mar', 'kwi', 'maj', 'cze', 'lip', 'sie', 'wrz', 'paź', 'lis', 'gru'];
-    const NAV_IDS = ['przywodztwo', 'strategia', 'zarzadzanie', 'przedsiebiorczosc', 'ai', 'technologie', 'innowacje', 'marketing', 'finanse'];
+    const NAV_IDS = ['przywodztwo', 'strategia', 'zarzadzanie', 'przedsiebiorczosc', 'ai', 'technologie', 'innowacje'];
     const navTopics = KBR.data.topics.filter(function (t) { return NAV_IDS.indexOf(t.id) !== -1; });
     const moreTopics = KBR.data.topics.filter(function (t) { return NAV_IDS.indexOf(t.id) === -1; }).map(function (t) { return '<li><a href="#/tematy/' + t.slug + '"' + cur('/tematy/' + t.slug) + '>' + esc(t.name) + '</a></li>'; }).join('');
     const account = user
-      ? '<div class="menu"><button type="button" class="hdr-link hdr-link--user" data-action="menu" aria-expanded="false" aria-controls="account-menu" aria-haspopup="true"><span class="hdr-avatar" aria-hidden="true">' + esc(ui.userInitials(user)) + '</span>' +
+      ? '<div class="menu"><button type="button" class="hdr-link hdr-link--user" data-action="menu" aria-expanded="false" aria-controls="account-menu" aria-haspopup="true">' + I('userCheck', 20) + 
         '<span>' + esc(user.firstName || 'Moje konto') + '</span>' + subTag + '<span class="chev">' + I('chevDown', 14) + '</span></button>' +
         '<div class="menu__panel" id="account-menu" hidden>' +
         '<div class="menu__head"><strong>' + esc(user.firstName || 'Czytelnik') + '</strong>' + esc(user.email) + '<br>' + (subPlan ? 'Pakiet ' + esc(subPlan.name) + ' – aktywny' : 'Konto bez subskrypcji') + '</div>' +
@@ -77,7 +77,7 @@
       '<div class="footer-brand">' +
         '<a class="logo" href="#/" aria-label="Kozminski Business Review – strona główna"><img class="logo__img" src="assets/img/kbr-logo-light.svg" alt="" width="208" height="56"></a>' +
         '<p>Polska platforma wiedzy biznesowej dla menedżerów, liderek i liderów, wydawana przez Akademię Leona Koźmińskiego.</p>' +
-        '<ul class="socials" aria-label="Kanały społecznościowe">' + socials.map(function (s) { return '<li><a href="' + (s[2] || '#') + '"' + (s[2] ? ' target="_blank" rel="noopener" aria-label="' + s[1] + ' (otwiera się w nowej karcie)"' : ' onclick="return false" aria-label="' + s[1] + ' (adres do uzupełnienia)"') + '><img src="assets/img/social-' + s[0] + '.png?v=2" alt=""></a></li>'; }).join('') + '</ul>' +
+        '<ul class="socials" aria-label="Kanały społecznościowe">' + socials.map(function (s) { return '<li><a href="' + (s[2] || '#') + '"' + (s[2] ? ' target="_blank" rel="noopener" aria-label="' + s[1] + ' (otwiera się w nowej karcie)"' : ' onclick="return false" aria-label="' + s[1] + ' (adres do uzupełnienia)"') + '><img src="assets/img/social-' + s[0] + '.png?v=20261108-134" alt=""></a></li>'; }).join('') + '</ul>' +
         '<div class="footer-cols">' +
           '<div><h2>O KBR</h2><ul><li><a href="#/strona/o-kbr">Misja i wizja</a></li><li><a href="#/autorzy">Autorzy i eksperci</a></li><li><a href="#/strona/kontakt">Kontakt</a></li></ul></div>' +
           '<div><h2>Uczelnia</h2><ul>' +

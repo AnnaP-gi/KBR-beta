@@ -16,11 +16,12 @@ KBR.ui = KBR.ui || {};
       : '<span class="avatar person-photo ' + (cls || '') + '" aria-hidden="true">' + ui.esc((p.initials || '').slice(0, 2)) + '</span>';
   };
   ui.personContact = function (p) {
-    if (!p.linkedin && !p.email) return '';
+    if (!p.linkedin && !p.email && !p.publicationsUrl) return '';
     const I = KBR.icon;
     return '<span class="person-contact">' +
       (p.linkedin ? '<a href="' + ui.esc(p.linkedin) + '" target="_blank" rel="noopener" aria-label="' + ui.esc(p.name) + ' na LinkedIn (otwiera się w nowej karcie)">' + I('linkedin', 16) + '<span>LinkedIn</span></a>' : '') +
-      (p.email ? '<a href="mailto:' + ui.esc(p.email) + '" aria-label="Napisz do: ' + ui.esc(p.name) + '">' + I('mail', 16) + '<span>Napisz wiadomość</span></a>' : '') + '</span>';
+      (p.email ? '<a href="mailto:' + ui.esc(p.email) + '" aria-label="Napisz do: ' + ui.esc(p.name) + '">' + I('mail', 16) + '<span>Napisz wiadomość</span></a>' : '') +
+      (p.publicationsUrl ? '<a href="' + ui.esc(p.publicationsUrl) + '" target="_blank" rel="noopener" aria-label="Publikacje naukowe: ' + ui.esc(p.name) + ' (portal Uczelni, otwiera się w nowej karcie)">' + I('cap', 16) + '<span>Publikacje naukowe</span></a>' : '') + '</span>';
   };
   ui.dateShort = function (iso) { const d = new Date(iso); return String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear() + ' r.'; };
   ui.dateLong = function (iso) { return new Date(iso).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' }); };
