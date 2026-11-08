@@ -1,5 +1,9 @@
 # Aktualizacja KBR – 06.11.2026 (build 20261106-109)
 
+## 20261106-132
+- Osoby: pole „pełna notka biograficzna” (do 2500 znaków ze spacjami, w akapitach; na stronie osoby widoczny pierwszy akapit – zalecane 250–400 znaków – reszta po kliknięciu „Czytaj całą notkę”). Krótki biogram: do 200 znaków. Przykład: dr Marta Wiśniewska.
+- Osoby: opcjonalny link „Publikacje naukowe” do strony osoby w portalu dn.kozminski.edu.pl (nowa karta).
+
 Skopiuj całą zawartość folderu `kbr-vercel` do katalogu głównego repozytorium (zastąp pliki), potem:
 
 ```
@@ -81,3 +85,14 @@ Szczegóły: dokumentacja/decyzje-i-materialy.html, sekcja „Oferta – do rozw
 - Konfiguracja: `KBR.config.ads.login` w `assets/js/config.js` (link: `href`, tekst alternatywny: `alt`).
 - Na komputerze po prawej od formularza; na telefonie i tablecie pod formularzem, skalowana do szerokości ekranu.
 - Łącznie 6 plików reklam (było 5).
+
+- Daty w publikacjach (karty, metadane artykułów, spisy treści, biblioteka) w foncie Open Sans; KozminskiU wyłącznie w datach dekoracyjnych (data w menu).
+- Kontakt: dwa kontakty (ogólny i dla autorów) obok siebie, usunięte złote paski nad sekcjami; reklama i partnerstwa w kontakcie ogólnym.
+- Punktory list w całym serwisie: zwykłe czarne kropki zamiast złotych kwadratów.
+- Misja i wizja: w sekcji Redakcja tylko redaktor naczelny (Paweł Kubisiak, link do LinkedIn); usunięta rada programowa i złoty pasek nad misją i wizją.
+- Kontakt: dodana karta redaktora naczelnego (Paweł Kubisiak, zdjęcie, LinkedIn) pod kontaktami.
+- Wyszukiwarka: przycisk „Szukaj” oddzielony od pola (8 px), w kolorze czerwonym jak pozostałe przyciski główne.
+- Wyniki wyszukiwania – osoby: usunięta strzałka po prawej stronie.
+- Build 20261108-134: wersja plików podbita, aby przeglądarki (desktop i mobile) pobrały najnowsze CSS i JS.
+- Nowe teksty: intro strony „Autorzy i eksperci” oraz komunikat po zakończeniu podglądu w czytniku magazynu.
+- Stopka: ikony społecznościowe (w tym X) z nowym parametrem wersji, aby przeglądarki pobrały aktualne pliki.
