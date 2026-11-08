@@ -56,7 +56,13 @@ KBR.data.authors = [
     bio: 'Autorka analiz o transformacji cyfrowej i organizacji pracy z danymi.' },
   { id: 'piotr-nowak', name: 'Piotr Nowak', initials: 'PN', photo: 'portret-05.png', role: 'Ekspert ładu korporacyjnego, członek rad nadzorczych',
     bio: 'Pisze o ładzie korporacyjnym, zarządzaniu ryzykiem i pracy rad nadzorczych.' },
-  { id: 'marta-wisniewska', name: 'dr Marta Wiśniewska', initials: 'MW', photo: 'portret-01.png', role: 'Adiunktka w Katedrze Zarządzania, Akademia Leona Koźmińskiego', linkedin: 'https://www.linkedin.com/in/marta-wisniewska-demo', email: 'marta.wisniewska@kozminski.edu.pl',
+  { id: 'marta-wisniewska', name: 'dr Marta Wiśniewska', initials: 'MW', photo: 'portret-01.png', role: 'Adiunktka w Katedrze Zarządzania, Akademia Leona Koźmińskiego', linkedin: 'https://www.linkedin.com/in/marta-wisniewska-demo', email: 'marta.wisniewska@kozminski.edu.pl', publicationsUrl: 'https://dn.kozminski.edu.pl/index.seam?lang=pl',
+    bioLong: [
+      'Doktor nauk o zarządzaniu, adiunktka w Katedrze Zarządzania Akademii Leona Koźmińskiego. Zajmuje się przywództwem, kulturą organizacyjną i komunikacją w zespołach zarządczych, ze szczególnym uwzględnieniem tego, jak liderzy podejmują decyzje w warunkach niepewności.',
+      'Przez dziesięć lat pracowała w sektorze prywatnym, m.in. jako menedżerka ds. rozwoju organizacji w międzynarodowej firmie z branży FMCG oraz jako konsultantka wspierająca zarządy w procesach zmiany. Doświadczenia z praktyki przeniosła do pracy naukowej i dydaktycznej.',
+      'Prowadzi zajęcia z przywództwa i zachowań organizacyjnych na studiach magisterskich oraz w programach Executive MBA. Jest autorką i współautorką publikacji w czasopismach naukowych i monografiach poświęconych zaufaniu w zespołach, roli humanistyki w edukacji menedżerskiej i odpowiedzialnemu wdrażaniu sztucznej inteligencji w organizacjach.',
+      'Współpracuje z zespołami zarządczymi firm i instytucji publicznych jako mentorka i facylitatorka warsztatów strategicznych. Członkini Polskiego Towarzystwa Zarządzania Wiedzą. W Kozminski Business Review pisze o przywództwie, kulturze pracy i kompetencjach przyszłości.'
+    ],
     bio: 'Badaczka przywództwa i kultury organizacyjnej, współpracuje z zespołami zarządczymi.' },
   { id: 'tomasz-zielinski', name: 'Tomasz Zieliński', initials: 'TZ', photo: 'portret-03.png', role: 'Doradca strategiczny, partner w firmie doradczej', linkedin: 'https://www.linkedin.com/in/tomasz-zielinski-demo',
     bio: 'Doradca strategiczny, specjalizuje się w planowaniu scenariuszowym i zarządzaniu portfelem projektów.' },
